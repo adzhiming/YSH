@@ -1,0 +1,289 @@
+<!DOCTYPE html>
+<html lang="zh-cn">
+<head>
+
+<meta http-equiv="Content-Type" content="text/html; charset=UTF-8">
+<title>商家管理中心</title>
+<meta name="viewport" content="width=device-width,initial-scale=1,maximum-scale=1,user-scalable=no">
+
+        <link rel="stylesheet" href="css/base.css">
+		<link rel="stylesheet" href="css/index.css">
+        <link rel="stylesheet" href="css/store.css">
+        <link rel="stylesheet" href="css/layer.css" id="layui_layer_skinlayercss">
+		<script src="js/jquery.js"></script>
+		<script src="js/base.js"></script>
+		<script src="js/layer.js"></script>
+		<script src="js/roll.js"></script>
+		<script src="js/public.js"></script>
+        <script src="js/dingwei.js"></script>
+
+<script>
+            function bd_encrypt(gg_lat, gg_lon)   // 百度地图测距偏差 问题修复
+            {
+                var x_pi = 3.14159265358979324 * 3000.0 / 180.0;
+                var x = gg_lon;
+                var y = gg_lat;
+                var z = Math.sqrt(x * x + y * y) + 0.00002 * Math.sin(y * x_pi);
+                var theta = Math.atan2(y, x) + 0.000003 * Math.cos(x * x_pi);
+                var bd_lon = z * Math.cos(theta) + 0.0065;
+                var bd_lat = z * Math.sin(theta) + 0.006;
+                dingwei('#', bd_lat, bd_lon);
+
+            }
+
+            navigator.geolocation.getCurrentPosition(function (position) {
+                bd_encrypt(position.coords.latitude, position.coords.longitude);
+            });
+</script>
+</head>
+
+<body>
+
+<header class="top-fixed bg-yellow bg-inverse">
+<div class="top-back"><a class="top-addr" href="javascript:history.go(-1)"><i class="icon-angle-left"></i></a></div>
+<div class="top-title">基本设置</div>
+<div class="top-signed"><a href="#"><i class="icon-sign-out"></i></a></div>
+</header>
+
+
+<style>
+body{padding-bottom:45px;}
+.fabu-form .form-content {border: none;resize: none;width: 100%;height: 80px;padding: 10px;font-size: 12px;}
+.fabu-form .form-content1 {border: none;resize: none;width: 100%;height: 150px;padding: 10px;font-size: 12px;}
+.shuxing{width: 20px; height: 20px;margin-bottom: 10px;}
+</style>
+
+<form class="fabu-form" method="post" target="x-frame" action="#">
+
+<div class="row">
+	<div class="line">
+		<span class="x3">店铺名称：</span>
+		<span class="x9">
+			<input type="text" class="text-input" name="" value="脆皮玉米（1）">
+		</span>
+	</div>
+</div>
+
+<div class="row">
+	<div class="line">
+		<span class="x3">联系人：</span>
+		<span class="x9">
+			<input type="text" class="text-input" name="" value="123">
+		</span>
+	</div>
+</div>
+
+<div class="row">
+	<div class="line">
+		<span class="x3">接单电话：</span>
+		<span class="x9">
+			<input type="text" class="text-input" name="" value="181151">
+		</span>
+	</div>
+</div>
+
+<div class="row">
+	<div class="line">
+		<span class="x3">负责人电话：</span>
+		<span class="x9">
+			<input type="text" class="text-input" name="" value="181151251">
+		</span>
+	</div>
+</div>
+
+<div class="row">
+	<div class="line">
+		<span class="x3">邮箱地址：</span>
+		<span class="x9">
+			<input type="text" class="text-input" name="" value="shs2013@126.com">
+		</span>
+	</div>
+</div>
+
+<div class="row">
+	<div class="line">
+		<span class="x3">店铺地址：</span>
+		<span class="x9">
+			<input type="text" class="text-input" name="" value="东莞市南城区">
+		</span>
+	</div>
+</div>
+
+<div class="row">
+	<div class="line">
+		<span class="x3" style="float:left;width:25%;">附近坐标：</span>
+		<span class="x9" style="float:left;width:55%;">
+			<input type="text" class="text-input" name="" value="113.765295,22.777862">
+		</span>
+        <span class="x3" style=" float:right;width:20%;text-align:center;background:rgb(197, 107, 21);color:#fff; line-height:20px;">给取地址</span>
+	</div>
+</div>
+
+<div class="row">
+	<div class="line">
+		<span class="x3">起送价：</span>
+		<span class="x9">
+			<input type="text" class="text-input" name="" value="15元">
+		</span>
+	</div>
+</div>
+
+<div class="row">
+	<div class="line">
+		<span class="x3">营业时间：</span>
+		<span class="x9">
+			<input type="text" class="text-input" name="" value="8:00-19：00">
+		</span>
+	</div>
+</div>
+
+<div class="row">
+	<div class="line">
+		<span class="x3">配送时间：</span>
+		<span class="x9">
+			<input type="text" class="text-input" name="" value="30公里">
+		</span>
+	</div>
+</div>
+
+<div class="row">
+	<div class="line">
+		<span class="x3">是否营业：</span>
+       <span class="x9">
+           <label><span>是</span>
+           <input style="width: 20px; height: 20px;" type="radio" name="data[is_new]" value="1"  >
+           </label>
+           <label><span style="margin-left: 20px;">否</span>
+           <input style="width: 20px; height: 20px;" type="radio" name="data[is_new]" value="0" >
+           </label>
+       </span>
+	</div>
+</div>
+
+<div class="row">
+	<div class="line">
+		<span class="x3">店面图片：</span>
+		<span class="x9">
+<button class="btn-uploading" onclick="uploadBtn();" style="border:none;background:none;">
+<a href="#"><img id="yushow2" src="images/thumb_57415f4571545.jpg" width="60"></a>	
+<span class="album" style="width:80px;background:#e26d6d;line-height:30px;border-radius:30px;float:right;margin:15px;color:#fff;">上传多图</span> 
+</button>
+<input type="file" name="file" style="display:none;" onchange="previewImg(this);" id="upload" accept="image/*"/>
+		</span>
+	</div>
+</div>
+
+
+<div class="blank-10 bg"></div>
+
+<div class="line border-bottom">
+<span class="x3" style=" border-bottom:solid 1px #eee; line-height:30px;width:100%;">店铺简介：</span>
+<textarea class="form-content1" name="" placeholder="店铺简介，建议不超过200字！">&lt;p&gt;还不错的商家&lt;/p&gt;</textarea>
+</div>
+
+<div class="blank-10 bg"></div>
+
+<div class="line border-bottom">
+<span class="x3" style=" border-bottom:solid 1px #eee; line-height:30px;width:100%;">店铺公告：</span>
+<textarea class="form-content1" name="" placeholder="店铺简介，建议不超过200字！">店铺新开张，请多多关照！！！</textarea>
+</div>
+
+<div class="blank-10 bg"></div>  
+
+<div class="container" style="position:fixed;bottom:0; width:100%; overflow:hidden;">
+<button style="display:block;width:100%; overflow:hidden;" type="submit" class="button button-block button-big bg-dot" >确认编辑</button>
+</div>
+
+
+</form>
+
+<script type="text/javascript">
+function uploadBtn(){
+    $("#upload").click();
+}
+
+//图片预览
+function previewImg(imgFile){
+    console.log(imgFile);//这里打印出是整个input标签
+    var extension = imgFile.value.substring(imgFile.value.lastIndexOf("."),imgFile.value.length);//扩展名
+    extension = extension.toLowerCase();//把文件扩展名转换为小写
+    if ((extension!='.jpg')&&(extension!='.gif')&&(extension!='.jpeg')&&(extension!='.png')&&(extension!='.bmp')){
+        layer.msg("对不起，系统仅支持标准格式的照片，请您调整格式后重新上传，谢谢 !");
+        $(".btn-uploading").focus();//将焦点定位在文件上传的按钮上，可以直接按确定键再次触发
+    }else{
+        var path;//预览地址
+        if(document.all){//IE
+            imgFile.select();
+                path = document.selection.createRange().text;
+        }else{//火狐，谷歌
+            path = window.URL.createObjectURL(imgFile.files[0]);
+        }
+        $("#yushow2").attr("src",path);//设置预览地址
+        uploadImg(imgFile);
+    }
+}
+
+//开始上传
+function uploadImg(imgFile){
+    //获取图片文件
+    var file = imgFile.files[0];//文件对象
+    var name = file.name;//图片名
+    //var size = file.size;//图片大小
+    //var type = file.type;//文件类型
+    
+    //检测浏览器对FileReader的支持
+    if(window.FileReader) {
+        var reader = new FileReader();
+        reader.onload = function(){//异步方法,文件读取成功完成时触发
+            var dataImg = reader.result;//文件一旦开始读取，无论成功或失败，实例的 result 属性都会被填充。如果读取失败，则 result 的值为 null ，否则即是读取的结果
+            syncUpload(name,dataImg);
+        };
+        reader.readAsDataURL(file);//将文件读取为 DataURL
+    }else {
+        layer.msg("浏览器不支持H5的FileReader!");
+    }
+}
+
+function syncUpload(name,dataImg){
+    var imgFile = dataImg.replace(/\+/g,"#wb#");//将所有“+”号替换为“#wb#”
+    imgFile = imgFile.substring(imgFile.indexOf(",")+1);//截取只保留图片的base64部分,去掉了data:image/jpeg;base64,这段内容
+    imgFile = encodeURIComponent(imgFile);//把字符串作为 URI 组件进行编码。后台容器会自动解码一次
+    name = encodeURIComponent(encodeURIComponent(name));//这里对中文参数进行了两次URI编码，后台容器自动解码了一次，获取到参数后还需要解码一次才能得到正确的参数内容
+    var mydata = "method=uploadImg&imgFile="+imgFile+"&imgName="+name;
+    $.ajax({
+          url: "/UploadServlet",
+          data: mydata,
+          type: "post",
+          dataType: "json",
+          success: function(data){
+                  if(data.state == 'ok'){
+                      document.getElementById("upload").value = "";//重置文件域
+                      layer.msg(data.msg);
+                }else if(data.state == 'error'){
+                    layer.msg(data.msg);
+                }
+          }
+    });
+}
+
+//删除图片
+function deleteImg(){
+    $.ajax({
+          url: "/UploadServlet",
+          data: "method=deleteImg",
+          type:"post",
+          dataType: "json",
+          success: function(data){
+                  if(data.state == 'ok'){
+                      layer.msg(data.msg);
+                }else if(data.state == 'error'){
+                    layer.msg(data.msg);
+                }
+          }
+    });
+}
+</script>
+
+
+</body>
+</html>

@@ -1,0 +1,509 @@
+
+
+<{if !empty($platpssetinfo) && $platpssetinfo['wxkefu_open']  == 1 }> 
+<div id="wx_kefu" >
+	<img style="width:40px;height:50px;" src="<{$siteurl}>/upload/images/wx_kefu.png" />
+</div>
+<div class="wxkefu_showino">
+	<div id="wx_closed"><img style="width:35px;height:35px;" src="<{$siteurl}>/upload/images/wx_closed.png" /></div> 
+	<div id="wxkefu_showino" style="text-align:center;">
+		<p style="height:200px;"><img style="width:200px;height:200px;" src="<{$platpssetinfo['wxkefu_ewm']}>" /></p>
+		<p style="margin-top:5px;">长按上方二维码添加好友</p>
+		<{if !empty($platpssetinfo['wxkefu_phone'])}>
+			<p>或者拨打电话直接联系我们</p>
+			<p style="height:65px;margin-top:5px;"><a href="tel:<{$platpssetinfo['wxkefu_phone']}>" ><img style="width:65px;height:65px;" src="<{$siteurl}>/upload/images/wx_phone.png" /></a></p>
+		<{/if}>
+	</div>
+	<div id="wx-zhezhao"></div>
+</div>
+<script>
+$(function(){
+	$('#wx_kefu').bind('click',function(){
+ 		$('.wxkefu_showino').show();
+	});
+	$('#wx_closed').bind('click',function(){
+ 		$('.wxkefu_showino').hide();
+	});
+});
+</script>
+<style>
+#wx_kefu{position:absolute;z-index:99999;bottom: 90px;right:0;}
+.wxkefu_showino{display:none;}
+#wx_closed{position:absolute;z-index:999999999999999;top:30px;right:30px;}
+#wxkefu_showino{position:absolute;z-index:999999999999999;left:50%;margin-left:-100px;top:50%;margin-top:-172px;}
+#wxkefu_showino p{font-size:16px; color:#FFF;height:35px;line-height:35px;}
+#wx-zhezhao {
+    background: none repeat scroll 0 0 #000000;
+    height: 100%;
+    opacity: 0.7;
+    filter: alpha(opacity=70);
+    position: fixed;
+    width: 100%;
+	height:100%;
+    z-index: 999099;
+    left: 0px;
+    top: 0px;
+    display:  ;
+
+</style>
+<{/if}>
+
+
+
+<div id="wrapper" class="swiper-containeraa" style="position:absolute;  display:;width:100%;top:73px; overflow:hidden;"> 
+<div id="scroller" style="transition-property: transform; transform-origin: 0px 0px 0px; transform: translate(0px, 0px) translateZ(0px);">
+
+
+ <div class="swiper-scrollbar"></div> 
+<div  class="swiper-wrapper" >
+<div class="swiper-slide"> 
+<!-- <div id="uprefuBox"><p class="refuImg"><img  src="/upload/images/wmrloading.gif"  ></p><p class="refuFang flipup" >下拉刷新...</p></div> -->
+<{load_data assign="advlist" table="adv"    fileds="*"  limit="5" where="advtype='weixinlb' and  module='<{$sitetemp}>'  and cityid='<{$CITY_ID}>'  " }> 
+<{if !empty($advlist['list']) }>
+
+  <div class="device"> 
+  
+    <div class="swiper-container-lb" style="position: relative; ">
+      <div class="swiper-wrapper-lb">
+	  <{foreach from=$advlist['list'] item=items}>
+        <div class="swiper-slide-lb" ><a href="<{$items['linkurl']}>"><img data-src="<{$items['img']}>"  src="<{$items['img']}>" style="width:100%; height:150px;" alt=""></a></div>
+	  <{/foreach}>	
+       </div>
+    </div>
+    <div class="pagination"></div>
+  </div>
+  
+    <script>
+    var mySwiper = new Swiper('.swiper-container-lb',{
+ 	wrapperClass:'swiper-wrapper-lb', 
+	slideClass:'swiper-slide-lb',
+    pagination: '.pagination',
+    loop:false,
+	autoplay: 3000,
+	 mode : 'horizontal', // or 'vertical'
+    grabCursor: true,
+    paginationClickable: true 
+  });
+ $(function(){ 
+	var mainheight = $(window).height();//窗口高度
+	var mainwidth = $(window).width();//窗口宽度
+	$('.swiper-container-lb,.swiper-slide-lb,.swiper-slide-lb img').css('width',mainwidth+'px');
+	mySwiper.reInit();
+	mySwiper.swipeTo(0);
+  });
+  
+  </script>
+ 
+<{/if}>
+
+
+
+ 
+<!-- 通知 -->
+<{load_data assign="notice" table="information"  type="one"  fileds="*"  limit="1" where="type=1 and ( cityid = '<{$CITY_ID}>' or cityid = 0  )  "  orderby="orderid asc"  }> 
+<{if !empty($notice) }>
+<div class="ordisprompt" style="background:#fff;display:none;" >
+ <ul>
+  <li class="noticeText">通知</li> 
+  <li id="gonggaoshow" style="margin-left:5px; float:left;  ">
+  <div id="marqueenotice"  onclick="dolink('<{ofunc type=url link="/wxsite/noticelist"}>');"  style="display:none;">
+  <marquee align="middle" behavior="scroll" loop="-1" scrollamount="4" width="100%"    direction="left"    ><{$notice['title']}></marquee>
+  </div>
+  <div id="notice"  onclick="dolink('<{ofunc type=url link="/wxsite/noticelist"}>');"  ><{$notice['title']}></div>
+  </li>
+ </ul>
+</div>
+<style>
+.noticeText{font-size:12px!important;background:url(<{$siteurl}>/templates/<{$tempdir}>/public/wxsite/images/wmr_index_notice.png) 1px 3px no-repeat #ff6e6e;background-size:13px;padding:0px 4px 0px 14px;color:#fff;font-size:12px;}
+.ordisprompt ul li {
+
+    float: left;
+    color: #fff;
+    font-size: 14px;
+    line-height: 20px;
+	height:20px;
+}
+</style>
+<script>
+$(function(){
+	$(".ordisprompt").show();
+	var getscreenwidth = $(window).width();
+	var gongdongWidth = getscreenwidth-67;
+	$("#gonggaoshow").css('width',gongdongWidth+'px');
+	var gonggaoshow = Number( $("#notice").text().length )*16;
+	var screenwidth = document.body.clientWidth-20;
+	if( gonggaoshow >= screenwidth ){
+  
+		$("#marqueenotice").show();
+		$("#notice").hide();
+	}else{
+	 
+		$("#marqueenotice").hide();
+		$("#notice").show();
+	}
+	
+	    
+	
+});
+  
+		 
+ 	    
+</script>
+<{/if}>
+
+<{if !empty($moretypelist) }>
+<!--分类部分-->
+<div class="categoryContainer" style="padding-top:10px;">
+    <div class="swiper-container swiper-container-class">
+        <div class="swiper-wrapper-cate">
+ <{foreach from=$moretypelist key=keys item=items}>
+            <{if $keys%8 ==0}>
+            <div class="swiper-slide-cate"  >
+            <ul>
+                <{/if}>
+
+  <li style="height:78px;"
+	<{if $items['activity'] == 'waimai' }>
+		onclick="dolink('<{ofunc type=url link="/wxsite/waimai/typeid/<{$items['param']}>"}>');"
+	<{else if $items['activity'] == 'market'  }>
+		onclick="dolink('<{ofunc type=url link="/wxsite/marketlist/typeid/<{$items['param']}>"}>');"
+	<{else if $items['activity'] == 'lifehelp'  }>
+		onclick="dolink('<{ofunc type=url link="/wxsite/lifeasslist"}>');"
+     <{else if $items['activity'] == 'shophui'  }>
+     onclick="dolink('<{ofunc type=url link="/wxsite/shophui"}>');"
+	 <{else if $items['activity'] == 'paotui'  }>
+     onclick="dolink('<{ofunc type=url link="/wxsite/paotui"}>');"
+	<{/if}>
+>
+ <p><img src="<{$items['img']}>" data-src="<{$items['img']}>" style="width:50px;height:50px;"   class="category_img"></p>
+ <p style="margin-top:-5px;"><span style="height:22px;line-height:22px;"><{$items['name']}></span> </p>
+ </li>
+  <{if $keys%8 == 7}>
+         </ul>
+    </div>
+   <{/if}>
+ <{/foreach}>
+            <{if $keys%8 != 7}>
+            </ul>
+        </div>
+        <{/if}>
+    </div>
+	
+ 	<div class="pagination-class" style="<{if count($moretypelist) <= 8 }>display:none;<{/if}>text-align:center;position:absolute;width:100%;bottom:-4px;"></div>  
+	
+</div>
+</div>
+    <script>
+        var mySwipers = new Swiper('.swiper-container-class',{
+            wrapperClass:'swiper-wrapper-cate',
+            slideClass:'swiper-slide-cate',
+            pagination: '.pagination-class',
+            grabCursor: true,
+            paginationClickable: true
+        });
+        $(function(){
+            var mainheight = $(window).height();//窗口高度
+            var mainwidth = $(window).width();//窗口宽度
+            $('.swiper-container-class,.swiper-slide,.swiper-slide').css('width',mainwidth+'px');
+            mySwipers.reInit();
+            mySwipers.swipeTo(0);
+			<{if count($moretypelist) > 8 }>
+				$('.swiper-wrapper-cate').css('height','165px');
+				$('.swiper-slide-cate').css('height','165px');
+			<{/if}>
+		 
+			
+        });
+    </script>
+<{/if}>
+<!--展示-->
+
+ 
+<!-- 专题页 -->
+<div class="advertisement"> 
+<{foreach from=$ztylist key=key item=items}>
+ <ul class=""   style="width:<{$items['imgwidth']}>; height:<{$items['imgheight']}>px; border:none;"  onclick="dolink('<{ofunc type=url link="/wxsite/specialpage/id/<{$items['id']}>"}>');"    >
+  <li style="width:100%; height:<{$items['imgheight']}>px;">
+  <a href="javascript:void(0);"><img  style="width:100%; height:<{$items['imgheight']}>px;"  data-src="<{$items['indeximg']}>" src="<{$items['indeximg']}>"></a></li>
+ </ul>
+ <{/foreach}>
+ 
+</div>
+
+<!-- 优选商家开始 -->
+
+<{if !empty($fyshoplist) }>
+<div class="foryou_content">
+	<div class="foryou_title">
+		<h3>为您优选</h3>
+		<i></i>
+	</div>
+	<div class="foryou_list">
+		<ul>
+		    
+			 <{foreach from=$fyshoplist item=items }>
+			<li>
+			 <{if $items['shoptype']  == 1 }>
+                            <a href="<{ofunc type=url link="/wxsite/shopshow/typelx/mk/id/<{$items['id']}>"}>">
+                            <{else}>
+                            <a href="<{ofunc type=url link="/wxsite/shopshow/typelx/wm/id/<{$items['id']}>"}>">
+                            <{/if}>
+				<img src="<{$items['shoplogo']|default:$sitelogo}>" />
+				<span><{$items['shopname']}></span>
+				</a>
+			</li>
+			<{/foreach}>
+			
+		</ul>
+	</div>
+</div>
+<{/if}>
+<!-- 优选商家结束 -->
+<style>
+.foryou_content{
+	width: 100%;
+	margin-top: 10px;
+	background-color: #fff;
+}
+
+.foryou_title{
+	height: 34px;
+	display: flex;
+	flex-direction: column;
+	justify-content: center;
+	align-items: center;
+	position: relative;
+}
+
+.foryou_title h3{
+	padding: 0 10px;
+	font-size: 14px;
+	color: #333333;
+	font-weight: 500;
+	background-color: #fff;
+	position: relative;
+	z-index: 2;
+}
+
+.foryou_title i{
+	width: 172px;
+	height: 1px;
+	margin-left: -86px;
+	background-color: #333;
+	position: absolute;
+	left: 50%;
+	top: 50%;
+	z-index: 1;
+}
+
+.foryou_list{
+	padding-left: 2.7777%;
+}
+
+.foryou_list ul{
+	display: flex;
+	flex-direction: row;
+	flex-wrap: wrap;
+}
+
+.foryou_list ul li{
+	width: 31.3428%;
+	margin: -2px 1.4285% 6px 0;
+	display: flex;
+	flex-direction: column;
+	text-align: center;
+    font-weight: bold;
+}
+
+.foryou_list ul li img{
+	width: 100%;
+	height: 80px;
+	border: 1px solid #e6e6e6;
+}
+
+.foryou_list ul li span{
+	margin-top: 5px;
+	font-size: 12px;
+	color: #1a1a1a;
+	white-space: nowrap;
+	text-overflow: ellipsis;
+	overflow: hidden;
+}
+</style>
+
+<div class="homscrbusinCon">
+ <div class="homscrbusintit"><h3>附近商家</h3></div>
+ 
+ 
+ <div class="homeNeashopBox">
+  <ul id="shoplist">
+   
+   <center style='height:50px;;line-height:50px;font-size:13px;color:#a9a9a9;'>加载中...</center>
+ 
+  </ul>
+ </div>
+ 
+ 
+<div  id="lodingmore" style="display:none;"   class="downLoading "><div class="moreLoading"><i class="iconstartloading"></i><span>上拉更多...</span></div></div>
+   
+ 
+</div>
+ 
+<!---------------------------------------------------------------------------首页结束----------------------------------------------------------------------------------->
+ </div>
+ 
+
+ </div>
+</div>
+
+
+
+
+
+<style>
+.swiper-slide-cate {
+     float: left;
+}
+</style>
+<script>
+var defaultSwiper; //默认的滚动控件名 
+var holdPosition = 0; 
+var maxposition = 0;
+var page =1;
+var pageend = false;
+function freshpage(){//刷新函数 
+  page =1;
+  pageend = false;
+    $('#shoplist').html('');  
+	var content = htmlback(siteurl+'/index.php?ctrl=wxsite&action=indexshoplistdata',{'page':page});
+  	if(content.flag == false){
+ 		 var getmoreContent =  $.trim(content.content);  
+   		   if( getmoreContent == ''  ){ 
+				$('#shoplist').html("<center style='height:50px;;line-height:50px;font-size:13px;color:#a9a9a9;'>附近暂未覆盖商家，敬请期待...</center>");
+		   }else{
+				$('#lodingmore').show();
+				$('#shoplist').append(getmoreContent);   
+		   }
+	}else{
+	    Tmsg('获取失败');
+	}  
+ 	$('#loading').hide(); 
+	hidefresh();
+ }
+ 
+function loadmore(){ 
+	page = page+1;
+	   var content = htmlback(siteurl+'/index.php?ctrl=wxsite&action=indexshoplistdata',{'page':page});
+		if(content.flag == false){
+		$('#lodingmore .moreLoading i').addClass('iconstartloading');
+	    $('#lodingmore .moreLoading i').removeClass('iconloading');
+	    $('#lodingmore .moreLoading i').removeClass('iconOverload');
+		$("#lodingmore span").text("上拉更多...");
+		   var getmoreContent =  $.trim(content.content); 
+		  
+  		   if( getmoreContent == ''  ){
+ 				pageend = true;
+				$('#lodingmore .moreLoading i').removeClass('iconstartloading');
+				$('#lodingmore .moreLoading i').removeClass('iconloading');
+				$('#lodingmore .moreLoading i').addClass('iconOverload');
+				$("#lodingmore span").text("加载完毕...");
+		   }else{
+				 $('#shoplist').append(content.content);
+		   }
+		  
+		}else{
+			pageend = true;
+			$('#lodingmore .moreLoading i').removeClass('iconstartloading');
+			$('#lodingmore .moreLoading i').removeClass('iconloading');
+	     	$('#lodingmore .moreLoading i').addClass('iconOverload');
+			$("#lodingmore span").text("加载完毕...");
+		}
+ 		hideloadmore();
+	
+} 
+  
+  
+function htmlback(url,info)
+{
+	var backmessage = {'flag':true,'content':''};
+	$.ajax({
+       type: 'POST',
+       async:false,
+       url: url.replace('@random@', 1+Math.round(Math.random()*1000)),
+       data: info,
+      dataType: 'html',success: function(content) {  
+	   backmessage['flag'] = false;
+      	   backmessage['content'] = content; 
+		  },
+      error: function(content) { 
+      backmessage['content'] = '获取失败';
+	   }
+   });  
+   return backmessage;
+}
+
+</script>
+<style>
+.zhengrefu{text-align:center; margin-top:-10px;} 
+.swiper-containeraa { 
+    position: absolute;
+    z-index: 10;
+}
+.swiper-scrollbar { 
+	position: relative;
+	-ms-touch-action: none;
+	background: rgba(0,0,0,0.1)
+}
+.swiper-scrollbar-drag {
+	height: 100%;
+	width: 100%;
+	position: relative;
+	background: rgba(0,0,0,0.5); 
+}
+.swiper-scrollbar-cursor-drag {
+	cursor: move;
+}
+
+.device {
+  width: 100%;
+  height: 150px;
+  background:#fff;
+   position: relative;
+ }
+.swiper-slide-lb{
+	height:150px;
+	 float:left;
+}.swiper-slide-lb img{
+	height:150px;
+	 
+}
+.swiper-container-lb {
+  height:150px;
+  width: 100%;
+}
+.content-slide {
+  padding: 20px;
+  color: #fff;
+}
+ 
+.pagination {
+  position: absolute;
+  left: 0;
+  text-align: center;
+  bottom:0px;
+  width: 100%;
+  z-index:9999999;
+}
+.swiper-pagination-switch {
+  display: inline-block;
+  width: 8px;
+  height: 8px;
+  border-radius:50%;
+  background: #A1A1A1;
+   margin: 0 3px;
+  cursor: pointer;
+}
+.swiper-active-switch {
+  background: #FD5959;
+}
+</style>

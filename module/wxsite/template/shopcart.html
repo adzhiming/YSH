@@ -1,0 +1,445 @@
+ <{extends file="<{$tempdir}>/public/wxsite.html"}>  
+<{block name=extendcss}> 
+<link rel="stylesheet"  href="<{$siteurl}>/templates/<{$tempdir}>/public/wxsite/css/mycss.css">   
+<{/block}>
+ <{block name=extendjs}> 
+<script>
+var site_city = '<{$CITY_NAME|default:$cityname}>';
+var shopid = '<{$id}>';
+var pstype = '<{$shopinfo['sendtype']}>';
+var addAreaType = '<{$addAreaType}>';
+var map_comment_link = '<{$map_comment_link}>';
+var map_webservice_key = '<{$map_webservice_key}>';
+var backtype = 0;
+	  
+ //平台配送检查是否在地图勾选区域内 
+function checkIsPaPsrange(addresslnglat){
+  	var is_exist = false;
+	if( addresslnglat != '' && addresslnglat != undefined ){
+		var lnglatarr = (addresslnglat).split(','); 
+		var addresslnglatarr = []; 
+		addresslnglatarr.push(lnglatarr[0]);
+		addresslnglatarr.push(lnglatarr[1]); 
+ 		<{foreach from=$waimai_psrange_arr item=items }>
+ 		var addressmap ;
+		var polygon = new AMap.Polygon({
+			map: addressmap,
+			path: <{$items|default:0}>
+		});  
+		if( polygon.contains(addresslnglatarr) ){
+			is_exist = true; 
+			return is_exist;
+		}else{
+			is_exist = false; 
+		}  
+ 	<{/foreach}>
+	}
+	
+	return is_exist;
+	
+} 
+   	
+	
+</script> 
+  <script src="<{$siteurl}>/templates/<{$tempdir}>/public/wxsite/js/wxshop.js"></script>  
+  <script src="<{$siteurl}>/templates/<{$tempdir}>/public/wxsite/js/template.min.js"></script> 
+<script src="<{$siteurl}>/templates/<{$tempdir}>/public/wxsite/js/h5newaddress.js"></script>  
+<script src="<{$siteurl}>/templates/<{$tempdir}>/public/wxsite/js/cart.js"></script>  
+  <link rel="stylesheet" href="<{$siteurl}>/templates/<{$tempdir}>/public/wxsite/css/gaodecss.css"/>
+  <link rel="stylesheet" href="<{$siteurl}>/templates/<{$tempdir}>/public/wxsite/css/wmr_newaddress.css"/>
+  <script src="<{$map_comment_link}>webapi.amap.com/maps?v=1.3&key=<{$map_javascript_key}>"></script>
+<script> 
+    var cartbagcost =0;
+    var cartpscost = 0;
+    var  cartsum = 0;
+    var cxcost = 0;
+    var surecost = 0;
+    var juanlist = <{$juanlist|json_encode}>;
+    var wxjuanlist = <{$wxjuanlist|json_encode}>;
+    var checknext = false;
+    var timelist = <{$timelist|json_encode}>;
+    var backgoshop = '<{ofunc type=url link="/wxsite/shopshow/id/<{$id}>"}>';
+    var backadd = '<{ofunc type=url link="/wxsite/bkaddress/shopid/<{$id}>"}>';
+    $(function(){ 
+	
+		 var cururl = window.location.href; 
+		 $.cookie('wxCurUrl', cururl); 
+		 <{if $member['uid'] <= 0 }>
+			window.location.href= siteurl+'/index.php?ctrl=wxsite&action=login';
+		 <{/if}>
+    	 freshcart();
+    	 maketime();
+    	 $('#outpay').bind("click", function() {   
+    	 	 $(this).find('li i').addClass('shopcaoaA onpay');
+	         $('#outonline').find('li i').removeClass('shopcaoaA onpay');
+             freshcart(1);
+			 redefinejuan();
+             myScroll.refresh();
+        });
+    	  $('#outonline').bind("click", function() {   
+	          $(this).find('li i').addClass('shopcaoaA onpay');
+	          $('#outpay').find('li i').removeClass('shopcaoaA onpay');
+              freshcart(1);
+			  redefinejuan();
+              myScroll.refresh();
+        });
+    	 
+    	 
+    	 
+    	 
+    });
+	function redefinejuan(){
+		$("#juanshuoming").text('未选择优惠券');
+		$("#juanid").val(0);
+	}
+    function myyanchi(){
+  		
+  		  checknext = false;
+  	}
+ </script>
+  <script id="cartlist" type="text/html">   
+ 
+   <li><span class="shopdetalistL"><^%=list.name%^><^%if(list.have_det==1){%^><font style="color:#ccc;font-size:10px;">【<^%=list.gg.attrname%^>】<font><^%}%^></span><span class="shopdetalistC" >x<^%=list.count%^></span><span class="shopdetalistR" >￥<^%=list.cost%^></span></li>
+ 
+ </script>
+<{/block}>
+<{block name=sitetitle}><{$sitename}><{/block}>
+<{block name=hearnav}>
+  
+<!--标题-->
+ <{load_data assign="info" table="address" type="one" where="id='<{$id}>' and userid = '<{$member['uid']}>'" fileds="*" }> 
+
+	<!--标题-->
+<div class="toptitCon">
+ <div class="toptitBox addressbox" >
+ <div class="adr_toptitL" ><i></i></div>
+  <div class="toptitC"><h3>购物车下单</h3></div>
+  </div>
+</div>
+
+
+<{/block}>
+<{block name=footer}><{/block}>
+<{block name=myScrolljs}>
+<script> 
+		var myScroll;
+		var outdiv = false;
+		var myScroll2;
+function loaded() { 
+
+	myScroll = new iScroll('wrapper', {
+		useTransform: false,
+		bounce:false,
+		onBeforeScrollStart: function (e) {
+			var target = e.target;
+			while (target.nodeType != 1) target = target.parentNode;
+
+			if (target.tagName != 'SELECT' && target.tagName != 'INPUT' && target.tagName != 'TEXTAREA')
+				e.preventDefault();
+		}
+	});
+	 myScroll2 = new iScroll('scroll_address_2',{hScroll:false,hScrollbar:false, vScrollbar:false});
+	  
+} 
+document.addEventListener('touchmove', function (e) { e.preventDefault(); }, false); 
+document.addEventListener('DOMContentLoaded', function () { setTimeout(loaded, 200); }, false);
+$(function(){
+	var getscreenwidth = $(window).width();
+	var inputWidth = getscreenwidth-58;
+	$(".newaddBox ul li input").css('width',inputWidth+'px');
+	 
+});
+
+</script>
+<{/block}>
+  <{block name=footer}><{/block}>
+<{block name=blockcontent}> 
+<style>
+#scroll_address_2 { 
+    z-index: 99999999999999;
+    top: 42px;
+    bottom:0px;
+    left: 0;
+    width: 100%;
+     position:absolute;
+ }
+</style>
+<div id="gdcart"> 
+ 
+	 <div id="wrapper" style="top:40px;bottom:54px; "> 
+	<div id="scroller">
+	
+	
+	
+	
+	 <div class="takesettlCon" id="orderaddress">
+ <div class="takesettlBox">
+  <div class="takesettladdto" style="width:93%;">
+   <div class="takesettla"><i class="icon-dw4"></i><span>添加/选择收货地址</span></div>
+  </div>
+  <div class="takesettltz"><i class="fa fa-angle-right"></i></div>
+ </div>
+</div>
+<input type="hidden" name="contactname" value="" />
+<input type="hidden" name="phone" value="" />
+<input type="hidden" name="addresss" value="" />
+<input type="hidden" name="areaids" value="" />
+<input type="hidden" name="addresslng" value="" />
+<input type="hidden" name="addresslat" value="" />
+<input type="hidden" name="adrpscost" value="" />
+	
+	 
+	
+<!--配送时间-->
+<div class="shopcaorderCon">
+ <ul  id="Timeposition">
+  <li class="shopcaodername">配送时间</li>
+  <li class="shopcaoderbox"  onclick="doselectTime();" id="DeliveryTimesm" >未选择配送时间</li>
+  <input type="hidden" name="DeliveryTime" id="DeliveryTime" value="0">
+ </ul>
+ <ul>
+  <li><input type="text" placeholder="添加备注" name="remark" class="shopremar"></li>
+ </ul>
+</div>	
+	
+	
+<!--支付方式-->
+
+
+
+<{if !( ( $open_acout == 0   ) && ( $is_daopay == 0   ) )}>
+<div class="shopcaorderCon"  id="payway">
+		<{if $open_acout == 1   }>
+		 <ul  id="outonline">
+		  <li class="shopcaodername">在线支付</li>
+		  <li class="shopcaoderbox"><i  data="1" class="shopcaoderxz shopcaoaA onpay"></i><input type="radio"   class="shopayment"></li>
+		 </ul>
+	<{/if}>
+	<{if $is_daopay == 1  }>
+		 <ul  id="outpay" >
+		  <li class="shopcaodername">货到付款</li>
+		  <li class="shopcaoderbox"><i  data="0" class="shopcaoderxz  <{if $open_acout == 0    }> shopcaoaA  onpay  <{/if}>"></i><input type="radio"  class="shopayment"></li>
+		 </ul>
+	<{/if}>
+ </div>	
+ <{else}>
+ <div class="shopcaorderCon"  >
+  <ul>
+  <li class="shopcaodername">未开启支付</li>
+  <li class="shopcaoderbox"><i class="shopcaoderxz"></i><input type="radio" class="shopayment"></li>
+ </ul>
+ 
+ </div>	
+<{/if}>
+ 
+
+
+<{if $member['uid'] > 0 }>
+<!--优惠券-->
+<div class="shopcaorderCon" >
+ <ul  id="yhjposition">
+  <li class="shopcaodername">优惠券</li>
+  <li class="shopcaoderbox" ><span class="shopcoupon"  onclick="doselectjuan();" id="juanshuoming">未使用优惠券<i class="fa fa-angle-right"></i></span></li>
+   <input type="hidden" name="juanid" id="juanid" value="0"><input type="hidden" name="juancost" id="juancost" value="0">
+ </ul>
+</div>
+
+
+<!--积分抵扣-->
+<div class="shopcaorderCon" >
+ <ul  id="jifenposition">
+  <li class="shopcaodername">积分抵扣</li>
+  <li class="shopcaoderbox" ><span class="shopcoupon"  onclick="doselectjifen('<{$scoretocost}>','<{$member['score']|default:0}>');" id="jifenshuoming">选择抵扣金额<i class="fa fa-angle-right"></i></span></li>
+   <input type="hidden" name="jifen" id="jifen" value="0">
+ </ul>
+ 
+</div>
+<{/if}>
+
+<!--订单清单-->
+<div class="shopcaorderCon">
+ <ul>
+  <li class="shopcaodername"><{$shopinfo['shopname']}></li>
+  <li class="shopcaoderbox"><span class="shopdiatc"><{if $shopinfo['sendtype'] == 1 }>商家<{else}>网站<{/if}>配送</span></li>
+ </ul>
+</div>
+<div style="background-color:#000;border-radius:5px;width:70%;color:#fff;position:absolute;z-index:999;top:80%;left:17%;display:none;" id="tspschange"></div>
+<div class="shopdetalistCon">
+ <div class="shopdetalistBox">
+  <ul  id="shocart">
+   
+   
+  </ul>
+  <ul id="nextshocart">
+   
+  </ul>
+ </div>
+</div>
+ 
+  <script>
+	$(function(){
+		$("#mask1").click(function(){
+			$("#mask1").hide();
+			$("#popup1").hide();
+		});
+	});
+	
+  </script>
+  
+ <div id="mask1">
+	  </div>
+	  <div id="popup1" class="popup1" style="background:none; border:none;"> 
+	  	 <div class="popcontent" id="popcontent" style="width:70%; background:#fff; margin:0 auto;">
+	  	 	    
+	  	 	  
+	  	 	   
+	  	 </div>
+	  </div>
+
+	  
+ </div>
+ 
+</div>
+<!--区域信息-->
+  
+ <div id="footer" class="box_inline" style="position:fixed; bottom:0px; left:0px;border:none;height:58px;background-color:#f4f4f4;">
+
+    <div class="mybottom" style="position:fixed; bottom:0px; left:0px;">
+      
+     	<div class="intexchabutt intexchabuttInput"  onclick="orderSubmit();" style="margin-top:15px;"><input type="button"  value="立即下单" class="intexbg1"></div>
+     </div>
+
+     </div>
+
+     </div>
+ <style>
+ .newadd li .newinp {
+    width: 200px;
+  margin-left: 0px;
+    font-size: 14px;
+}
+.newadd {width:100%;}
+.newadd li {
+    border-bottom: 1px solid #e8e8e8;
+    line-height: 42px;}
+ </style>
+
+ <div class="addressmask" id="otheraddress" style="display:none;">
+    <div id="addareass_1">
+    <div class="addressbox">
+			<input type="hidden" name="add_addressid" value="0"  >
+            <!--联系人-->
+            <div class="newaddCon">
+                <div class="newaddBox">
+                    <ul class="newadd">
+                        <li><a>&nbsp;&nbsp;&nbsp;姓名：</a><input type="text" placeholder="请填写收货人的姓名" id="contactname_value" value="<{$info['contactname']}>" name="" class="newinp"></li>
+                        <li><a>&nbsp;&nbsp;&nbsp;手机：</a><input type="text" placeholder="请填写收货人手机号" id="mobile" name="phone" value="<{$info['phone']}>" class="newinp"></li>
+                        <{if $areacode== 1}>
+                        <li id="showgetcode" class="signmehide">
+                            <i class="signinmess"></i>
+                            <input type="text" name="check_message" id="phoneyan"   value="" placeholder="输入短信验证码">
+                            <input type="button"  onclick="clickyanzheng();"   time="0" id="dosendbtn"  value="发送到手机" class="signmeinput">
+                        </li>
+                        <{/if}>
+                        <{if $addAreaType == 1}>
+                        <li style=" height:44px; ">
+                            <a>&nbsp;&nbsp;&nbsp;地址：</a><input type="text" placeholder="输入收货人详细地址（如单元、门牌号等）" value="<{$info['address']}>" class="newinp1" style="width:79%;margin-left:0px;">
+                        </li>
+                        <{else}>
+                        <li style=" height:44px; ">
+                            <a style="float:left;">&nbsp;&nbsp;&nbsp;地址：</a>
+                            <div lng="<{$info['lng']}>" lat="<{$info['lat']}>"  lnglat="" style="float:left; height:44px; line-height:44px;margin-left:20px;"  type="text" id ='selectSendAddress'  class="newinp1"><{$info['bigadr']|default:'点击选择地址'}></div>
+                        </li>
+                        <div class="clear"></div>
+                        <li><a>&nbsp;&nbsp;&nbsp;楼号-门牌号：</a><input type="text" placeholder="例：16号楼107室" value="<{$info['detailadr']}>" class="newinp2"></li>
+                        <{/if}>
+						
+								 
+						<div class="selectLabCon">
+						<div class="selectLabL">
+							<span>标&nbsp;&nbsp;&nbsp;签：</span>
+						</div>
+						<div class="selectLabR">
+								<div class="selectLabBox">
+								<input type="hidden" name="i_tag" id="i_tag" value="<{$info['tag']|default:1}>" /> 
+								<span><{if !empty($info)}><{if $info['tag'] == 1 }>家<{else if $info['tag'] == 2  }>公司<{else if $info['tag'] == 3  }>学校<{else}>无<{/if}><{else}>家<{/if}></span>
+								<i class="fa fa-caret-down" style="font-size: 14px; margin-right: 12px;"></i>
+							</div>
+								<div class="selectLab" style="display:none;">
+								<ul>
+												<li tagid="1" tagname="家">
+										<span>家</span>
+										<input type="radio" name="selb">
+									</li>
+												<li tagid="2" tagname="公司">
+										<span>公司</span>
+										<input type="radio" name="selb">
+									</li>
+												<li tagid="3" tagname="学校">
+										<span>学校</span>
+										<input type="radio" name="selb">
+									</li>
+												<li tagid="0" tagname="无">
+										<span>无</span>
+										<input type="radio" name="selb">
+									</li>
+												 
+								</ul>
+							</div>
+						</div>
+					</div>
+						
+						
+						
+                    </ul>
+                </div>
+            </div>
+            <div class="intexchabutt "  onclick="saveaddress();" style="margin-top:15px;"><input type="button"  value="保存地址" class="intexbg1"></div>
+        </div>
+
+
+ <div class="mapaddressbox"  style="display:none;">
+	<div class="showmapbox">
+		 <div class="mapditu" id="map">
+
+		 </div>
+ 	</div>
+ 
+	
+<div id="choiceguidebox" >
+	<ul>
+		 
+	</ul>
+</div>
+</div>
+
+	</div>
+<div id="scroll_address_2">
+	<div id="address_2">
+
+	</div>
+ </div>		
+ </div>
+ 
+
+		<div id="selectAddress" style="display:none; position:absolute;z-index:99999999999; width:100%;height:100%;background:#fff;  " >
+
+		</div> 
+ 
+ <style>
+ .toptitBox .adr_toptitL {
+    height: 22px;
+    display: inline-block;
+    width: 3.625%;
+    float: left;
+}
+.toptitBox .adr_toptitL i {
+    display: inline-block;
+    width: 100%;
+    height: 22px;
+    background-image: url(<{$siteurl}>/templates/<{$tempdir}>/public/wxsite/images/top04.png);
+    background-repeat: no-repeat;
+    background-size: 100%;
+}
+ </style>   
+<{/block}>

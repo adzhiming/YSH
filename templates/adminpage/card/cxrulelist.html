@@ -1,0 +1,141 @@
+<{extends file="<{$tempdir}>/public/admin.html"}>
+<{block name=extendjs}>
+<{/block}>
+ <{block name=controlname}>优惠活动列表<{/block}>
+ <{block name=bodylist}>
+
+    <div style="width:auto;overflow-x:hidden;overflow-y:auto">
+ 
+           <div class="tags">
+
+
+
+          <div id="tagscontent">
+
+            <div id="con_one_1">
+
+              <div class="table_td" style="margin-top:10px;">
+
+              <form method="post" action="" onsubmit="return remind();" id="delform">
+
+                  <table border="0" cellspacing="2" cellpadding="4" class="list" name="table" id="table" width="100%">
+
+                    <thead>
+
+                      <tr>
+
+                        <th width="60px"><input type="checkbox" id="chkall" name="chkall" onclick="checkall()"></th>
+
+                        <th align="center">id</th>
+                        <th align="center">促销名称</th>
+                        <th align="center">规则说明</th>                       
+                        <th align="center">开始时间</th>
+                        <th align="center">结束时间</th>   
+                        <th align="center">状态</th>
+                        <th align="center">操作</th>
+
+                      </tr>
+
+                    </thead>
+
+                     <tbody>
+                        
+                <{foreach from=$cxrulelist key=myid item=items}>
+                      <tr class="s_out" onmouseover="this.bgColor='#F5F5F5';" onmouseout="this.bgColor='ffffff';" bgcolor="#ffffff">
+                        <td align="center"><input type="checkbox" name="id[]" value="<{$items['id']}>"></td>
+                        <td align="center"><{$items['id']}></td>
+                        <td align="center"> <{$items['name']}> </td>
+                        <td align="center"> <span id="showrule_<{$items['id']}>" data=""></span> </td>
+                        <td align="center"><{$items['starttime']|date_format:"%Y-%m-%d"}></td>
+                        <td align="center"><{$items['endtime']|date_format:"%Y-%m-%d"}></td>
+                        <td align="center"><{if $items['status'] == 1}>开启中<{else}>未开启<{/if}></td> 
+			<td align="center">
+                            <span style=" background:#27a9e3; padding:8px; color:#fff;"><a href="<{ofunc type=url link="/adminpage/card/module/addcxrule/id/<{$items['id']}>"}>">编辑</a></span>
+                            <span style=" background:#ec7501; padding:8px; color:#fff;"><a onclick="return remind(this);"href="<{ofunc type=url link="/adminpage/card/module/delcxrule/id/<{$items['id']}>/datatype/json"}>"> 删除</a></span>
+                        </td> 
+                                               
+                      </tr>
+                  <{/foreach}>
+                 
+                    </tbody>
+
+                  </table>
+
+                <div class="blank20" style="padding-left: 20px;"><font style="color:red;">提示:促销规则按id顺序依次使用，每个规则的金额满足条件都以最初商品总价为基准，计算下个规则产生的优惠金额时以上个规则优惠后的金额为基准，同类型的规则取优惠金额最大的使用。</font></div>
+
+                </form>
+
+                <div class="page_newc">
+				
+					<div class="select_page"><a href="#" onclick="checkword(true);">全选</a>/<a href="#" onclick="checkword(false);">取消</a> 
+						  <a onclick="return remindall(this);" href="<{ofunc type=url link="/adminpage/card/module/delcxrule/datatype/json"}>" class="delurl">删除</a>  
+						  <a href="<{ofunc type=url link="/adminpage/card/module/addcxrule"}>" class="delurl">添加优惠活动</a></div>
+				 
+                 	     </div>
+                       <div class="show_page"><ul><{$pagecontent}></ul></div>
+                 </div>
+  <div class="page_newc">
+				
+					<div class="select_page" style="color:red;width:800px;">
+					
+						  </div>
+				 
+                 	     </div>
+                <div class="blank20"></div>
+
+              </div>
+
+            </div>
+
+          </div>
+
+        </div>
+
+
+  </div>
+
+</div>
+<script>
+	var alllist = <{$cxrulelist|@json_encode}>;
+$(function(){  
+	$.each(alllist,function(i,field){ 
+		var showcontent = '';
+		
+		if(field.limitcontent > 0){
+			showcontent += '订单总价大于'+field.limitcontent+'元';
+		}else{
+			showcontent +='所有订单';
+		} 
+		if(field.limittype ==  2){
+			showcontent ='每周(星期'+field.limittime+'),'+showcontent;
+		} 
+		if(field.limittype == 3){
+			showcontent ='每天在'+field.limittime+'时间段，'+showcontent;
+		}
+		if(field.controltype ==  1){
+			showcontent +='赠送:'+field.presenttitle+'库存还剩'+field.controlcontent+'件';
+		}
+		if(field.controltype ==  2){
+			showcontent +='优惠:'+field.controlcontent+'元';
+		}
+		if(field.controltype ==  3){
+			var times = field.controlcontent*0.1;
+			showcontent +='折扣:'+times+'折';
+		}
+		if(field.controltype ==  4){
+			showcontent +='免配送费';
+		}
+		 
+		
+		 $('#showrule_'+field.id).text(showcontent);
+	});
+	
+});
+	
+	
+	
+	
+	
+	
+</script>
+<{/block}>

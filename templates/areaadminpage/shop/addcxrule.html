@@ -1,0 +1,254 @@
+ <{extends file="<{$tempdir}>/public/admin.html"}>
+  <{block name=extendjs}>
+   <script src="<{$siteurl}>/js/kindeditor/kindeditor.js" type="text/javascript" language="javascript"></script>
+ <script src="<{$siteurl}>/templates/<{$tempdir}>/public/js/datepicker/WdatePicker.js" type="text/javascript" language="javascript"></script>
+   <script type="text/javascript" language="javascript" src="<{$siteurl}>/templates/<{$tempdir}>/public/js/ajaxfileupload.js"> </script>
+
+  <{/block}>
+ <{block name=controlname}>添加优惠活动<{/block}>
+ <{block name=bodylist}>
+ <div class="managShopCon">
+	<div class="managShopBox">
+		<div class="managShopMain">
+		<{include file="<{$tempdir}>/public/commentcate.html"}>  
+			
+			<div class="addShopSingCon">
+
+       <div style="width:98%;overflow-y:auto;white-space:nowrap;height:660px;">
+
+          <div class="tags">
+          <div id="tagscontent">
+            <form method="post" name="form1" action="<{ofunc type=url link="/areaadminpage/shop/module/savecxrule/datatype/json"}>" onsubmit="return subform('<{ofunc type=url link="/areaadminpage/shop/module/cxrulelist"}>',this);">
+              <div>
+                <table border="0" cellspacing="2" cellpadding="4" class="list" name="table" id="table" width="100%">
+                  <tbody>
+                  	 <tr onmouseover="this.bgColor='#F5F5F5';" onmouseout="this.bgColor='ffffff';" bgcolor="ffffff">
+                      <td class="left">优惠活动标题</td>
+                      <td><input type="text" name="name" id="name" value="<{$cxinfo['name']}>" class="skey" style="width:150px;" ></td>
+                    </tr>
+                    
+                     <tr onmouseover="this.bgColor='#F5F5F5';" onmouseout="this.bgColor='ffffff';" bgcolor="ffffff">
+                      <td class="left">订单总金额限制</td>
+                      <td><input type="text" id="limitcontent" name="limitcontent" value="<{$cxinfo['limitcontent']}>" class="skey" style="width:50px;" ></td>
+                    </tr>
+                    
+                    <tr onmouseover="this.bgColor='#F5F5F5';" onmouseout="this.bgColor='ffffff';" bgcolor="ffffff">
+                      <td class="left" valign="top">具体时间</td>
+                      <td>
+                      	 <input type="radio" name="limittype" value="1" checked>不限制<{$cxinfo['limittype']}>
+                         <input type="radio" name="limittype" value="2" <{if $cxinfo['limittype']==2}>checked<{/if}>>每周星期
+                         <input type="radio" name="limittype" value="3" <{if $cxinfo['limittype']==3}>checked<{/if}>>每天时间段
+                      	</td>
+                    </tr>
+                    
+                    <tr onmouseover="this.bgColor='#F5F5F5';" onmouseout="this.bgColor='ffffff';" bgcolor="ffffff" id="limittime1" style="display:none;">
+                      <td class="left" valign="top">选择星期</td>
+                      <td>
+                      	 <{assign var=mysign value=","|explode:$cxinfo['limittime']}>
+                        	<{assign var=signshu value="1"}>
+                          <{section name=loop  loop=7}>
+                  	          <input type="checkbox" name="limittime1[]" value="<{$signshu}>" <{if in_array($signshu,$mysign)}>checked<{/if}>> 星期<{if $signshu == 7}>天<{else}><{$signshu}><{/if}>
+                  	          <{$signshu=$signshu+1}>
+                         <{/section}>
+                      	</td>
+                    </tr>
+                    
+                    <tr onmouseover="this.bgColor='#F5F5F5';" onmouseout="this.bgColor='ffffff';" bgcolor="ffffff" class="limittime2">
+                        <{assign var=mysign value=","|explode:$cxinfo['limittime']}>
+                         <{foreach from=$mysign item=items}>
+
+                         <{assign var=dotime value="-"|explode:$items}>
+                         <{if count($dotime) > 1}>
+                      <td class="left" valign="top">时间段</td>
+                      <td>
+                      	从<input  name="limittime2[]" value="<{$dotime[0]}>" class="ttext" type="text" class="skey" style="width:60px;">
+                        至<input  name="limittime22[]" value="<{$dotime[1]}>" class="ttext" type="text" class="skey" style="width:60px;">
+                        <a href="#" onclick="removetime2(this);" style="color:#0989d8;">移除</a>
+                      </td>
+                      <{/if}>
+                       <{/foreach}>
+                    </tr>
+                    
+<!--                    <tr onmouseover="this.bgColor='#F5F5F5';" onmouseout="this.bgColor='ffffff';" bgcolor="ffffff" class="limittime2">
+                        
+                      <td class="left" valign="top">时间段</td>
+                      <td>
+                      	从<input  name="limittime2[]" value="" class="ttext" type="text" class="skey" style="width:50px;">
+                        至<input  name="limittime22[]" value="" class="ttext" type="text" class="skey" style="width:50px;">
+                        <a href="#" onclick="removetime2(this);" style="color:#0989d8;">移除</a>
+                      </td>
+                      
+                    </tr>-->
+                    
+                    <tr onmouseover="this.bgColor='#F5F5F5';" onmouseout="this.bgColor='ffffff';" bgcolor="ffffff" id="addduan" class="limittime2">
+                        
+                      <td class="left" valign="top"></td>
+                      <td>
+                      	例如：从08:00至11:00   <a href="#" style="color:#0989d8;" onclick="addtimedo(this)">增加时间段</a>
+                      </td>
+                      
+                    </tr>
+                    
+                    
+                   <tr onmouseover="this.bgColor='#F5F5F5';" onmouseout="this.bgColor='ffffff';" bgcolor="ffffff">
+                      <td class="left" valign="top">支持类型</td>
+                      <td>
+                      	<{assign var=mytype value=","|explode:$cxinfo['supporttype']}>
+                             <input type="checkbox" name="supporttype[]" value="1"  <{if in_array(1,$mytype)}>checked<{/if}>>首单有效
+                                    <a href="addcxrule.html"></a>
+                             <input type="checkbox" name="supporttype[]" value="2" <{if in_array(2,$mytype)}>checked<{/if}>>在线支付有效</td>
+                    </tr>
+                    
+                    <tr class="show_1" onmouseover="this.bgColor='#F5F5F5';" onmouseout="this.bgColor='ffffff';" bgcolor="ffffff">
+                      <td class="left">支持平台</td>
+                      <td>
+                          <{assign var=platform value=","|explode:$cxinfo['supportplatform']}>
+                             <input type="checkbox" name="supportplatform[]" value="1"  <{if in_array(1,$platform)}>checked<{/if}>>pc端
+                             <input type="checkbox" name="supportplatform[]" value="2"  <{if in_array(2,$platform)}>checked<{/if}>>微信端
+                             <input type="checkbox" name="supportplatform[]" value="3"  <{if in_array(3,$platform)}>checked<{/if}>>触屏端
+                             <input type="checkbox" name="supportplatform[]" value="4"  <{if in_array(4,$platform)}>checked<{/if}>>客户端（安卓、苹果）
+                      </td>
+                    </tr>
+                    
+                    <tr class="show_1" onmouseover="this.bgColor='#F5F5F5';" onmouseout="this.bgColor='ffffff';" bgcolor="ffffff">
+                      <td class="left">促销类型</td>
+                      <td>
+                          <select name="controltype" id="controltype" onchange="changetxt(this)" style="margin-top:10px;">
+                                <option value="1" data1="赠品数量" data="请录入赠品库存数量" selected >送赠品 </option>
+                                <option value="2" data1="减费用金额" data=""  <{if $cxinfo['controltype'] == 2}>selected<{/if}>>减费用</option>
+                                <option value="3" data1="折扣" data="假如9折请录入90" <{if $cxinfo['controltype'] == 3}>selected<{/if}>>折扣</option>
+                                <option value="4" data1="免配送费" data="免配送费" <{if $cxinfo['controltype'] == 4}>selected<{/if}>>免配送费</option>
+                          </select>
+                      </td>
+                    </tr>
+                    
+		    <tr class="show_1" id="showpresenttitle" onmouseover="this.bgColor='#F5F5F5';" onmouseout="this.bgColor='ffffff';" bgcolor="ffffff">
+                      <td class="left">赠品名称</td>
+                      <td><input type="text"  id="presenttitle" name="presenttitle" value="<{$cxinfo['presenttitle']}>" class="skey" style="width:100px;" ></td>
+                    </tr>
+                    
+	            <tr class="show_1" id="showdefualt" onmouseover="this.bgColor='#F5F5F5';" onmouseout="this.bgColor='ffffff';" bgcolor="ffffff">
+                      <td class="left" id="cctitle">xxx</td>
+                      <td><input name="controlcontent" value="<{$cxinfo['controlcontent']}>" class="skey" type="text" class="skey" style="width:50px;" >
+                          <font id="ccmiaoshu">xxx</font>
+                      </td>
+                      
+                    </tr>
+                    
+                    <tr class="show_1" onmouseover="this.bgColor='#F5F5F5';" onmouseout="this.bgColor='ffffff';" bgcolor="ffffff">
+                      <td class="left">优惠金额网站比例</td>
+                      <td><input type="text" id="shopbili" name="shopbili" value="<{$cxinfo['shopbili']}>" class="skey" style="width:50px;" >%  例：录入30，即优惠金额网站承担30%，剩余70%由商家承担。（促销类型为免配送费和送赠品时，该比例无效）。
+                      </td>
+                    </tr> 
+                    
+		    <tr class="show_1" onmouseover="this.bgColor='#F5F5F5';" onmouseout="this.bgColor='ffffff';" bgcolor="ffffff">
+                      <td class="left">生效时间</td>
+                      <td>从 <input class="Wdate datefmt" type="text" class="skey" name="starttime" id="starttime" value="<{$cxinfo['starttime']|date_format:"%Y-%m-%d"}>"  onFocus="WdatePicker({isShowClear:false,readOnly:true});" />
+                          至 <input class="Wdate datefmt" type="text" class="skey" name="endtime" id="endtime" value="<{$cxinfo['endtime']|date_format:"%Y-%m-%d"}>"  onFocus="WdatePicker({isShowClear:false,readOnly:true});" />
+                      </td>
+                    </tr> 
+                    
+		    <tr class="show_1" onmouseover="this.bgColor='#F5F5F5';" onmouseout="this.bgColor='ffffff';" bgcolor="ffffff">
+                      <td class="left">是否启用</td>
+                      <td><input type="radio" name="status" value="1" checked>已启用
+                          <input type="radio" name="status" value="0" <{if $cxinfo['status']==0}>checked<{/if}>>未启用
+                      </td>
+                    </tr>
+                    
+		    <tr class="show_1" onmouseover="this.bgColor='#F5F5F5';" onmouseout="this.bgColor='ffffff';" bgcolor="ffffff">
+                      <td class="left">促销标签</td>
+                      <td>
+                       <{foreach from=$cxsignlist item=items}>
+                        <input type="radio" name="signid" value="<{$items['id']}>"  <{if $items['id'] == $cxinfo['signid']}>checked<{/if}>><img style="width:25px; height:25px;" src="<{$items['imgurl']}>"><{$items['name']}>
+                       <{/foreach}>
+                      </td>
+                    </tr>
+                    <tr class="show_1" onmouseover="this.bgColor='#F5F5F5';" onmouseout="this.bgColor='ffffff';" bgcolor="ffffff">
+                      <td class="left">选择店铺</td>
+                      <td>
+                        
+                       <{foreach from=$shoplist item=items}>
+                       <div style="display: inline-block;width: 100px;white-space:nowrap; overflow:hidden; ">
+                           <input type="checkbox" name="shopid[]" value="<{$items['id']}>"  <{if in_array("<{$items['id']}>",explode(',',$cxinfo['shopid']))}>checked<{/if}>><{$items['shopname']}>
+                       </div>
+                       <{/foreach}>
+                       
+                      </td>
+                      
+                    </tr>
+
+                  <input type="hidden" name="cxid" value="<{$cxinfo['id']}>">
+                  <input type="hidden" name="parentid" value="1">
+
+                  </tbody>
+                </table>
+              </div>
+              <div id="checkall" style="display: inline-block;padding-left: 125px;"><a href="#" onclick="checkword(true);">店铺全选</a>/<a href="#" onclick="checkword(false);">取消全选</a></div>
+               <input type="submit" value="确认提交" class="button">
+            </form>
+          </div>
+        </div>
+        <div class="blank20"></div>
+
+      </div>
+      <div class="clear"></div>
+    </div>
+</div>
+</div>
+</div>
+</div>
+</div>
+ <!--newmain 结束-->
+<script>
+    function checkword(flag){ 
+	var flag = flag;
+	$("input[name='shopid[]']").attr("checked",flag); 
+	}
+	$(function(){
+		$("input[name='limittype']:checked").trigger("click");
+		$('#controltype').trigger('change');
+               
+	});
+	function addtimedo(obj){
+		var contentdata = '<tr><td class="left">时间段</td>   <td>   从<input  name="limittime2[]" value="" class="ttext" type="text" style=" background:#ffffff;width:50px; height:22px;"> 至<input  name="limittime22[]" value="" class="ttext" type="text" style=" background:#ffffff;width:50px; height:22px;"><a href="#" onclick="removetime2(this);" style="color:#0989d8;">移除</a>  </td>  </tr>';
+		$('#addduan').before(contentdata);
+	}
+	function removetime2(obj){
+		$(obj).parent().parent().remove();
+	}
+	$("input[name='limittype']").click(function(){
+		var dovalue = $(this).val();
+		if(dovalue ==  2){
+			 $('#limittime1').show();
+			 $('.limittime2').hide();
+		}else{
+			 if(dovalue == 3){
+			 $('#limittime1').hide();
+			  $('.limittime2').show();
+		}else{
+			 $('#limittime1').hide();
+			  $('.limittime2').hide();
+		  }
+		}
+	});
+	function changetxt(obj){
+		var findvalue = $(obj).find("option:selected").val();
+		var doobj = $(obj).find("option:selected");
+		$('#showdefualt').show();
+		if(findvalue == 1){
+			 $('#showpresenttitle').show();
+		}else{
+			$('#showpresenttitle').hide();
+		}
+		if(findvalue == 4){
+		  $('#showdefualt').hide();
+		}
+		$('#cctitle').text($(doobj).attr('data1'));
+		$('#ccmiaoshu').text($(doobj).attr('data'));
+	}
+	$('.hc_login_btn_div').click(function(){
+		//$('#loginForm').submit();
+	  subform('<{ofunc type=url link="/shopcenter/cxrule"}>',$('#loginForm'));
+	});
+</script>
+<{/block}>

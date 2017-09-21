@@ -1,0 +1,29 @@
+<div class="titCons" style="">
+    <div class="titBoxs">
+        <div class="titCs" style="width: 71.7647%;">
+            <div class="searchCons">
+                <div class="searchBoxs">
+                    <img src="<{$siteurl}>/templates/<{$tempdir}>/public/wxsite/images/top04.png" id="houtuiimg" style="width:14px;height:20px;position:absolute;top:10px;left:12px;" alt="">
+                    <i></i>
+                    <input style=" font-size: 14px;text-indent:2em;" type="text" id="searchKeywordss"  placeholder="搜索附近位置">
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+<div style="clrar:both;"></div>
+<div id="searchAddresslist" style="display:none;position:absolute;left:0px;top:40px;width:100%;z-index:9999999999999;bottom:0px;">
+    <div style="width:350px;">
+
+    </div>
+</div>
+<iframe id="selectadd" style="width:100%;height:100%;position: absolute;top: -6px; z-index: 999999;opacity:10;  " src="https://m.amap.com/picker/?keywords=小区,写字楼,学校&key=<{$map_javascript_key}>"></iframe>
+<script> 
+        $(function(){ 
+            var iframe = document.getElementById('selectadd').contentWindow;
+            document.getElementById('selectadd').onload = function(){
+                iframe.postMessage('hello','https://m.amap.com/picker/?keywords=小区');
+            };
+			
+        }) 
+</script>

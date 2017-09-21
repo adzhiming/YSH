@@ -1,0 +1,501 @@
+@charset "utf-8";
+/* CSS Document */
+
+/*------------------------------------------------------------重置属性------------------------------------------------------------*/
+::-webkit-scrollbar{
+	width:8px;
+	background:#ccc;
+	}
+::-webkit-scrollbar-thumb{
+	background:rgba(0,0,0,0.2) scroll repeat 0% 0% !important;
+	border-radius:5px;
+	}
+::scrollbar{
+	width:0px;
+	}
+::selection{
+	background:rgba(255, 0, 0, 0.7) none repeat scroll 0 0 !important;
+	color:#fff;
+	}
+html,body{
+	scrollbar-face-color:#a3a3a3; /*滚动条3D表面（ThreedFace）的颜色*/ 
+	scrollbar-highlight-color:#ccc; /*滚动条3D界面的亮边（ThreedHighlight）颜色*/ 
+	scrollbar-shadow-color:#ccc; /*滚动条3D界面的暗边（ThreedShadow）颜色*/ 
+	scrollbar-3dlight-color:#ccc; /*滚动条亮边框颜色*/ 
+	scrollbar-arrow-color:#ccc; /*滚动条方向箭头的颜色 */ 
+	scrollbar-track-color:#ccc; /*滚动条的拖动区域(TrackBar)颜色*/
+	scrollbar-darkshadow-color:#ccc; /*滚动条暗边框（ThreedDarkShadow）颜色*/ 
+	}
+html,body{
+	width:100%;
+	height:100%;
+	}
+body{
+	position:relative;
+	}
+body,ul,li,dl,dt,dd,a,img,table,thead,tbody,tfoot,th,td,tr,p,h1,h2,h3,h4,h5,h6,span,b,input{
+	margin: 0px;
+	padding: 0px;
+	border-collapse:collapse;
+	text-decoration: none;
+	list-style: none;
+	font-family: '微软雅黑';
+	border: 0;
+	outline:none;
+}
+
+.hide{
+	display:none;
+	}
+/*------------------------------------------------------------图标应用------------------------------------------------------------*/
+.icon{
+	background-image:url(../images/icon_base.png);
+	}
+
+/*------------------------------------------------------------导航开始------------------------------------------------------------*/
+.navCon{
+	width:100%;
+	height:58px;
+	padding:22px 0;
+	background-color:#fff;
+	}
+.navCon .navBox{
+	width:1200px;
+	margin:0 auto;
+	}
+.navCon .navBox .logo{
+	width:px;
+	height:px;
+	float:left;
+	}
+.navCon .navBox .nav{
+	line-height:58px;
+	float:right;
+	margin-right:-24px;
+	}
+.navCon .navBox .nav ul li{
+	padding:0 24px;
+	float:left;
+	}
+.navCon .navBox .nav ul li a{
+	font-size:16px;
+	color:#333333;
+	}
+.navCon .navBox .nav ul li a:hover{
+	color:#ff6e6e;
+	text-decoration:underline;
+	}
+.navCon .navBox .nav ul .navaA a{
+	color:#ff6e6e;
+	}
+/*------------------------------------------------------------导航结束------------------------------------------------------------*/
+
+/*------------------------------------------------------------首页开始------------------------------------------------------------*/
+/*-------------------------第一部分-------------------------*/
+.homeOneCon{
+	width:100%;
+	height:528px;
+	padding-top:72px;
+	background-color:#ff6e6e;
+	}
+.homeOneCon .homeOneBox{
+	width:1020px;
+	margin:0 auto;
+	padding:0 90px;
+	}
+.homeOneCon .homeOneBox .homeOneL{
+	width:300px;
+	float:left;
+	margin-left:32px;
+	}
+.homeOneCon .homeOneBox .homeOneR{
+	float:right;
+	}
+.homeOneCon .homeOneBox .homeOneR h3{
+	font-size:24px;
+	color:#fff;
+	font-weight:normal;
+	}
+.homeOneCon .homeOneBox .homeOneR h2{
+	font-size:44px;
+	color:#fff;
+	}
+.homeOneCon .homeOneBox .homeOneR h2 span{
+	color:#ffed2a;
+	}
+.homeOneCon .homeOneBox .homeOneR ul{
+	width:100%;
+	padding-top:74px;
+	overflow:hidden;
+	}
+.homeOneCon .homeOneBox .homeOneR ul li{
+	text-align:center;
+	float:left;
+	}
+.homeOneCon .homeOneBox .homeOneR ul li img{
+	width:170px;
+	height:170px;
+	}
+.homeOneCon .homeOneBox .homeOneR ul li span{
+	padding-top:32px;
+	font-size:16px;
+	color:#fff;
+	display:block;
+	}
+.homeOneCon .homeOneBox .homeOneR ul li i{
+	width:1px;
+	height:226px;
+	margin:0 82px;
+	background-color:#dd5a5a;
+	display:block;
+	}
+/*-------------------------第二部分-------------------------*/
+.homeTwoCon{
+	width:100%;
+	padding:86px 0 116px 0;
+	background-color:#fff;
+	overflow:hidden;
+	}
+.homeTwoCon .homeTwoBox{
+	width:1200px;
+	margin:0 auto;
+	}
+.homeTwoCon .homeTwoBox .homeTwo{
+	width:100%;
+	height:164px;
+	overflow:hidden;
+	}
+.homeTwoCon .homeTwoBox .homeTwo img{
+	width:100%;
+	height:100%;
+	}
+/*-------------------------第三部分-------------------------*/
+.homeThrCon{
+	width:100%;
+	padding:98px 0 104px 0;
+	background-color:#f5f5f5;
+	overflow:hidden;
+	}
+.homeThrCon .homeThrBox{
+	width:1200px;
+	margin:0 auto;
+	}
+.homeThrCon .homeThrBox .homeThrTop{
+	width:100%;
+	height:376px;
+	margin-bottom:52px;
+	overflow:hidden;
+	}
+.homeThrCon .homeThrBox .homeThrTop img{
+	width:100%;
+	height:100%;
+	}
+.homeThrCon .homeThrBox .homeThrBot{
+	width:100%;
+	height:70px;
+	overflow:hidden;
+	}
+.homeThrCon .homeThrBox .homeThrBot img{
+	width:100%;
+	height:100%;
+	}
+/*------------------------------------------------------------首页结束------------------------------------------------------------*/
+
+/*----------------------------------------------------------关于我们开始----------------------------------------------------------*/
+/*-------------------------服务案例-------------------------*/
+.aboutUsCon{
+	width:100%;
+	height:400px;
+	background:#e70f20 url(../images/aboutUs_top_bg.png) no-repeat center center;
+	}
+.aboutUsCon .aboutUsBox{
+	width:1200px;
+	margin:0 auto;
+	}
+.aboutUsCon .aboutUsBox .aboutUsLogo{
+	width:100%;
+	padding-top:132px;
+	text-align:center;
+	}
+.aboutUsCon .aboutUsBox .aboutUsLogo img{
+	width:196px;
+	height:66px;
+	}
+.aboutUsCon .aboutUsBox .aboutUsTit{
+	width:100%;
+	padding-top:36px;
+	text-align:center;
+	}
+.aboutUsCon .aboutUsBox .aboutUsTit h2{
+	font-size:40px;
+	color:#fff;
+	}
+.aboutUsCon .aboutUsBox .aboutUsTit h2 span{
+	color:#ffff00;
+	}
+/*-------------------------可靠伙伴-------------------------*/
+.partnerCon{
+	width:100%;
+	background-color:#fff;
+	overflow:hidden;
+	}
+.partnerCon .partnerBox{
+	width:1200px;
+	margin:0 auto;
+	padding:70px 0 82px 0
+	}
+.partnerCon .partnerBox .partnerTit{
+	width:100%;
+	text-align:center;
+	}
+.partnerCon .partnerBox .partnerTit h2{
+	line-height:75px;
+	font-size:30px;
+	color:#11161c;
+	font-weight:normal;
+	background:url(../images/partner_tit_bor.png) no-repeat center bottom;
+	}
+.partnerCon .partnerBox .partner{
+	width:100%;
+	padding-top:30px;
+	text-align:center;
+	}
+.partnerCon .partnerBox .partner p{
+	width:960px;
+	margin:0 auto;
+	padding:7px 0;
+	line-height:44px;
+	font-size:16px;
+	color:#666666;
+	}
+.partnerCon .partnerBox .partner p span{
+	color:#e60012;
+	}
+.partnerCon .partnerBox .partner p span strong{
+	font-weight:normal;
+	}
+/*----------------------------------------------------------关于我们结束----------------------------------------------------------*/
+
+/*----------------------------------------------------------商家入驻开始----------------------------------------------------------*/
+/*-------------------------banner-------------------------*/
+.mersetBanCon{
+	width:100%;
+	height:380px;
+	min-width:1200px;
+	overflow:hidden;
+	}
+.mersetBanCon img{
+	width:100%;
+	height:100%;
+	display:block;
+	}
+/*-------------------------商家入驻-------------------------*/
+.mersetCon{
+	width:100%;
+	padding:82px 0 108px 0;
+	overflow:hidden;
+	}
+.mersetCon .mersetBox{
+	width:1020px;
+	padding:0 90px;
+	margin:0 auto;
+	}
+.mersetCon .mersetBox .mersetL{
+	width:380px;
+	float:left;
+	}
+.mersetCon .mersetBox .mersetL .mersetLtit{
+	width:100%;
+	padding-bottom:24px;
+	border-bottom:1px solid #e6e6e6;
+	overflow:hidden;
+	}
+.mersetCon .mersetBox .mersetL .mersetLtit h2{
+	margin-bottom:18px;
+	font-size:44px;
+	color:#666666;
+	}
+.mersetCon .mersetBox .mersetL .mersetLtit h2 span{
+	margin-left:12px;
+	color:#e60012;
+	vertical-align:-7px;
+	font-weight:normal;
+	}
+.mersetCon .mersetBox .mersetL .mersetLtit p{
+	font-size:12px;
+	color:#808080;
+	text-align:justify;
+	}
+.mersetCon .mersetBox .mersetL .mersetLtel{
+	width:100%;
+	padding-top:6px;
+	overflow:hidden;
+	}
+.mersetCon .mersetBox .mersetL .mersetLtel h3{
+	line-height:48px;
+	font-size:20px;
+	color:#666666;
+	}
+.mersetCon .mersetBox .mersetL .mersetLtel h3 span{
+	font-size:24px;
+	color:#ff4949;
+	vertical-align:-2px;
+	}
+.mersetCon .mersetBox .mersetL .mersetLtel ol{
+	padding-left:20px;
+	margin:0px;
+	}
+.mersetCon .mersetBox .mersetL .mersetLtel ol li{
+	line-height:30px;
+	font-size:14px;
+	color:#666666;
+	list-style:decimal;
+	}
+.mersetCon .mersetBox .mersetR{
+	width:510px;
+	float:right;
+	}
+.mersetCon .mersetBox .mersetR h2{
+	font-size:24px;
+	color:#666666;
+	}
+.mersetCon .mersetBox .mersetR .mersetRfill{
+	width:100%;
+	padding:18px 0 10px 0;
+	overflow:hidden;
+	}
+.mersetCon .mersetBox .mersetR .mersetRfill ul li{
+	width:100%;
+	padding:14px;
+	margin-bottom:10px;
+	background:#f5f5f5;
+	position:relative;
+	overflow:hidden;
+	}
+.mersetCon .mersetBox .mersetR .mersetRfill ul li span{
+	width:90px;
+	font-size:16px;
+	color:#999999;
+	float:left;
+	}
+.mersetCon .mersetBox .mersetR .mersetRfill ul li input{
+	width:380px;
+	font-size:16px;
+	color:#333;
+	float:left;
+	background:transparent;
+	}
+.mersetCon .mersetBox .mersetR .mersetRfill ul li b{
+	margin:110px 0 0 10px;
+	font-size:14px;
+	color:#999999;
+	float:left;
+	font-weight:normal;
+	}
+.mersetCon .mersetBox .mersetR .mersetRfill ul li .fileImg{
+	width:128px;
+	height:128px;
+	float:left;
+	border:1px solid #d6d6d6;
+	background:#fff url(../images/fileImg_bg.png) no-repeat center;
+	overflow:hidden;
+	}
+.mersetCon .mersetBox .mersetR .mersetRfill ul li .fileImg input{
+	width:128px;
+	height:128px;
+	filter:Alpha(opacity=0);
+	opacity:0;
+	cursor:pointer;
+	}
+.mersetCon .mersetBox .mersetR .mersetRbut{
+	width:100%;
+	}
+.mersetCon .mersetBox .mersetR .mersetRbut input{
+	width:100%;
+	height:48px;
+	font-size:18px;
+	color:#ffffff;
+	background:#ff6e6e;
+	border-radius:3px;
+	cursor:pointer;
+	}
+/*----------------------------------------------------------商家入驻结束----------------------------------------------------------*/
+
+/*----------------------------------------------------------联系我们开始----------------------------------------------------------*/
+.conUsCon{
+	width:100%;
+	overflow:hidden;
+	}
+.conUsCon .conUsBox{
+	width:1200px;
+	margin:0 auto;
+	}
+.conUsCon .conUsBox .conUsAddCon{
+	width:1200px;
+	padding:60px 0 0 0;
+	overflow:hidden;
+	}
+.conUsCon .conUsBox .conUsAddCon .conUsAdd{
+	width:33.3333%;
+	height:180px;
+	padding-bottom:20px;
+	line-height:30px;
+	float:left;
+	overflow:hidden;
+	}
+.conUsCon .conUsBox .conUsAddCon .conUsAdd h2{
+	font-size:18px;
+	color:#333;
+	}
+.conUsCon .conUsBox .conUsAddCon .conUsAdd ul li{
+	font-size:13px;
+	color:#333333;
+	}
+
+
+
+
+
+
+
+
+
+
+
+
+
+/*----------------------------------------------------------联系我们结束----------------------------------------------------------*/
+
+/*------------------------------------------------------------脚部开始------------------------------------------------------------*/
+.footer{
+	width:100%;
+	padding:32px 0;
+	background-color:#333333;
+	overflow:hidden;
+	}
+.footer .footerLink{
+	width:100%;
+	line-height:38px;
+	text-align:center;
+	}
+.footer .footerLink ul li{
+	padding:0 12px;
+	display:inline-block;
+	}
+.footer .footerLink ul li a{
+	font-size:14px;
+	color:#ffffff;
+	}
+.footer .footerLink ul li a:hover{
+	text-decoration:underline;
+	}
+.footer .copyRight{
+	width:100%;
+	line-height:34px;
+	text-align:center;
+	}
+.footer .copyRight p{
+	font-size:12px;
+	color:#cccccc;
+	}
+/*------------------------------------------------------------脚部结束------------------------------------------------------------*/

@@ -1,0 +1,186 @@
+<!DOCTYPE html>
+<html lang="zh-cn">
+<head>
+
+<meta http-equiv="Content-Type" content="text/html; charset=UTF-8">
+<title>商家管理中心</title>
+<meta name="viewport" content="width=device-width,initial-scale=1,maximum-scale=1,user-scalable=no">
+
+        <link rel="stylesheet" href="css/base.css">
+		<link rel="stylesheet" href="css/index.css">
+        <link rel="stylesheet" href="css/store.css">
+        <link rel="stylesheet" href="css/layer.css" id="layui_layer_skinlayercss">
+		<script src="js/jquery.js"></script>
+		<script src="js/base.js"></script>
+		<script src="js/layer.js"></script>
+		<script src="js/roll.js"></script>
+		<script src="js/public.js"></script>
+        <script src="js/dingwei.js"></script>
+
+<script>
+            function bd_encrypt(gg_lat, gg_lon)   // 百度地图测距偏差 问题修复
+            {
+                var x_pi = 3.14159265358979324 * 3000.0 / 180.0;
+                var x = gg_lon;
+                var y = gg_lat;
+                var z = Math.sqrt(x * x + y * y) + 0.00002 * Math.sin(y * x_pi);
+                var theta = Math.atan2(y, x) + 0.000003 * Math.cos(x * x_pi);
+                var bd_lon = z * Math.cos(theta) + 0.0065;
+                var bd_lat = z * Math.sin(theta) + 0.006;
+                dingwei('#', bd_lat, bd_lon);
+
+            }
+
+            navigator.geolocation.getCurrentPosition(function (position) {
+                bd_encrypt(position.coords.latitude, position.coords.longitude);
+            });
+</script>
+</head>
+
+<body>
+
+<header class="top-fixed bg-yellow bg-inverse">
+<div class="top-back"><a class="top-addr" href="#"><i class="icon-angle-left"></i></a></div>
+<div class="top-title">商家管理中心</div>
+<div class="top-signed"><a href="#"><i class="icon-sign-out"></i></a></div>
+</header>
+
+
+<div class="blank-10 bg"></div>
+
+
+<div class="container">
+<div class="line detail-base">
+<div class="x5" style="width:30%;">
+<div class="pic">
+
+<button class="btn-uploading" onclick="uploadBtn();" style="border:none;background:none;">
+<a href="#"><img id="yushow" src="images/thumb_57415f4571545.jpg"></a>	
+<span class="album" style="width:60px;">上传店照</span> 
+</button>
+<input type="file" name="file" style="display:none;" onchange="previewImg(this);" id="upload" accept="image/*"/>
+
+</div>
+</div>
+
+
+<div class="x7" style="width:68%;">
+<h1>脆皮玉米（1）</h1>
+<p>暂无评价</p>
+<p>类型：菜市场</p>
+<p>商户资金： ¥ 5778 元&nbsp;&nbsp;&nbsp;&nbsp;
+<a href="sjzj-3.html" style="border-radius:1em;background:#f00;padding:0.5em;color:#fff;">立即结算</a>
+</p>
+</div>
+		
+</div>
+</div>
+
+
+<div class="blank-10 bg"></div>
+
+
+<div class="panel-list">
+    <ul>
+        <li><a href="jbsz.html"><span class="icon-gears "></span>基本设置<i class="icon-angle-right"></i></a></li>
+        <li><a href="cpgl.html"><span class="icon-home"></span>产品管理<i class="icon-angle-right"></i></a></li>
+        <li><a href="ddgl.html"><span class="icon-calendar"></span>订单管理<i class="icon-angle-right"></i></a></li>
+        <li><a href="sjzj.html"><span class="icon-newspaper-o"></span>商家资金<i class="icon-angle-right"></i></a></li>
+        <li><a href="yhq.html"><span class="icon-key"></span>优惠劵<i class="icon-angle-right"></i></a></li>
+        <!--li><a href="#"><span class="icon-github"></span>人才招聘<i class="icon-angle-right"></i></a></li>
+        <li><a href="#"><span class="icon-truck"></span>同城信息<i class="icon-angle-right"></i></a></li-->
+        <li><a href="#"><span class="icon-sign-out"></span>注销登录<i class="icon-angle-right"></i></a></li>
+    </ul>
+</div>
+
+
+
+<script type="text/javascript">
+function uploadBtn(){
+    $("#upload").click();
+}
+
+//图片预览
+function previewImg(imgFile){
+    console.log(imgFile);//这里打印出是整个input标签
+    var extension = imgFile.value.substring(imgFile.value.lastIndexOf("."),imgFile.value.length);//扩展名
+    extension = extension.toLowerCase();//把文件扩展名转换为小写
+    if ((extension!='.jpg')&&(extension!='.gif')&&(extension!='.jpeg')&&(extension!='.png')&&(extension!='.bmp')){
+        layer.msg("对不起，系统仅支持标准格式的照片，请您调整格式后重新上传，谢谢 !");
+        $(".btn-uploading").focus();//将焦点定位在文件上传的按钮上，可以直接按确定键再次触发
+    }else{
+        var path;//预览地址
+        if(document.all){//IE
+            imgFile.select();
+                path = document.selection.createRange().text;
+        }else{//火狐，谷歌
+            path = window.URL.createObjectURL(imgFile.files[0]);
+        }
+        $("#yushow").attr("src",path);//设置预览地址
+        uploadImg(imgFile);
+    }
+}
+
+//开始上传
+function uploadImg(imgFile){
+    //获取图片文件
+    var file = imgFile.files[0];//文件对象
+    var name = file.name;//图片名
+    //var size = file.size;//图片大小
+    //var type = file.type;//文件类型
+    
+    //检测浏览器对FileReader的支持
+    if(window.FileReader) {
+        var reader = new FileReader();
+        reader.onload = function(){//异步方法,文件读取成功完成时触发
+            var dataImg = reader.result;//文件一旦开始读取，无论成功或失败，实例的 result 属性都会被填充。如果读取失败，则 result 的值为 null ，否则即是读取的结果
+            syncUpload(name,dataImg);
+        };
+        reader.readAsDataURL(file);//将文件读取为 DataURL
+    }else {
+        layer.msg("浏览器不支持H5的FileReader!");
+    }
+}
+
+function syncUpload(name,dataImg){
+    var imgFile = dataImg.replace(/\+/g,"#wb#");//将所有“+”号替换为“#wb#”
+    imgFile = imgFile.substring(imgFile.indexOf(",")+1);//截取只保留图片的base64部分,去掉了data:image/jpeg;base64,这段内容
+    imgFile = encodeURIComponent(imgFile);//把字符串作为 URI 组件进行编码。后台容器会自动解码一次
+    name = encodeURIComponent(encodeURIComponent(name));//这里对中文参数进行了两次URI编码，后台容器自动解码了一次，获取到参数后还需要解码一次才能得到正确的参数内容
+    var mydata = "method=uploadImg&imgFile="+imgFile+"&imgName="+name;
+    $.ajax({
+          url: "/UploadServlet",
+          data: mydata,
+          type: "post",
+          dataType: "json",
+          success: function(data){
+                  if(data.state == 'ok'){
+                      document.getElementById("upload").value = "";//重置文件域
+                      layer.msg(data.msg);
+                }else if(data.state == 'error'){
+                    layer.msg(data.msg);
+                }
+          }
+    });
+}
+
+//删除图片
+function deleteImg(){
+    $.ajax({
+          url: "/UploadServlet",
+          data: "method=deleteImg",
+          type:"post",
+          dataType: "json",
+          success: function(data){
+                  if(data.state == 'ok'){
+                      layer.msg(data.msg);
+                }else if(data.state == 'error'){
+                    layer.msg(data.msg);
+                }
+          }
+    });
+}
+</script>
+
+</body>
+</html>

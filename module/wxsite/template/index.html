@@ -1,0 +1,284 @@
+ <{extends file="<{$tempdir}>/public/wxsite.html"}>  
+  <{block name=extendcss}> 
+  <link rel="stylesheet"  href="<{$siteurl}>/templates/<{$tempdir}>/public/wxsite/css/weixinlunbo.css">
+  <link rel="stylesheet"  href="<{$siteurl}>/templates/<{$tempdir}>/public/wxsite/css/swiper-3.4.1.min.css">
+  <script src="<{$siteurl}>/js/Swiper/idangerous.swiper.js"></script>
+ <{/block}>
+ <{block name=loadinghide}><{/block}>
+
+<{block name=hearnav}>
+<div class="homescreenadd"   onclick="dolink('<{ofunc type=url link="/wxsite/choice"}>');"  ><i class="homescreendw"></i><span lag="<{$lat|default:0}>" lat="<{$lng|default:0}>" id="showareainfo"><{if $areaid > 0}><{$mapname}><{else}>定位中...<{/if}></span><i class="fa fa-angle-right"></i></div>
+<div class="homscrsear"  onclick="dolink('<{ofunc type=url link="/wxsite/search"}>');"   ><input style="    background-position: 3% center;" readonly type="text" placeholder="请输入店铺名、商品名"></div>
+<input type="hidden" value="<{$CITY_ID}>" />
+<{/block}>
+ <{block name=sitetitle}><{$sitename}><{/block}>
+ <{block name=blockcontent}>  
+<div id="locationing" style="display: block;">
+	<p class="refuImg"><img style="width:65px;"	src="<{$siteurl}>/upload/images/locationing.gif"></p>
+	<p class="refuFang">定位中...</p>
+</div>
+
+<div id="loadindecContent">
+	 
+</div>
+ 
+ 
+<div id="nearnoshop" style="display:none;">
+<div id="nearnoshopshowBox" style="background: #fff;"  > 
+		<center>
+			<div id="noshop1" style="margin-bottom: 0px;height: 115px;width: 250px;"><img style="height: 115px;width: 250px;" src="<{$siteurl}>/upload/images/nearnoshop.png"></div>
+			<div id="noshop2" style="margin-bottom: 50px;height:25px;line-height:25px;color: #7a7a7a;font-size: 14px;">您所在城市暂无开通</div>
+			<div id="noshop3" style="width: 110px;height:38px;line-height:38px;background: #ff6e6e;text-align:center;border-radius: 5px;" onclick="dolink('<{ofunc type=url link="/wxsite/choice"}>');"><span style="color:#fff;">切换城市</span></div>
+		</center>
+</div>
+</div>
+ 
+ <script>
+ $("#loading").hide(); 
+var can_show = true;
+ var catid = <{$typeid|default:0}>;
+var order = 0;
+var qsjid = 0;
+var typeid = <{$typeid|default:0}>;
+var myaddress = '<{$myaddress}>';
+var search_input = '<{$search_input|default:''}>';
+var shopshowtype  = '<{$shopshowtype|default:'0'}>';
+var checknext = false;
+var lat = '<{$lat|default:0}>';
+var lng = '<{$lng|default:0}>';
+var addressname = '<{$addressname|default:''}>';
+var CITY_ID = '<{$CITY_ID|default:0}>';
+var is_loading = false; 
+var html5_config = {'showheader':true,'showfooter':true,'bodyscller':true,'Canfresh':false,'CanloadMore':true,'titilename':'外卖频道'};  
+$(function(){    
+ 	  <{if !empty($lng) && !empty($lat) &&  !empty($addressname)  }>
+		$('#showareainfo').text(addressname);
+ 		loadindexcontent();
+   <{else}>   
+		if(https == ''){
+			getLocation(); 
+		}else{
+		} 
+		
+	
+    <{/if}> 
+	//方便演示测试地址 函数
+
+	 
+	 
+});
+function getLocation(){
+     if (navigator.geolocation)
+    { 
+       navigator.geolocation.getCurrentPosition(showPosition,showError);
+    }
+   else{
+     $('#showareainfo').text("浏览器不支持定位");
+	 setTimeout('goChoiceAdr()',1000);
+	 loadindexcontent();
+   }
+}  
+function showPosition(position)
+{  
+	gpstolng(position.coords.latitude,position.coords.longitude);
+}
+function gpstolng(lat,lng){
+	var changelnglaturl = '<{$map_comment_link}>restapi.amap.com/v3/assistant/coordinate/convert?locations='+lng+','+lat+'&coordsys=gps&output=json&key=<{$map_webservice_key}>&callback=changelnglat';
+      $.getScript(changelnglaturl); 
+} 
+function changelnglat(datas){
+ 	if(datas.status == 1   && datas.info == 'ok' ) {
+		var locations = datas.locations;
+  		 var getaddurl = '<{$map_comment_link}>restapi.amap.com/v3/geocode/regeo?output=json&location='+locations+'&key=<{$map_webservice_key}>&radius=1000&extensions=all&callback=newrenderReverse';
+		$.getScript(getaddurl);
+	} 
+} 
+
+
+
+function newrenderReverse(datas){
+  	if(datas.status == 1   && datas.info == 'OK' ) {
+	    var lnglat = '';
+		var adcode = datas.regeocode.addressComponent.adcode;
+		var aois = datas.regeocode.aois;
+		var pois = datas.regeocode.pois;
+		var roads = datas.regeocode.roads;
+		if( aois.length > 0 ){ 
+			var lnglat  = aois[0].location; 
+			var formatted_address = aois[0].name;
+		}else if( pois.length > 0 ){
+			var lnglat  = pois[0].location; 
+			var formatted_address = pois[0].address;
+		}else if( roads.length > 0 ){
+			var lnglat  = roads[0].location; 
+			var formatted_address = roads[0].name;
+		} 
+		if( lnglat != '' ){
+				var lnglatarr = lnglat.split(',');
+				lng = lnglatarr[0];
+				lat = lnglatarr[1];
+		}  
+		$("#showareainfo").attr('lng',lng);
+		$("#showareainfo").attr('lat',lat);
+		$("#showareainfo").text(formatted_address);  
+		 $.ajax({
+           type: 'GET', 
+           url: '<{ofunc type=url link="/wxsite/saveloation/datatype/json"}>',
+           async:false,
+ 		   data: {'lat':lat,'lng':lng,'addressname':formatted_address,'adcode':adcode},
+           dataType: 'json',success: function(content) { 
+               if(content.error == false){ 
+					 var areainfo = content.msg.areainfoone;
+  					 if( areainfo == '' || areainfo.name == undefined ){
+						 setTimeout('goChoiceAdr()',1000);
+					 }else{
+						CITY_ID = areainfo.adcode;
+						loadindexcontent();
+					 }
+					 
+             }else{
+             	  loadindexcontent();
+             }
+	    	  },
+           error: function(content) { 
+				loadindexcontent();
+	        }
+       });  
+		 
+	 }else{
+		 $('#showareainfo').text('定位失败');
+		 setTimeout('goChoiceAdr()',1000);
+		 loadindexcontent();
+ 	 }
+ } 
+
+ 
+  function showError(error)
+  { 
+   $('#showareainfo').text(error.code); 
+  	$('#showareainfo').text("定位失败");
+  	Tmsg("定位失败,请手动选择"); 
+   switch(error.code) 
+    { 
+    case error.PERMISSION_DENIED:
+      //x.innerHTML="User denied the request for Geolocation."
+    //  $('#showareainfo').text("User denied the request for Geolocation.");
+      break;
+    case error.POSITION_UNAVAILABLE:
+     // x.innerHTML="Location information is unavailable."
+      $('#showareainfo').text("Location information is unavailable.");
+      break;
+    case error.TIMEOUT:
+    //  x.innerHTML="The request to get user location timed out."
+    //$('#showareainfo').text("The request to get user location timed out.");
+      break;
+    case error.UNKNOWN_ERROR:
+     // x.innerHTML="An unknown error occurred."
+     //  $('#showareainfo').text("An unknown error occurred.");
+      break;
+    } 
+	setTimeout('goChoiceAdr()',1000);
+    loadindexcontent();    
+	
+	
+  } 
+  
+  function loadindexcontent(){
+		$("#locationing").hide();  
+		 
+		if( CITY_ID <= 0 ){ 
+			  var winHeight = $(window).height()-40-33-46-40;
+ 			  var allHeight = 115+25+50+38;
+ 			  var paddHeight = (winHeight-allHeight)/2;
+  			  $('#nearnoshopshowBox').css({'height':winHeight+'px','paddingTop':paddHeight+'px'});
+			  $('#loadindecContent').html("");
+			  $('#loadindecContent').html( $("#nearnoshop").html() );
+		}else{
+				var ajaxurl = '<{ofunc type=url link="/wxsite/loadindexcontent"}>'; 
+				$.ajax({
+				   type: 'POST',
+				   async:true,
+				   url: ajaxurl,
+				   data: {},
+				  dataType: 'html',success: function(content) {  
+						$('#loadindecContent').html(content);  
+						if(typeof html5_config == 'undefined'){
+							newTmsg('获取失败');
+						}else{  
+							if(html5_config.bodyscller == true){
+								 setTimeout(function(){  
+									$('#wrapper').show();    
+									 addfresh();  
+								 },500);
+							} 
+						}
+						
+				  },
+				  error: function(content) { 
+						console.log("加载失败");
+				   }
+				  });
+		} 
+   
+		
+		
+		  
+		 
+		  
+  }
+  
+   
+function htmlback(url,info)
+{
+	var backmessage = {'flag':true,'content':''};
+	$.ajax({
+       type: 'POST',
+       async:false,
+       url: url.replace('@random@', 1+Math.round(Math.random()*1000)),
+       data: info,
+      dataType: 'html',success: function(content) {  
+	   backmessage['flag'] = false;
+      	   backmessage['content'] = content; 
+		  },
+      error: function(content) { 
+      backmessage['content'] = '获取失败';
+	   }
+   });  
+   return backmessage;
+}
+
+function goChoiceAdr(){
+	 //location.href = '<{ofunc type=url link="/wxsite/choice"}>';
+	 $("#locationing").hide();
+	 var winHeight = $(window).height()-40-33-46-40;
+ 			  var allHeight = 115+25+50+38;
+ 			  var paddHeight = (winHeight-allHeight)/2;
+  			  $('#nearnoshopshowBox').css({'height':winHeight+'px','paddingTop':paddHeight+'px'});
+			  $('#loadindecContent').html("");
+			  $('#loadindecContent').html( $("#nearnoshop").html() );
+}  
+</script>
+<{if !empty($https)}>
+<script type="text/javascript"> 
+function receiveMessage(e) { 
+	var newdata = e.data;
+	<{if !empty($lng) && !empty($lat) &&  !empty($addressname)  }>
+		<{else}>
+			if(newdata.loadtion == 'success'){ 
+				gpstolng(newdata.lat,newdata.lng);
+			}else{
+				setTimeout('goChoiceAdr()',1000);
+				loadindexcontent();  
+			} 
+	<{/if}>
+}
+if (typeof window.addEventListener != 'undefined') {//使用html5 的postMessage必须处理的
+	window.addEventListener('message', receiveMessage, false);
+} else if (typeof window.attachEvent != 'undefined') {
+	window.attachEvent('onmessage', receiveMessage);
+}
+</script> 
+<{/if}>
+ 
+ 
+ <{/block}>

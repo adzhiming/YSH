@@ -1,0 +1,16 @@
+ <{extends file="<{$tempdir}>/public/site.html"}>   
+<{block name=extendjs}>
+<{/block}>
+<{block name=extendcss}>
+<link rel="stylesheet" type="text/css" href="<{$siteurl}>/templates/<{$tempdir}>/public/css/floor.css"> 
+<{/block}>
+<{block name=sitetitle}>关于我们<{/block}>
+ <{block name=bodylist}>
+
+   
+			<{$contactus['content']|htmlspecialchars_decode|default:'暂无说明'}>
+	
+      
+	
+	
+<{/block}>
