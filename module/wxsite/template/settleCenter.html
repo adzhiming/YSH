@@ -1,0 +1,179 @@
+<!DOCTYPE html>
+<html lang="zh-cn">
+<head>
+
+<meta http-equiv="Content-Type" content="text/html; charset=UTF-8">
+<title>商家管理中心</title>
+<meta name="viewport" content="width=device-width,initial-scale=1,maximum-scale=1,user-scalable=no">
+<link rel="stylesheet"  href="<{$siteurl}>/templates/<{$tempdir}>/public/wxsite/css/shopmanage/base.css"> 
+<link rel="stylesheet"  href="<{$siteurl}>/templates/<{$tempdir}>/public/wxsite/css/shopmanage/index.css">
+<link rel="stylesheet"  href="<{$siteurl}>/templates/<{$tempdir}>/public/wxsite/css/shopmanage/store.css">  
+<link rel="stylesheet"  href="<{$siteurl}>/templates/<{$tempdir}>/public/wxsite/css/shopmanage/layer.css"  id="layui_layer_skinlayercss">  
+
+
+  <script src="<{$siteurl}>/templates/<{$tempdir}>/public/wxsite/js/shopmanage/jquery.js"></script>    
+ <script src="<{$siteurl}>/templates/<{$tempdir}>/public/wxsite/js/shopmanage/base.js"></script>
+  <script src="<{$siteurl}>/templates/<{$tempdir}>/public/wxsite/js/shopmanage/layer.js"></script> 
+   <script src="<{$siteurl}>/templates/<{$tempdir}>/public/wxsite/js/shopmanage/roll.js"></script>
+ <script src="<{$siteurl}>/templates/<{$tempdir}>/public/wxsite/js/shopmanage/public.js"></script>
+<script src="<{$siteurl}>/templates/<{$tempdir}>/public/wxsite/js/shopmanage/dingwei.js"></script>  
+<script>
+            function bd_encrypt(gg_lat, gg_lon)   // 百度地图测距偏差 问题修复
+            {
+                var x_pi = 3.14159265358979324 * 3000.0 / 180.0;
+                var x = gg_lon;
+                var y = gg_lat;
+                var z = Math.sqrt(x * x + y * y) + 0.00002 * Math.sin(y * x_pi);
+                var theta = Math.atan2(y, x) + 0.000003 * Math.cos(x * x_pi);
+                var bd_lon = z * Math.cos(theta) + 0.0065;
+                var bd_lat = z * Math.sin(theta) + 0.006;
+                dingwei('#', bd_lat, bd_lon);
+
+            }
+
+            navigator.geolocation.getCurrentPosition(function (position) {
+                bd_encrypt(position.coords.latitude, position.coords.longitude);
+            });
+</script>
+</head>
+
+<body>
+
+<script src="js/WdatePicker.js"></script>  
+
+<header class="top-fixed bg-yellow bg-inverse">
+<div class="top-back"><a class="top-addr" href="javascript:history.go(-1)"><i class="icon-angle-left"></i></a></div>
+<div class="top-title">提现申请</div>
+<div class="top-share"><a href="javascript:void(0);" id="cate-btn"></a></div>
+</header>
+
+
+<style>
+ul { padding-left: 0px;}
+.layui-layer-molv .layui-layer-title {background-color: #F8F8F8;border-bottom: 1px solid #eee;color: #333;}
+</style>
+
+
+<style>ul { padding-left: 0px;}</style>
+<!-- 筛选TAB -->
+<ul id="shangjia_tab">
+<li style="width:25%;"><a href="sjzj.html">商家资金</a></li>
+<li style="width:25%;"><a href="sjzj-1.html">资金日志</a></li>
+<li style="width:25%;"><a href="sjzj-2.html">提现日志</a></li>
+<li style="width:25%;"><a href="sjzj-3.html" class="on">申请提现</a></li>
+</ul>  
+
+<div class="blank-10 bg"></div> 
+
+<div class="line padding border-bottom" style="margin-top:2rem;">
+<span class="x12 text-gray">你好：123456@qq.com  &nbsp;您的店铺：脆皮玉米</span>
+<span class="x12 text-gray">可提现余额：5778元</span>
+</div>
+    
+<div class="blank-10 bg"></div> 
+<form method="post" target="x-frame" action="#">
+
+<div class="line padding border-bottom">
+<span class="x3 text-gray">提现金额：</span>
+<span class="x5"><input type="text" name="gold" id="money" class="text-input" ></span>
+<span class="x4"><em class="text-small text-gray">单笔最少100元<br/>单笔最多1000元<em></span>
+</div>
+
+<div class="line padding border-bottom">
+<span class="x3 text-gray">开户银行：</span>
+<span class="x9">
+<input type="text" name="bank_name" id="bank_name" class="text-input" value="" placeholder="请输入开户银行">
+</span>
+</div>
+
+<div class="line padding border-bottom">
+<span class="x3 text-gray">银行账号：</span>
+<span class="x9">
+<input type="text"  name="bank_num" id="bank_num" class="text-input" value="" placeholder="请输入银行账户">
+</span>
+</div>
+
+<div class="line padding border-bottom">
+<span class="x3 text-gray">具体支行：</span>
+<span class="x9">
+<input type="text" name="bank_branch" id="bank_branch" class="text-input" value="" placeholder="请输入具体支行名字">
+</span>
+</div>
+
+<div class="line padding border-bottom">
+<span class="x3 text-gray">开户名：</span>
+<span class="x9">
+<input type="text" name="bank_realname" id="bank_realname" class="text-input" value="" placeholder="输入开户名">
+</span>
+</div>
+    
+<!--验证码--> 
+<div class="line padding border-bottom">
+<span class="x3 text-gray">输入手机</span>
+<span class="x5">
+<input class="text-input" type="text" name="mobile" id="mobile" value="" placeholder="手机号码">
+</span>
+<span class="x4"><a class="button button-small bg-dot" id="jq_send" href="javascript:void(0);">获取验证码</a></span>
+</div>
+
+<div class="line padding border-bottom">
+<span class="x3 text-gray">验证码</span>
+<span class="x5"><input type="text" name="yzm" id="yzm" class="text-input" placeholder="验证码"></span>
+<span class="x4"><em class="text-small text-gray">手机收到的验证码<em></span>
+</div>
+
+<!--结束-->  
+          
+<div class="container">
+<div class="blank-30"></div>
+<p><span class="text-dot">小提示：</span>  请您认真填写!</p>
+</div>
+
+<div class="container">
+<div class="blank-30"></div>
+<button class="button button-big button-block bg-dot">确认申请</button>   
+<div class="blank-30"></div>
+</div>
+
+</form>
+
+<script>
+$('#change_mobile').click(function(){
+	change_user_mobile('#','#');
+})
+</script>
+
+<script type="text/javascript">
+	var mobile_timeout;
+	var mobile_count = 100;
+	var mobile_lock = 0;
+	$(function () {
+		$("#jq_send").click(function () {
+			if (mobile_lock == 0) {
+				$.ajax({
+					url: '#',
+					data: 'mobile=' + $("#mobile").val(),
+					type: 'post'
+				});
+				mobile_count = 100;
+				BtnCount();
+				mobile_lock = 1;
+			}
+
+		});
+	});
+	BtnCount = function () {
+		if (mobile_count == 0) {
+			$('#jq_send').html("重新发送");
+			mobile_lock = 0;
+			clearTimeout(mobile_timeout);
+		}
+		else {
+			mobile_count--;
+			$('#jq_send').html("重新发送(" + mobile_count.toString() + ")秒");
+			mobile_timeout = setTimeout(BtnCount, 1000);
+		}
+	};
+</script>
+</body>
+</html>

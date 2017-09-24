@@ -1722,7 +1722,7 @@ if(  empty($this->member['uid']) || $this->member['uid'] ==  0){
 	
    
    function member(){//用户中心
-
+   	
 //   	$this->checkwxweb();
 //   	$this->checkwxuser();
 	
@@ -1966,9 +1966,9 @@ if(  empty($this->member['uid']) || $this->member['uid'] ==  0){
 	  Mysite::$app->setdata($data); 
    }
    function address(){
-       $this->checkwxweb();
-       $this->checkwxuser();
-   	$link = IUrl::creatUrl('wxsite/shoplist'); 
+      $this->checkwxweb();
+      $this->checkwxuser();
+   	  $link = IUrl::creatUrl('wxsite/shoplist'); 
 	  if($this->member['uid'] == 0)  $this->message('',$link); 
 	  $tarelist = $this->mysql->getarr("select *  from ".Mysite::$app->config['tablepre']."address where userid='".$this->member['uid']."'   order by id asc limit 0,50");
 	  $arelist = array();
@@ -3446,6 +3446,73 @@ function makeorder(){
 	  	Mysite::$app->setdata($data);
 	  }
 	}
+	
+	//商家后台
+	function shopmanageIndex(){
+	    $this->checkwxweb();
+	    $this->checkwxuser();
+	    $link = IUrl::creatUrl('wxsite/shoplist');
+	    if($this->member['uid'] == 0)  $this->message('',$link);
+	    $tarelist = $this->mysql->getarr("select *  from ".Mysite::$app->config['tablepre']."address where userid='".$this->member['uid']."'   order by id asc limit 0,50");
+	    $arelist = array();
+	    $areaid=array();
+	    foreach($tarelist as $key=>$value){
+	        $areaid[] = $value['areaid1'];
+	        $areaid[] = $value['areaid3'];
+	        $areaid[] = $value['areaid2'];
+	    }
+	    if(count($areaid) > 0){
+	        $areaarr = $this->mysql->getarr("select id,name from ".Mysite::$app->config['tablepre']."area  where id in(".join(',',$areaid).")  order by id asc limit 0,1000");
+	        foreach($areaarr as $key=>$value){
+	            $arelist[$value['id']] = $value['name'];
+	        }
+	    }
+	    $data['arealist'] = $tarelist;
+	    $data['areaarr'] = $arelist;
+		$data['order'] = '';
+		Mysite::$app->setdata($data);
+	}
+	//店铺基本设置
+	function shopset(){
+		$data['order'] = '';
+		Mysite::$app->setdata($data);
+	}
+	
+	//更新店铺信息
+	function shopeditCommit(){
+		var_dump($_POST);
+		die;
+	}
+	
+	//产品管理
+	function product_list(){
+	    $data['order'] = '';
+	    Mysite::$app->setdata($data);
+	}
+	
+	//订单管理
+	function orderManage(){
+	    $data['order'] = '';
+	    Mysite::$app->setdata($data);
+	}
+	//商家资金
+	function merchantFunds(){
+	    $data['order'] = '';
+	    Mysite::$app->setdata($data);
+	}
+	
+	//优惠券
+	function shopCoupon(){
+	    $data['order'] = '';
+	    Mysite::$app->setdata($data);
+	}
+	
+	//结算中心
+	function settleCenter(){
+	    $data['order'] = '';
+	    Mysite::$app->setdata($data);
+	}
+	
 	function shopcontrol(){
 		$this->checkmemberlogin();
 		$controlname =trim(IFilter::act(IReq::get('controlname')));
@@ -3522,6 +3589,9 @@ function makeorder(){
 			break;
 		}
 	}
+	
+
+	
 	function ajaxlocation(){
 		
 	 	$lat = IFilter::act(IReq::get('lat'));   

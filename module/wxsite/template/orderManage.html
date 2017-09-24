@@ -1,0 +1,280 @@
+<!DOCTYPE html>
+<html lang="zh-cn">
+<head>
+
+<meta http-equiv="Content-Type" content="text/html; charset=UTF-8">
+<title>商家管理中心</title>
+<meta name="viewport" content="width=device-width,initial-scale=1,maximum-scale=1,user-scalable=no">
+<link rel="stylesheet"  href="<{$siteurl}>/templates/<{$tempdir}>/public/wxsite/css/shopmanage/base.css"> 
+<link rel="stylesheet"  href="<{$siteurl}>/templates/<{$tempdir}>/public/wxsite/css/shopmanage/index.css">
+<link rel="stylesheet"  href="<{$siteurl}>/templates/<{$tempdir}>/public/wxsite/css/shopmanage/store.css">  
+<link rel="stylesheet"  href="<{$siteurl}>/templates/<{$tempdir}>/public/wxsite/css/shopmanage/layer.css"  id="layui_layer_skinlayercss">  
+
+
+  <script src="<{$siteurl}>/templates/<{$tempdir}>/public/wxsite/js/shopmanage/jquery.js"></script>    
+ <script src="<{$siteurl}>/templates/<{$tempdir}>/public/wxsite/js/shopmanage/base.js"></script>
+  <script src="<{$siteurl}>/templates/<{$tempdir}>/public/wxsite/js/shopmanage/layer.js"></script> 
+   <script src="<{$siteurl}>/templates/<{$tempdir}>/public/wxsite/js/shopmanage/roll.js"></script>
+ <script src="<{$siteurl}>/templates/<{$tempdir}>/public/wxsite/js/shopmanage/public.js"></script>
+<script src="<{$siteurl}>/templates/<{$tempdir}>/public/wxsite/js/shopmanage/dingwei.js"></script>  
+<script>
+            function bd_encrypt(gg_lat, gg_lon)   // 百度地图测距偏差 问题修复
+            {
+                var x_pi = 3.14159265358979324 * 3000.0 / 180.0;
+                var x = gg_lon;
+                var y = gg_lat;
+                var z = Math.sqrt(x * x + y * y) + 0.00002 * Math.sin(y * x_pi);
+                var theta = Math.atan2(y, x) + 0.000003 * Math.cos(x * x_pi);
+                var bd_lon = z * Math.cos(theta) + 0.0065;
+                var bd_lat = z * Math.sin(theta) + 0.006;
+                dingwei('#', bd_lat, bd_lon);
+
+            }
+
+            navigator.geolocation.getCurrentPosition(function (position) {
+                bd_encrypt(position.coords.latitude, position.coords.longitude);
+            });
+</script>
+</head>
+
+<body>
+
+<script src="js/WdatePicker.js"></script>  
+
+<header class="top-fixed bg-yellow bg-inverse">
+<div class="top-back"><a class="top-addr" href="javascript:history.go(-1)"><i class="icon-angle-left"></i></a></div>
+<div class="top-title">订单管理</div>
+<div class="top-share"><a href="javascript:void(0);" id="cate-btn" class="top-addr icon-chevron-down"> 添加</a></div>
+</header>
+
+<style>
+body {padding: 20px 0;}
+.xiaoqu-search1 { margin-top:2rem;}
+.list-media-x { margin-top: 0.0rem !important;}
+.list-media-x p {margin-top: .01rem; line-height:20px;font-size: 12px;font-weight: normal;}
+</style>
+
+<div class="serch-bar-mask" id="cate_menu" style="display:none;top:50px;">
+<div class="serch-bar-mask-list">
+<ul>
+<li><a href="cpgl-3.html">添加商品</a></li>
+<li><a href="cpgl-2.html">添加商品分类</a></li>
+</ul>
+</div>
+</div>
+
+<script>
+		$(document).ready(function () {
+			$("#cate-btn").click(function () {
+				$("#cate_menu").toggle();
+			});
+			
+			$("#cate_menu ul li a").click(function () {
+				$("#cate_menu").toggle();
+			});
+
+		});
+</script>  
+    
+<style>
+/*搜索框开始*/
+.right {float: right;}.fr {float: right;}.fl {float: left;}.mb10 {margin-bottom: 0.5rem !important;}
+.xiaoqu-search1 {padding: 15px; background: #fafafa;border-bottom: thin solid #eee;}
+.sh_search_box{}
+.sh_search_int{ border:1px solid #dedede;  border-radius:3px;  position:relative; padding-left:0.3rem; background:#fff url(../img/search02.png) 0.1rem center no-repeat; background-size:0.2rem 0.2rem;}
+.sh_search_int span{font-size:0.14rem; line-height:0.34rem; color:#333; margin:0px 0.05rem;}
+.sh_search_int input{ height:0.34rem; background:none; border:none 0px; width:1.5rem;}
+.sh_search_int .btn{ position:absolute; right:0; top:0; font-size:0.15rem;  width:0.5rem; border-left:1px solid #dedede; text-align:center; color:#e33;}
+
+/*搜索框结束*/
+
+/*商户中心-抢购优惠-抢购管理-订单管理*/
+.sh_search_more_time .left{ width:49%;}
+.sh_search_more_time .right{ width:49%;}
+.sh_search_more_time .left input,.sh_search_more_time .right input{ width:100%; border:1px solid #dedede;  border-radius:3px; background-color:#fff; text-indent:0.3rem; padding: 0.5rem;}
+.sh_search_more_int .left{ width:35%;}
+.sh_search_more_int .center{ width:45%; position:relative; z-index:1;}
+.sh_search_more_int .right{ width:20%; text-align:right;}
+.sh_search_more_int .left input,.sh_search_more_int .center input{width:96%; border:1px solid #dedede; border-radius:3px; background-color:#fff;text-indent:0.3rem; padding: 0.5rem;}
+.sh_search_more_int .center input{ background:#fff url(../img/buy_int_ico.png) no-repeat 90% center; background-size:0.11rem 0.07rem;}
+.sh_search_more_pull{ position:absolute; left:0;  width:96%; background-color:#fff; border:1px solid #dedede; border-top:none 0px;}
+.sh_search_more_pull li{ display:block; text-align:center; color:#666;padding: 0.8rem;}
+.sh_search_more_int .right .btn{ background-color:#e33;  border-radius:3px; color:#fff;  border:none 0px;padding: 0.55rem 0.95rem;}
+
+/*****/
+</style>
+
+<script>
+	$(function(){
+		$(".sh_search_more_int .center").click(function(){
+				$(this).find(".sh_search_more_pull").toggle();
+		});
+		$(".sh_search_more_pull li").click(function(){
+				$(".sh_search_more_int .center input").val($(this).html());
+				v = $(this).attr('v');
+				$('#st').val(v);
+		});
+	});
+</script> 
+
+	
+
+<div class="xiaoqu-search1">
+<form method="get" action="#">
+<div class="sh_search_more">
+
+<div class="sh_search_more_time mb10">
+<div class="fl left">
+<input type="text" placeholder="开始时间" onBlur="if (!value) { value = defaultValue; this.style.color = '#999' }" onClick="if (value == defaultValue) { value = ''; this.style.color = '#000' }" name="bg_date" value="" onfocus="WdatePicker({dateFmt: 'yyyy-MM-dd HH:mm:ss'});">
+</div>
+
+<div class="fr right">
+<input type="text" placeholder="结束时间"  onBlur="if (!value) { value = defaultValue; this.style.color = '#999' }" onClick="if (value == defaultValue) { value = ''; this.style.color = '#000' }" name="end_date" value="" onfocus="WdatePicker({dateFmt: 'yyyy-MM-dd HH:mm:ss'});">
+</div>
+
+<div class="clear"></div>
+</div>
+
+<div class="sh_search_more_int">
+
+<div class="fl left">
+<input type="text" placeholder="订单编号" name="keyword" value="" >
+</div>
+
+<div class="fl center">
+<input type="text" value="状态"> <input value="" name="st" id="st" type="hidden" />
+<div class="sh_search_more_pull" style="display:none;">
+<ul>
+<li v="0">等待付款</li>
+<li v="8">已完成</li>
+</ul>
+</div>
+</div>
+
+<div class="fr right"><input class="btn" type="submit" value="搜索"></div>
+
+<div class="clear"></div>
+</div>
+</div>
+</form>
+</div>
+
+
+<style>ul { padding-left: 0px;}</style>
+<!-- 筛选TAB -->
+
+
+<div class="list-media-x" id="list-media">
+<ul>
+<div class="blank-10 bg"></div>
+
+
+<li class="line">
+<dt><a class="x4">订单ID：4</a><a class="x8 text-right">交易时间：2016-07-01 22:55:46 </a></dt>
+<!--循环商品开始-->
+<dd class="zhong">
+<div class="x2">
+<img src="images/thumb_57415f4571546.jpg"  style="width:90%;">
+</div>
+<div class="10">
+<p class="text-gray">名称：港版苹果Apple 笔记本电脑</p>
+<p class="text-gray">单价：5688 * 1 = 5688</p>
+<p class="text-gray"></p>
+</div>
+</dd>
+<!--循环商品开始--> 
+<!--如果不是到付就显示--> 
+<dt>
+<div class="x12">
+<p class="text-small">总价：5688  - 积分抵现：1元（消耗100积分） =实付金额：<a class="text-dot">5687</a>元</p>
+</div>
+</dt> 
+<!--信息end-->   
+<!--收货地址开始-->          
+<dt>
+<div class="x12">
+<p class="text-gray">买家姓名：123456@qq.com</p>
+<p class="text-gray">买家电话：13855512345</p>
+<p class="text-gray">收货地址：-深圳-生态公园-测试能不能跳转回去-测试-13344555554</p>
+</div>
+</dt> 
+<!--地址end-->       
+<dl>
+<p class="text-right padding-top x12">
+<a class="button button-small bg-dot">等待付款</a>        
+<!--配送逻辑代码开始-->
+<!--配送逻辑代码结束-->
+</p>
+</dl>
+</li>
+
+
+<div class="blank-10 bg"></div>
+
+
+
+<li class="line"  >
+<dt><a class="x4">订单ID：1</a><a class="x8 text-right">交易时间：2016-06-03 09:01:34 </a></dt>
+<!--循环商品开始-->
+<dd class="zhong">
+<div class="x2">
+<img src="images/thumb_57415f4571546.jpg"  style="width:90%;">
+</div>
+<div class="10">
+<p class="text-gray">名称：港版苹果Apple 笔记本电脑</p>
+<p class="text-gray">单价：5688 * 1 = 5688</p>
+<p class="text-gray"></p>
+</div>
+</dd>
+<!--循环商品开始--> 
+<!--如果不是到付就显示--> 
+<dt>
+<div class="x12">
+<p class="text-small">总价：5688 - 积分抵现：1元（消耗100积分）-手机优惠：10元=实付金额：<a class="text-dot">5677</a>元</p>
+</div>
+</dt> 
+<!--信息end-->   
+<!--收货地址开始-->          
+<dt>
+<div class="x12">
+<p class="text-gray">买家姓名：123456@qq.com</p>
+<p class="text-gray">买家电话：138567123456</p>
+<p class="text-gray">收货地址：-深圳-生态公园-测试能不能跳转回去-测试-13344555554</p>
+</div>
+</dt> 
+<!--地址end-->       
+<dl>
+<p class="text-right padding-top x12">
+<a class="button button-small bg-main">手机订单</a>        
+<a class="button button-small bg-dot">已完成配送</a>        
+<!--配送逻辑代码开始-->
+<!--配送逻辑代码结束-->
+<a id="is_pei1" class="button button-small bg-yellow">配送员资料</a>
+<script type="text/javascript">
+$('#is_pei1').mouseover(function(){
+	var n = '李小姐';
+	var m = '13356782345';
+	layer.tips('配送员姓名：'+n+'<br>电话：'+m+'',$(this),{
+	tips: [2, '#7a7a7a']
+	});
+})
+</script>      
+</p>
+</dl>
+</li>
+
+
+<div class="blank-10 bg"></div>   
+</ul>
+</div> 
+
+
+
+<div class="blank-20"></div>
+<div class="container login-open">
+<h5 style="text-align:center">
+<div class="paging"><span>2 条记录 1/1 页</span></div>
+<!--分页代码不要忘记加-->
+</h5>
+</div>
+</body>

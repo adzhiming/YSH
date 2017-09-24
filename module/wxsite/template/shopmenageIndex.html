@@ -48,90 +48,47 @@
                 <{/if}>
             </span>
         </div>
-    <!-----------------------账户信息----------------------->
-    <div class="peceInfoCon">
-        <ul>
-            <li onclick="dolink('<{ofunc type=url link="/wxsite/memcard"}>');"><{if !empty($member['uid']) || $WeChatType == 1}><span style="color:#fe5858;font-size:16px;font-weight:bold;"><{$member['cost']|default:'0'}></span> <{else}><i class="icon icon_ye"></i> <{/if}><span>账号余额</span></li>
-            <li onclick="dolink('<{ofunc type=url link="/wxsite/juan"}>');"><{if !empty($member['uid']) || $WeChatType == 1}><span style="color:#ff9500;font-size:16px;font-weight:bold;"><{$juanshu|default:'0'}></span><{else}> <i class="icon icon_yhq"></i><{/if}><span>优惠券</span></li>
-            <li onclick="dolink('<{ofunc type=url link="/wxsite/gift"}>');"><{if !empty($member['uid']) || $WeChatType == 1}><span style="color:#5e5cdf;font-size:16px;font-weight:bold;"><{$member['score']|default:'0'}></span><{else}> <i class="icon icon_jf"></i><{/if}><span>积分</span></li>
-        </ul>
-    </div>
     <!-----------------------功能分类----------------------->
     <div class="peceFunclaCon">
         <ul class="peceFun">
-            <li class="peceCla" onclick="dolink('<{ofunc type=url link="/wxsite/address"}>');">
-            <i class="icon icon_dizhi"></i>
-            <ul>
-                <li style="border:none;"><span>管理收货地址</span><i class="fa fa-angle-right"></i></li>
-            </ul>
-            </li>
-        </ul>
-        <ul class="peceFun">
-            <li class="peceCla" onclick="dolink('<{ofunc type=url link="/wxsite/order"}>');">
+            <li class="peceCla" onclick="dolink('<{ofunc type=url link="/wxsite/shopset"}>');">
             <i class="icon icon_sjrz"></i>
             <ul>
-                <li><span>我的订单</span><i class="fa fa-angle-right"></i></li>
+                <li><span>基本设置</span><i class="fa fa-angle-right"></i></li>
             </ul>
             </li>
             <li class="peceCla" onclick="dolink('<{ofunc type=url link="/wxsite/collect"}>');">
             <i class="icon icon_shouc"></i>
             <ul>
-                <li><span>我的收藏</span><i class="fa fa-angle-right"></i></li>
+                <li><span>产品管理</span><i class="fa fa-angle-right"></i></li>
             </ul>
             </li>
-            <li class="peceCla" onclick="dolink('<{ofunc type=url link="/wxsite/giftlist"}>');">
-            <i class="icon icon_duih"></i>
+            <li class="peceCla" onclick="dolink('<{ofunc type=url link="/wxsite/collect"}>');">
+            <i class="icon icon_shouc"></i>
             <ul>
-                <li <{if $userextensionsharejuan  == 0 && $WeChatType == 1 }><{else}> style="border:none;"<{/if}>><span>兑换礼品</span><i class="fa fa-angle-right"></i></li>
+                <li><span>订单管理</span><i class="fa fa-angle-right"></i></li>
             </ul>
             </li>
-            <{if $userextensionsharejuan  == 0 && $WeChatType == 1 }>
-            <li class="peceCla" onclick="dolink('<{ofunc type=url link="/wxsite/memsharej"}>');">
-                <i class="icon icon_hongb"></i>
-                <ul>
-                    <li style="border:none;"><span>邀请好友送红包</span><i class="fa fa-angle-right"></i></li>
-                </ul>
+            <li class="peceCla" onclick="dolink('<{ofunc type=url link="/wxsite/collect"}>');">
+            <i class="icon icon_shouc"></i>
+            <ul>
+                <li><span>商家资金</span><i class="fa fa-angle-right"></i></li>
+            </ul>
             </li>
-            <{/if}>
+            <li class="peceCla" onclick="dolink('<{ofunc type=url link="/wxsite/collect"}>');">
+            <i class="icon icon_shouc"></i>
+            <ul>
+                <li><span>优惠券</span><i class="fa fa-angle-right"></i></li>
+            </ul>
+            </li>
+            <li class="peceCla" onclick="dolink('<{ofunc type=url link="/wxsite/collect"}>');">
+            <i class="icon icon_shouc"></i>
+            <ul>
+                <li><span>注销登录</span><i class="fa fa-angle-right"></i></li>
+            </ul>
+            </li>
         </ul>
-        <ul class="peceFun">
-            <li class="peceCla" onclick="dolink('<{ofunc type=url link="/wxsite/binding"}>');">
-            <i class="icon icon_bdsjh"></i>
-            <ul>
-                <li><span>绑定手机号</span><b>（绑定后才能获取到红包哦）</b><i class="fa fa-angle-right"></i></li>
-            </ul>
-            </li>
-			 <{if $WeChatType == 1}>
-            <{if $wxuserbangd !=1 }>
-            <li class="peceCla" onclick="dolink('<{ofunc type=url link="/wxsite/bangdmem"}>');">
-            <i class="icon icon_bdzh"></i>
-            <ul>
-                <li><span>绑定账号</span><i class="fa fa-angle-right"></i></li>
-            </ul>
-            </li>
-            <{/if}>
-            <{/if}>
-            <li class="peceCla" onclick="dolink('<{ofunc type=url link="/wxsite/shopmanageIndex"}>');">
-            <i class="icon icon_sjrz"></i>
-            <ul>
-                <li <{if $WeChatType != 1 && !empty($member['uid'])}><{else}>style="border:none;"<{/if}>><span>商家后台</span><i class="fa fa-angle-right"></i></li>
-            </ul>
-            </li>
-            <li class="peceCla" onclick="dolink('<{ofunc type=url link="/wxsite/shopSettled"}>');">
-            <i class="icon icon_sjrz"></i>
-            <ul>
-                <li <{if $WeChatType != 1 && !empty($member['uid'])}><{else}>style="border:none;"<{/if}>><span>商家入驻</span><i class="fa fa-angle-right"></i></li>
-            </ul>
-            </li>
-            <{if $WeChatType != 1 && !empty($member['uid'])}>
-            <li class="peceCla" onclick="dolink('<{ofunc type=url link="/wxsite/loginout"}>');">
-            <i class="icon icon_outlogin"></i>
-            <ul>
-                <li style="border:none;"><span>退出</span><i class="fa fa-angle-right"></i></li>
-            </ul>
-            </li>
-            <{/if}>
-        </ul>
+ 
     </div>
 
 

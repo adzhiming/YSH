@@ -1,0 +1,130 @@
+<!DOCTYPE html>
+<html lang="zh-cn">
+<head>
+
+<meta http-equiv="Content-Type" content="text/html; charset=UTF-8">
+<title>商家管理中心</title>
+<meta name="viewport" content="width=device-width,initial-scale=1,maximum-scale=1,user-scalable=no">
+<link rel="stylesheet"  href="<{$siteurl}>/templates/<{$tempdir}>/public/wxsite/css/shopmanage/base.css"> 
+<link rel="stylesheet"  href="<{$siteurl}>/templates/<{$tempdir}>/public/wxsite/css/shopmanage/index.css">
+<link rel="stylesheet"  href="<{$siteurl}>/templates/<{$tempdir}>/public/wxsite/css/shopmanage/store.css">  
+<link rel="stylesheet"  href="<{$siteurl}>/templates/<{$tempdir}>/public/wxsite/css/shopmanage/layer.css"  id="layui_layer_skinlayercss">  
+
+
+  <script src="<{$siteurl}>/templates/<{$tempdir}>/public/wxsite/js/shopmanage/jquery.js"></script>    
+ <script src="<{$siteurl}>/templates/<{$tempdir}>/public/wxsite/js/shopmanage/base.js"></script>
+  <script src="<{$siteurl}>/templates/<{$tempdir}>/public/wxsite/js/shopmanage/layer.js"></script> 
+   <script src="<{$siteurl}>/templates/<{$tempdir}>/public/wxsite/js/shopmanage/roll.js"></script>
+ <script src="<{$siteurl}>/templates/<{$tempdir}>/public/wxsite/js/shopmanage/public.js"></script>
+<script src="<{$siteurl}>/templates/<{$tempdir}>/public/wxsite/js/shopmanage/dingwei.js"></script>  
+<script>
+            function bd_encrypt(gg_lat, gg_lon)   // 百度地图测距偏差 问题修复
+            {
+                var x_pi = 3.14159265358979324 * 3000.0 / 180.0;
+                var x = gg_lon;
+                var y = gg_lat;
+                var z = Math.sqrt(x * x + y * y) + 0.00002 * Math.sin(y * x_pi);
+                var theta = Math.atan2(y, x) + 0.000003 * Math.cos(x * x_pi);
+                var bd_lon = z * Math.cos(theta) + 0.0065;
+                var bd_lat = z * Math.sin(theta) + 0.006;
+                dingwei('#', bd_lat, bd_lon);
+
+            }
+
+            navigator.geolocation.getCurrentPosition(function (position) {
+                bd_encrypt(position.coords.latitude, position.coords.longitude);
+            });
+</script>
+</head>
+
+<body>
+
+<header class="top-fixed bg-yellow bg-inverse">
+<div class="top-back"><a class="top-addr" href="#"><i class="icon-angle-left"></i></a></div>
+<div class="top-title">优惠券管理</div>
+<div class="top-signed"><a href="yhq-2.html" class="top-addr icon-plus"> 优惠劵</a>/div>
+</header>
+
+
+<style>
+ul { padding-left: 0px;}
+.list-media-x{ margin-top:2.2rem;}
+.list-media-x p {margin-top: .01rem; line-height:20px;font-size: 12px;}
+</style>
+
+<!-- 筛选TAB -->
+<ul id="shangjia_tab">
+<li style="width:50%;"><a href="yhq.html" class="on">优惠劵列表</a></li>
+<li style="width:50%;"><a href="yhq-2.html">添加优惠劵</a></li>
+</ul>
+
+<div class="list-media-x" id="list-media">
+<ul>
+<div class="blank-10 bg"></div> 
+
+<li class="line">
+<dt><a class="x2">ID：1</a><a class="x10 text-right text-gray">过期时间：2016-06-30</a></dt>
+<dd class="zhong">
+<div class="x3">
+<img src="images/thumb_57415f4571546.jpg" style="width:90%;">
+<span class="album" style="width:60px;">限1次</span>
+</div>
+<div class="9">
+<p class="text-small">标题：111</p>
+<p class="text-gray">浏览量：7 &nbsp;总数量：50</p>     
+<p class="text-small">
+<span class="text-dot1 margin-right">下载次数：<span class="text-dot">0</span></span>
+</p>
+</div>
+</dd>
+<dl>
+<p class="text-left padding-top x6">
+<a class="text-smal text-dot1" style=" font-size:12px; letter-spacing:0px;">2016-06-04 14:58:15</a>
+</p>
+<p class="text-right padding-top x6"> 
+<a href="/store/coupon/edit/coupon_id/1.html" class="button button-small bg-dot">编辑</a>
+<a href="javascript:void(0);" rel="1"  class="jquery-delete button button-small bg-gray">删除</a>
+</p>
+</dl>
+</li>
+<div class="blank-10 bg"></div>     
+</ul>
+</div>
+
+<div class="blank-20"></div>
+<div class="container login-open">
+<h5 style="text-align:center">
+<div class="paging"><span>1 条记录 1/1 页</span></div>
+<!--分页代码不要忘记加-->
+</h5>
+</div>
+
+
+<script>
+	$(document).ready(function () {
+		$(document).on('click', ".jquery-delete", function (e) {
+			var coupon_id = $(this).attr('rel');
+			layer.confirm('您确定要删除该优惠劵？', {
+				skin: 'layer-ext-demo', 
+				area: ['50%', 'auto'], //宽高
+				btn: ['是的', '不'], //按钮
+				shade: false //不显示遮罩
+			}, function () {
+				$.post("#", {coupon_id: coupon_id}, function (result) {
+					if (result.status == "success") {
+						layer.msg(result.msg);
+						setTimeout(function () {
+							location.reload();
+						}, 1000);
+					} else {
+						layer.msg(result.msg);
+					}
+				}, 'json');
+			});
+		});
+	});
+</script>
+
+
+</body>
+</html>

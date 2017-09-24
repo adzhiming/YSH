@@ -1,0 +1,107 @@
+<!DOCTYPE html>
+<html lang="zh-cn">
+<head>
+
+<meta http-equiv="Content-Type" content="text/html; charset=UTF-8">
+<title>商家管理中心</title>
+<meta name="viewport" content="width=device-width,initial-scale=1,maximum-scale=1,user-scalable=no">
+<link rel="stylesheet"  href="<{$siteurl}>/templates/<{$tempdir}>/public/wxsite/css/shopmanage/base.css"> 
+<link rel="stylesheet"  href="<{$siteurl}>/templates/<{$tempdir}>/public/wxsite/css/shopmanage/index.css">
+<link rel="stylesheet"  href="<{$siteurl}>/templates/<{$tempdir}>/public/wxsite/css/shopmanage/store.css">  
+<link rel="stylesheet"  href="<{$siteurl}>/templates/<{$tempdir}>/public/wxsite/css/shopmanage/layer.css"  id="layui_layer_skinlayercss">  
+
+
+  <script src="<{$siteurl}>/templates/<{$tempdir}>/public/wxsite/js/shopmanage/jquery.js"></script>    
+ <script src="<{$siteurl}>/templates/<{$tempdir}>/public/wxsite/js/shopmanage/base.js"></script>
+  <script src="<{$siteurl}>/templates/<{$tempdir}>/public/wxsite/js/shopmanage/layer.js"></script> 
+   <script src="<{$siteurl}>/templates/<{$tempdir}>/public/wxsite/js/shopmanage/roll.js"></script>
+ <script src="<{$siteurl}>/templates/<{$tempdir}>/public/wxsite/js/shopmanage/public.js"></script>
+<script src="<{$siteurl}>/templates/<{$tempdir}>/public/wxsite/js/shopmanage/dingwei.js"></script>  
+<script>
+            function bd_encrypt(gg_lat, gg_lon)   // 百度地图测距偏差 问题修复
+            {
+                var x_pi = 3.14159265358979324 * 3000.0 / 180.0;
+                var x = gg_lon;
+                var y = gg_lat;
+                var z = Math.sqrt(x * x + y * y) + 0.00002 * Math.sin(y * x_pi);
+                var theta = Math.atan2(y, x) + 0.000003 * Math.cos(x * x_pi);
+                var bd_lon = z * Math.cos(theta) + 0.0065;
+                var bd_lat = z * Math.sin(theta) + 0.006;
+                dingwei('#', bd_lat, bd_lon);
+
+            }
+
+            navigator.geolocation.getCurrentPosition(function (position) {
+                bd_encrypt(position.coords.latitude, position.coords.longitude);
+            });
+</script>
+</head>
+
+<body>
+
+<script src="js/WdatePicker.js"></script>  
+
+<header class="top-fixed bg-yellow bg-inverse">
+<div class="top-back"><a class="top-addr" href="javascript:history.go(-1)"><i class="icon-angle-left"></i></a></div>
+<div class="top-title">商家资金</div>
+<div class="top-share"><a href="javascript:void(0);" id="cate-btn"></a></div>
+</header>
+
+
+<style>
+.zhengwen { margin-top:2rem;}
+.list-media-x { margin-top: 0.0rem;}
+.list-media-x p {margin-top: .01rem; line-height:20px;font-size: 12px;}
+</style>
+
+
+<style>ul { padding-left: 0px;}</style>
+<!-- 筛选TAB -->
+<ul id="shangjia_tab">
+<li style="width:25%;"><a href="sjzj.html" class="on">商家资金</a></li>
+<li style="width:25%;"><a href="sjzj-1.html">资金日志</a></li>
+<li style="width:25%;"><a href="sjzj-2.html">提现日志</a></li>
+<li style="width:25%;"><a href="sjzj-3.html">申请提现</a></li>
+</ul>  
+
+<div class="blank-10 bg"></div>
+
+<style>
+.panel-list li em { font-size:12px;}
+</style>
+
+<div class="container">
+<div class="blank-40"></div>
+<p><span>尊敬的：脆皮玉米（1）</span></p>
+</div>
+
+<div class="blank-10 bg"></div>
+<div class="panel-list">
+<ul>
+<li><a>您总收入：7894.8元</a></li>
+</ul>
+</div>
+
+<div class="blank-10 bg"></div>
+<div class="panel-list">
+<ul>
+<li><a>当前余额：5778元</a></li>
+</ul>
+</div>
+
+<div class="blank-10 bg"></div>
+<div class="panel-list">
+<ul>
+<li><a>今日总收入：0元，昨日总收入：0元。</a></li>
+</ul>
+</div>
+
+<div class="blank-10 bg"></div>
+<div class="panel-list">
+<ul>
+<li><a>订单待确认收货：0元。</a></li>
+</ul>
+</div>
+<div class="blank-10 bg"></div>
+</body>
+</html>
