@@ -561,7 +561,15 @@ class method   extends adminbaseclass
 		}
 	}
 	
-	
+	function getareainfo(){
+	    $pcode =  intval(IReq::get('pcode'));
+	    $citylist =  $this->mysql->getarr("
+         select * from ".Mysite::$app->config['tablepre']."area where parent_id =
+         (select id from ".Mysite::$app->config['tablepre']."area where code = '{$pcode}')");
+	    
+	    $data['areainfo'] = $citylist;
+	    $this->success($data);
+	}
 	
 	
 	

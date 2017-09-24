@@ -38,12 +38,17 @@
                     </tr> 
                     <tr onmouseover="this.bgColor='#F5F5F5';" onmouseout="this.bgColor='ffffff';" bgcolor="ffffff">
                       <td class="left">所属城市</td>
-                      <td><select name="admin_id">
-                      	<option value="0">请选择所属城市</option>
-                      	<{foreach from=$citylist key=mykey item=items}>
-                      	<option value="<{$items['adcode']}>"><{$items['name']}></option>      
-                      		<{/foreach}>                	
-                      </select>
+                        <td>
+                         <select name="province" id="province">
+                      	       <option value="0">请选择所属省</option>
+                      	                	
+                         </select>
+                         <select name="city" id="city">
+                      	       <option value="0">请选择所属市</option>
+                         </select>
+                         <select name="county" id="county">
+                      	       <option value="0">请选择所属区</option>
+                         </select>
                       	</td>
                     </tr> 
                   
@@ -127,5 +132,104 @@
 
 
  </div> 
-  
+ <script language="javascript" type="text/javascript"> 
+
+// JavaScript Document
+$(document).ready(function(e){
+
+    
+  //当省选中的话市也会跟着变去也会变。市和区都会加载一遍
+  FillSheng();//省
+  FillShi();//市
+  FillQu();//区
+  //给省加点击事件
+  $("#province").change(function(){
+      FillShi();//市
+      FillQu();//区
+    })
+  //给市加点击事件
+  $("#city").change(function(){
+      FillQu();//区
+    })
+});
+//做三个方法分别为省市区
+//填充省的方法，如何在表里查询 出省的代号例如：北京0001、天津0001,中国下面所有省都是0001开头的
+function FillSheng()
+{
+  var pcode = "0";
+  $.ajax({
+    async:false,
+    url: '<{ofunc type=url link="/adminpage/area/module/getareainfo/datatype/json"}>',
+    data:{pcode:pcode},
+    type:"POST",
+    dataType:"TEXT",
+    success: function(data){
+    	 var obj = JSON.parse(data); 
+    	 var areainfo = obj.msg.areainfo
+      //返回数据,根据行于行之间的分隔符来拆,拆完之后会返回一数组/行的数组
+      var str = "<option value='' >请选择地区</option>";
+      //把行的数组遍历下用for循环...length长度
+      for(var i=0;i<areainfo.length;i++)
+      {
+        str += "<option value='"+areainfo[i]['code']+"'>"+areainfo[i]['province']+"</option>";
+         
+        $("#province").html(str);
+      }
+    }
+  });
+}
+//填充市的方法
+function FillShi()
+{
+  var pcode = $("#province").val();
+  $.ajax({
+    async:false,//****
+    url: '<{ofunc type=url link="/adminpage/area/module/getareainfo/datatype/json"}>',
+    data:{pcode:pcode},
+    type:"POST",
+    dataType:"TEXT",
+    success: function(data){
+   	 var obj = JSON.parse(data); 
+   	 var areainfo = obj.msg.areainfo
+     //返回数据,根据行于行之间的分隔符来拆,拆完之后会返回一数组/行的数组
+     var str = "<option value='' >请选择市</option>";
+     //把行的数组遍历下用for循环...length长度
+     for(var i=0;i<areainfo.length;i++)
+     {
+       str += "<option value='"+areainfo[i]['code']+"'>"+areainfo[i]['city']+"</option>";
+        
+       $("#city").html(str);
+     }
+   }
+  });
+}
+//填充区的方法
+function FillQu()
+{
+  var pcode = $("#city").val();
+  $.ajax({
+    async:false,
+    url: '<{ofunc type=url link="/adminpage/area/module/getareainfo/datatype/json"}>',
+    data:{pcode:pcode},
+    type:"POST",
+    dataType:"TEXT",
+    success: function(data){
+      	 var obj = JSON.parse(data); 
+      	 var areainfo = obj.msg.areainfo
+        //返回数据,根据行于行之间的分隔符来拆,拆完之后会返回一数组/行的数组
+        var str = "<option value='' >请选择市</option>";
+        //把行的数组遍历下用for循环...length长度
+        for(var i=0;i<areainfo.length;i++)
+        {
+          str += "<option value='"+areainfo[i]['code']+"'>"+areainfo[i]['county']+"</option>";
+           
+          $("#county").html(str);
+        }
+      }
+  });
+}
+</script>  
 <{/block}>
+
+
+

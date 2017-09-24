@@ -707,9 +707,9 @@ class method   extends adminbaseclass
 		 $this->setstatus();
 	}
 	function addshop(){
-	   $this->setstatus(); 
-	   $citylist =  $this->mysql->getarr("select * from ".Mysite::$app->config['tablepre']."area where id > 0 and parent_id = 0 ");  
-	 	 $data['citylist'] = $citylist;
+	   $this->setstatus();
+	   $citylist =  $this->mysql->getarr("select * from ".Mysite::$app->config['tablepre']."area where parent_id = 1 ");  
+	   $data['citylist'] = $citylist;
 		 $catparent = $this->mysql->getarr("select * from ".Mysite::$app->config['tablepre']."shoptype  where  type='checkbox' order by cattype asc limit 0,100");
 			$catlist = array();
 			foreach($catparent as $key=>$value){
@@ -723,6 +723,7 @@ class method   extends adminbaseclass
 	 
 	 	 Mysite::$app->setdata($data);  
 	}
+
 	function moreaddshop(){
 	   $this->setstatus(); 
 	$citylist =  $this->mysql->getarr("select * from ".Mysite::$app->config['tablepre']."area where id > 0 and parent_id = 0 ");  
