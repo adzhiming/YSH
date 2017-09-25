@@ -106,12 +106,17 @@
                     </tr> 
                     <tr onmouseover="this.bgColor='#F5F5F5';" onmouseout="this.bgColor='ffffff';" bgcolor="ffffff">
                       <td class="left">所属城市</td>
-                       <td><select name="admin_id">
-                      	<option value="0">请选择所属城市</option>
-                      	<{foreach from=$citylist key=mykey item=items}>
-                      	<option value="<{$items['adcode']}>"><{$items['name']}></option>      
-                      		<{/foreach}>                	
-                      </select>
+                       <td>
+                         <select name="province2" id="province2">
+                      	       <option value="0">请选择所属省</option>
+                      	                	
+                         </select>
+                         <select name="city2" id="city2">
+                      	       <option value="0">请选择所属市</option>
+                         </select>
+                         <select name="county2" id="county2">
+                      	       <option value="0">请选择所属区</option>
+                         </select>
                       	</td>
                     </tr> 
                   </tbody>
@@ -150,17 +155,27 @@ $(document).ready(function(e){
   //给市加点击事件
   $("#city").change(function(){
       FillQu();//区
+   })
+   
+   //给省加点击事件
+  $("#province2").change(function(){
+      FillShi();//市
+      FillQu();//区
     })
+  //给市加点击事件
+  $("#city2").change(function(){
+      FillQu();//区
+   })
 });
 //做三个方法分别为省市区
 //填充省的方法，如何在表里查询 出省的代号例如：北京0001、天津0001,中国下面所有省都是0001开头的
 function FillSheng()
 {
-  var pcode = "0";
+  var pid = "100000";
   $.ajax({
     async:false,
     url: '<{ofunc type=url link="/adminpage/area/module/getareainfo/datatype/json"}>',
-    data:{pcode:pcode},
+    data:{pid:pid},
     type:"POST",
     dataType:"TEXT",
     success: function(data){
@@ -171,9 +186,10 @@ function FillSheng()
       //把行的数组遍历下用for循环...length长度
       for(var i=0;i<areainfo.length;i++)
       {
-        str += "<option value='"+areainfo[i]['code']+"'>"+areainfo[i]['province']+"</option>";
+        str += "<option value='"+areainfo[i]['zipcode']+"' data-id='"+areainfo[i]['id']+"'>"+areainfo[i]['shortname']+"</option>";
          
         $("#province").html(str);
+        $("#province2").html(str);
       }
     }
   });
@@ -181,11 +197,11 @@ function FillSheng()
 //填充市的方法
 function FillShi()
 {
-  var pcode = $("#province").val();
+  var pid =$ ("#province").find ("option:selected").attr ("data-id");
   $.ajax({
     async:false,//****
     url: '<{ofunc type=url link="/adminpage/area/module/getareainfo/datatype/json"}>',
-    data:{pcode:pcode},
+    data:{pid:pid},
     type:"POST",
     dataType:"TEXT",
     success: function(data){
@@ -196,9 +212,31 @@ function FillShi()
      //把行的数组遍历下用for循环...length长度
      for(var i=0;i<areainfo.length;i++)
      {
-       str += "<option value='"+areainfo[i]['code']+"'>"+areainfo[i]['city']+"</option>";
+       str += "<option value='"+areainfo[i]['zipcode']+"' data-id='"+areainfo[i]['id']+"'>"+areainfo[i]['shortname']+"</option>";
         
        $("#city").html(str);
+     }
+   }
+  });
+  
+  var pid = $ ("#province2").find ("option:selected").attr ("data-id");
+  $.ajax({
+    async:false,//****
+    url: '<{ofunc type=url link="/adminpage/area/module/getareainfo/datatype/json"}>',
+    data:{pid:pid},
+    type:"POST",
+    dataType:"TEXT",
+    success: function(data){
+   	 var obj = JSON.parse(data); 
+   	 var areainfo = obj.msg.areainfo
+     //返回数据,根据行于行之间的分隔符来拆,拆完之后会返回一数组/行的数组
+     var str = "<option value='' >请选择市</option>";
+     //把行的数组遍历下用for循环...length长度
+     for(var i=0;i<areainfo.length;i++)
+     {
+       str += "<option value='"+areainfo[i]['zipcode']+"' data-id='"+areainfo[i]['id']+"'>"+areainfo[i]['shortname']+"</option>";
+        
+       $("#city2").html(str);
      }
    }
   });
@@ -206,11 +244,11 @@ function FillShi()
 //填充区的方法
 function FillQu()
 {
-  var pcode = $("#city").val();
+  var pid = $ ("#city").find ("option:selected").attr ("data-id");
   $.ajax({
     async:false,
     url: '<{ofunc type=url link="/adminpage/area/module/getareainfo/datatype/json"}>',
-    data:{pcode:pcode},
+    data:{pid:pid},
     type:"POST",
     dataType:"TEXT",
     success: function(data){
@@ -221,9 +259,31 @@ function FillQu()
         //把行的数组遍历下用for循环...length长度
         for(var i=0;i<areainfo.length;i++)
         {
-          str += "<option value='"+areainfo[i]['code']+"'>"+areainfo[i]['county']+"</option>";
+          str += "<option value='"+areainfo[i]['zipcode']+"' data-id='"+areainfo[i]['id']+"'>"+areainfo[i]['shortname']+"</option>";
            
           $("#county").html(str);
+        }
+      }
+  });
+  
+  var pid = $ ("#city2").find ("option:selected").attr ("data-id");
+  $.ajax({
+    async:false,
+    url: '<{ofunc type=url link="/adminpage/area/module/getareainfo/datatype/json"}>',
+    data:{pid:pid},
+    type:"POST",
+    dataType:"TEXT",
+    success: function(data){
+      	 var obj = JSON.parse(data); 
+      	 var areainfo = obj.msg.areainfo
+        //返回数据,根据行于行之间的分隔符来拆,拆完之后会返回一数组/行的数组
+        var str = "<option value='' >请选择市</option>";
+        //把行的数组遍历下用for循环...length长度
+        for(var i=0;i<areainfo.length;i++)
+        {
+          str += "<option value='"+areainfo[i]['zipcode']+"' data-id='"+areainfo[i]['id']+"'>"+areainfo[i]['shortname']+"</option>";
+           
+          $("#county2").html(str);
         }
       }
   });

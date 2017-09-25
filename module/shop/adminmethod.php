@@ -85,7 +85,10 @@ class method   extends adminbaseclass
 			  if(!empty($shopinfo)) $this->message('shop_repeatname');
 			  $data['uid'] = $testinfo['uid'];
 			 
-			   $data['admin_id'] = intval(IReq::get('admin_id'));
+			   $data['admin_id'] = intval(IReq::get('county'));
+			   $data['province'] = intval(IReq::get('province'));
+			   $data['city'] = intval(IReq::get('city'));
+			   $data['county'] = intval(IReq::get('county'));
 			  $nowday = 24*60*60*365;
 	       $data['endtime'] = time()+$nowday;
  			   
