@@ -58,7 +58,7 @@ body{padding-bottom:45px;}
 	<div class="line">
 		<span class="x3">店铺名称：</span>
 		<span class="x9">
-			<input type="text" class="text-input" name="" value="脆皮玉米（1）">
+			<input type="text" class="text-input" name="" value="<{$shopinfo['shopname']}>">
 		</span>
 	</div>
 </div>
@@ -67,7 +67,7 @@ body{padding-bottom:45px;}
 	<div class="line">
 		<span class="x3">联系人：</span>
 		<span class="x9">
-			<input type="text" class="text-input" name="" value="123">
+			<input type="text" class="text-input" name="" value="<{$shopinfo['username']}>">
 		</span>
 	</div>
 </div>
@@ -76,7 +76,7 @@ body{padding-bottom:45px;}
 	<div class="line">
 		<span class="x3">接单电话：</span>
 		<span class="x9">
-			<input type="text" class="text-input" name="" value="181151">
+			<input type="text" class="text-input" name="" value="<{$shopinfo['username']}>">
 		</span>
 	</div>
 </div>
@@ -85,7 +85,7 @@ body{padding-bottom:45px;}
 	<div class="line">
 		<span class="x3">负责人电话：</span>
 		<span class="x9">
-			<input type="text" class="text-input" name="" value="181151251">
+			<input type="text" class="text-input" name="" value="<{$shopinfo['phone']}>">
 		</span>
 	</div>
 </div>
@@ -94,7 +94,7 @@ body{padding-bottom:45px;}
 	<div class="line">
 		<span class="x3">邮箱地址：</span>
 		<span class="x9">
-			<input type="text" class="text-input" name="" value="shs2013@126.com">
+			<input type="text" class="text-input" name="" value="<{$shopinfo['email']}>">
 		</span>
 	</div>
 </div>
@@ -103,7 +103,7 @@ body{padding-bottom:45px;}
 	<div class="line">
 		<span class="x3">店铺地址：</span>
 		<span class="x9">
-			<input type="text" class="text-input" name="" value="东莞市南城区">
+			<input type="text" class="text-input" name="" value="<{$shopinfo['address']}>">
 		</span>
 	</div>
 </div>
@@ -112,7 +112,7 @@ body{padding-bottom:45px;}
 	<div class="line">
 		<span class="x3" style="float:left;width:25%;">附近坐标：</span>
 		<span class="x9" style="float:left;width:55%;">
-			<input type="text" class="text-input" name="" value="113.765295,22.777862">
+			<input type="text" class="text-input" name="" value="<{$shopinfo['lat']}>,<{$shopinfo['lng']}>">
 		</span>
         <span class="x3" style=" float:right;width:20%;text-align:center;background:rgb(197, 107, 21);color:#fff; line-height:20px;">给取地址</span>
 	</div>
@@ -122,7 +122,7 @@ body{padding-bottom:45px;}
 	<div class="line">
 		<span class="x3">起送价：</span>
 		<span class="x9">
-			<input type="text" class="text-input" name="" value="15元">
+			<input type="text" class="text-input" name="" value="0元">
 		</span>
 	</div>
 </div>
@@ -131,7 +131,7 @@ body{padding-bottom:45px;}
 	<div class="line">
 		<span class="x3">营业时间：</span>
 		<span class="x9">
-			<input type="text" class="text-input" name="" value="8:00-19：00">
+			<input type="text" class="text-input" name="" value="<{$shopinfo['starttime']}>">
 		</span>
 	</div>
 </div>
@@ -140,7 +140,7 @@ body{padding-bottom:45px;}
 	<div class="line">
 		<span class="x3">配送时间：</span>
 		<span class="x9">
-			<input type="text" class="text-input" name="" value="30公里">
+			<input type="text" class="text-input" name="" value="公里">
 		</span>
 	</div>
 </div>
@@ -150,10 +150,10 @@ body{padding-bottom:45px;}
 		<span class="x3">是否营业：</span>
        <span class="x9">
            <label><span>是</span>
-           <input style="width: 20px; height: 20px;" type="radio" name="data[is_new]" value="1"  >
+           <input style="width: 20px; height: 20px;" type="radio" name="data[is_new]" value="1" <{if $shopinfo['is_open'] == 1}> checked <{/if}>>
            </label>
            <label><span style="margin-left: 20px;">否</span>
-           <input style="width: 20px; height: 20px;" type="radio" name="data[is_new]" value="0" >
+           <input style="width: 20px; height: 20px;" type="radio" name="data[is_new]" value="0" <{if $shopinfo['is_open'] == 0}> checked <{/if}>>
            </label>
        </span>
 	</div>
@@ -177,14 +177,14 @@ body{padding-bottom:45px;}
 
 <div class="line border-bottom">
 <span class="x3" style=" border-bottom:solid 1px #eee; line-height:30px;width:100%;">店铺简介：</span>
-<textarea class="form-content1" name="" placeholder="店铺简介，建议不超过200字！">&lt;p&gt;还不错的商家&lt;/p&gt;</textarea>
+<textarea class="form-content1" name="" placeholder="店铺简介，建议不超过200字！"><{$shopinfo['intr_info']}></textarea>
 </div>
 
 <div class="blank-10 bg"></div>
 
 <div class="line border-bottom">
 <span class="x3" style=" border-bottom:solid 1px #eee; line-height:30px;width:100%;">店铺公告：</span>
-<textarea class="form-content1" name="" placeholder="店铺简介，建议不超过200字！">店铺新开张，请多多关照！！！</textarea>
+<textarea class="form-content1" name="" placeholder="店铺简介，建议不超过200字！"><{$shopinfo['notice_info']}></textarea>
 </div>
 
 <div class="blank-10 bg"></div>  

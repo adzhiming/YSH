@@ -3453,29 +3453,29 @@ function makeorder(){
 	    $this->checkwxuser();
 	    $link = IUrl::creatUrl('wxsite/shoplist');
 	    if($this->member['uid'] == 0)  $this->message('',$link);
-	    $tarelist = $this->mysql->getarr("select *  from ".Mysite::$app->config['tablepre']."address where userid='".$this->member['uid']."'   order by id asc limit 0,50");
-	    $arelist = array();
-	    $areaid=array();
-	    foreach($tarelist as $key=>$value){
-	        $areaid[] = $value['areaid1'];
-	        $areaid[] = $value['areaid3'];
-	        $areaid[] = $value['areaid2'];
-	    }
-	    if(count($areaid) > 0){
-	        $areaarr = $this->mysql->getarr("select id,name from ".Mysite::$app->config['tablepre']."area  where id in(".join(',',$areaid).")  order by id asc limit 0,1000");
-	        foreach($areaarr as $key=>$value){
-	            $arelist[$value['id']] = $value['name'];
-	        }
-	    }
-	    $data['arealist'] = $tarelist;
-	    $data['areaarr'] = $arelist;
-		$data['order'] = '';
+	    $sql = "select a.*,b.cost,c.name shoptypename  from ".Mysite::$app->config['tablepre']."shop a 
+                left join ".Mysite::$app->config['tablepre']."member b on a.uid = b.uid
+                left join ".Mysite::$app->config['tablepre']."shoptype c on a.shoptype = c.id
+                where a.uid='".$this->member['uid']."' group by a.id limit 1";
+	
+	    $shopinfo = $this->mysql->getarr($sql);
+	    $data['shopinfo'] = $shopinfo[0];
 		Mysite::$app->setdata($data);
 	}
 	//店铺基本设置
 	function shopset(){
-		$data['order'] = '';
-		Mysite::$app->setdata($data);
+	    $this->checkwxweb();
+	    $this->checkwxuser();
+	    $link = IUrl::creatUrl('wxsite/shoplist');
+	    if($this->member['uid'] == 0)  $this->message('',$link);
+	    $sql = "select a.*,b.cost,b.username,c.name shoptypename  from ".Mysite::$app->config['tablepre']."shop a
+                left join ".Mysite::$app->config['tablepre']."member b on a.uid = b.uid
+                left join ".Mysite::$app->config['tablepre']."shoptype c on a.shoptype = c.id
+                where a.uid='".$this->member['uid']."' group by a.id limit 1";
+	    
+	    $shopinfo = $this->mysql->getarr($sql);
+	    $data['shopinfo'] = $shopinfo[0];
+	    Mysite::$app->setdata($data);
 	}
 	
 	//更新店铺信息
@@ -3486,7 +3486,19 @@ function makeorder(){
 	
 	//产品管理
 	function product_list(){
-	    $data['order'] = '';
+	    $this->checkwxweb();
+	    $this->checkwxuser();
+	    $link = IUrl::creatUrl('wxsite/shoplist');
+	    if($this->member['uid'] == 0)  $this->message('',$link);
+	    $sql = "select id from ".Mysite::$app->config['tablepre']."shop 
+                where uid='".$this->member['uid']."'  limit 1";
+	    $shopinfo = $this->mysql->select_one($sql);
+	    $shopid = $shopinfo['id'];
+	    $sql = "select * from ".Mysite::$app->config['tablepre']."goods
+                where shopid='".$shopid."' order by id";
+	    
+	    $goods = $this->mysql->getarr($sql);
+	    $data['goodslist'] =$goods;
 	    Mysite::$app->setdata($data);
 	}
 	

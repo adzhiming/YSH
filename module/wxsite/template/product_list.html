@@ -98,37 +98,38 @@
 </ul>    
 
     
-
+<{foreach from=$goodslist item=items}>
 <div class="list-media-x" id="list-media">
 <ul>
 
 <div class="blank-10 bg"></div>
 
+
 <li class="line ">
-<dt><a class="x4">商品ID：1</a><a class="x8 text-right">剩余库存：97</a></dt>
+<dt><a class="x4">商品ID：<{$items['id']}></a><a class="x8 text-right">剩余库存：97</a></dt>
 
 <dd class="zhong">
 <div class="x4">
 <img src="images/thumb_57415f4571546.jpg"  style="width:90%;">
 <span class="album" style="width:70px;">分销商品</span>         </div>
 <div class="8">
-<p class="text-small">标题：港版苹果Apple 笔记本电脑</p>
-<p class="text-small">销量：25 &nbsp; 浏览：287 &nbsp; </p>
+<p class="text-small">标题：<{$items['name']}></p>
+<p class="text-small">销量：<{$items['sellcount']}> &nbsp; 浏览：未知&nbsp; </p>
 <p class="text-gray">手机下单立减：<span class="text-dot">10</span></p>
-<p class="text-small"><span class="text-dot1 margin-right">商品单价：<span class="text-dot">5688</span>&nbsp;</span></p>
-<p class="text-small"><span class="text-dot1 margin-right">打包费：<span class="text-dot">1.00</span></span></p>
+<p class="text-small"><span class="text-dot1 margin-right">商品单价：<span class="text-dot"><{$items['cost']}></span>&nbsp;</span></p>
+<p class="text-small"><span class="text-dot1 margin-right">打包费：<span class="text-dot"><{$items['bagcost']}></span></span></p>
 </div>
 </dd>
 
 <dt>
 <div class="x12">
-<span class="margin-right text-gray">商品简述： MacBook Air 15年版新款 11英寸128GBMJVM2ZP/A</span>
+<span class="margin-right text-gray">商品简述：<{$items['descgoods']}></span>
 </div>
 </dt>
    
 <dl>
 <p class="text-left padding-top x6">
-<a class="text-smal text-dot1" style=" font-size:12px; letter-spacing:0px;">发布日期：2016-05-26 </a>
+<a class="text-smal text-dot1" style=" font-size:12px; letter-spacing:0px;">发布日期：未知 </a>
 </p>
           
 <p class="text-right padding-top x6"> 
@@ -143,53 +144,13 @@
 
 </ul>
 </div> 
-
+<{/foreach}>
     
 
 <div class="list-media-x" id="list-media">
 <ul>
 
-<div class="blank-10 bg"></div>
 
-<li class="line ">
-<dt><a class="x4">商品ID：1</a><a class="x8 text-right">剩余库存：97</a></dt>
-
-<dd class="zhong">
-<div class="x4">
-<img src="images/thumb_57415f4571546.jpg"  style="width:90%;">
-<span class="album" style="width:70px;">分销商品</span>         </div>
-<div class="8">
-<p class="text-small">标题：港版苹果Apple 笔记本电脑</p>
-<p class="text-small">销量：25 &nbsp; 浏览：287 &nbsp; </p>
-<p class="text-gray">手机下单立减：<span class="text-dot">10</span></p>
-<p class="text-small"><span class="text-dot1 margin-right">商品单价：<span class="text-dot">5688</span>&nbsp;</span></p>
-<p class="text-small"><span class="text-dot1 margin-right">打包费：<span class="text-dot">1.00</span></span></p>
-</div>
-</dd>
-
-<dt>
-<div class="x12">
-<span class="margin-right text-gray">商品简述： MacBook Air 15年版新款 11英寸128GBMJVM2ZP/A</span>
-</div>
-</dt>
-   
-<dl>
-<p class="text-left padding-top x6">
-<a class="text-smal text-dot1" style=" font-size:12px; letter-spacing:0px;">发布日期：2016-05-26 </a>
-</p>
-          
-<p class="text-right padding-top x6"> 
-<a class="button button-small bg-dot">下架</a>
-<a href="#" class="button button-small bg-dot">编辑</a>
-<a  href="javascript:void(0);" rel="1"  class="jquery-delete button button-small bg-dot">删除</a>
-</p>
-</dl>
-</li>
-
-<div class="blank-10 bg"></div>   
-
-</ul>
-</div> 
 
 
 
