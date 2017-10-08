@@ -15,22 +15,26 @@ class areaadminbaseclass
 	 public $platpsinfo;
  	 function init(){
 	 	     //主要是检测权限  
+ 	     
 	 	     $controller = Mysite::$app->getController();
 	 	     $Taction = Mysite::$app->getAction();
 	 	     $this->mysql =  new mysql_class(); 
 	 	     $this->memberCls = new memberclass($this->mysql);  
 	 	     $this->pageCls = new page();
-	 	     $this->admin =  $this->memberCls->getareaadmininfo();  
+	 	     $this->admin =  $this->memberCls->getareaadmininfo(); 
 	 	     if( !empty( $this->admin ) ){
 				 $stationinfo =  $this->mysql->select_one("select * from ".Mysite::$app->config['tablepre']."stationadmininfo  where uid='".$this->admin['uid']."'  ");  
-				 $cityinfo =  $this->mysql->select_one("select * from ".Mysite::$app->config['tablepre']."area  where adcode='".$stationinfo['cityid']."'  ");  
+				
+				 $cityinfo =  $this->mysql->select_one("select * from ".Mysite::$app->config['tablepre']."area  where id='".$stationinfo['cityid']."'  ");  
 				 $stationinfo['cityname'] = $cityinfo['name'];
+				 
 				 if( !empty($stationinfo) ){
 					 $this->admin = array_merge($this->admin,$stationinfo);
 				 }
  				 
  			 } 
 			 $platpsinfo =  $this->mysql->select_one("select * from ".Mysite::$app->config['tablepre']."platpsset  where cityid='".$stationinfo['cityid']."' ");   
+			 
 			 $this->platpsinfo = $platpsinfo;
 			 $data['platpsinfo'] = $platpsinfo; 
 			 
@@ -38,15 +42,17 @@ class areaadminbaseclass
 	 	     $link = IUrl::creatUrl('member/agentlogin'); 
 	 	     if($this->admin['uid'] == 0) $this->message('member_nologin',$link);
 	 	     $data['admininfo'] = $this->admin; 
+	 	     
 	 	     if($this->admin['groupid'] != 4){
 	 	       $links = IUrl::creatUrl('areaadminpage/system'); 
 	 	       $this->message('',$links);
 	 	     }
+	 	    
 	 	     $checkmodule =  $this->mysql->select_one("select * from ".Mysite::$app->config['tablepre']."module  where name='".$Taction."' and install=1 limit 0,20");  
 	 	     if(empty($checkmodule) && !in_array($controller,array('site','market'))){ 
 	 	         $this->message('module_noinstall'); 
 	 	     }   
-	 	    
+	 	     
 	 	     $action = Mysite::$app->getAction();  
 	 	     $data['moduleid']= $checkmodule['id']; 
 	 	     $data['moduleparent'] = $checkmodule['parent_id']; 
