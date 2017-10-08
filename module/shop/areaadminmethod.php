@@ -143,7 +143,13 @@ class method   extends areaadminbaseclass
 		$subtype = intval(IReq::get('subtype'));
 		$id = intval(IReq::get('uid'));
 		if(!in_array($subtype,array(1,2))) $this->message('system_err');
+		$market_id = IReq::get('market_id');
 		if($subtype == 1){
+    		  if(!empty($market_id)) $data['market_id'] = $market_id;
+    		  $data['province'] = $this->admin['provinceid'];
+    		  $data['city'] = $this->admin['cityid'];
+    		  $data['county'] = $this->admin['countyid'];
+    		  
 			  $username = IReq::get('username');
 			  if(empty($username)) $this->message('member_emptyname');
 				$testinfo = $this->mysql->select_one("select * from ".Mysite::$app->config['tablepre']."member where username='".$username."'  ");
@@ -168,6 +174,11 @@ class method   extends areaadminbaseclass
 			  $this->success('success');
 		}elseif($subtype ==  2){
 			/*检测*/
+		    if(!empty($market_id)) $sdata['market_id'] = $market_id;
+		    $sdata['province'] = $this->admin['provinceid'];
+		    $sdata['city'] = $this->admin['cityid'];
+		    $sdata['county'] = $this->admin['countyid'];
+		    
 			$data['username'] = IReq::get('username');
 		  $data['phone'] = IReq::get('maphone');
       $data['email'] = IReq::get('email');
@@ -199,6 +210,67 @@ class method   extends areaadminbaseclass
 		}else{
 		 $this->message('nodefined_func');
 		}
+	}
+	
+	//保存店铺
+	function savemarket()
+	{
+
+	    $optype = intval(IReq::get('optype'));
+	    $marketid =  intval(IReq::get('marketid'));
+	    $data['siteid'] = $this->admin['id'];
+	    $data['name'] = IReq::get('marketname');
+	    $data['typeid'] = intval(IReq::get('markettype'));
+	    $data['fzren'] = IReq::get('fzren');
+	    $data['phone'] = IReq::get('phone');
+	    $data['desc'] = IReq::get('desc');
+	    if($optype == 1){
+	        $this->mysql->insert(Mysite::$app->config['tablepre'].'market',$data);
+	        
+	    }
+	    else
+	    {
+	        $this->mysql->update(Mysite::$app->config['tablepre'].'market',$data, "id = '".$marketid."'");
+	    }
+	    
+	    $this->success('success');
+	}
+	
+	//删除店铺
+	function delmarket()
+	{
+	    
+	    $marketid =  intval(IReq::get('id'));
+	    if(empty($marketid))  $this->message('marketid不能为空');
+	    $data['is_deleted'] = 1;
+	  
+	    $this->mysql->update(Mysite::$app->config['tablepre'].'market',$data, "id = '".$marketid."'");
+	    $link = IUrl::creatUrl('areaadminpage/shop/module/adminmarketlist');
+	    $this->success('success',$link);
+	}
+	
+	//根据市场类型获取市场信息
+	function getMarketbyTypeid(){
+	    $typeid = IReq::get('markettype');
+	    if($typeid){
+	        $marketlist= $this->mysql->getarr("select * from ".Mysite::$app->config['tablepre']."market where typeid=".$typeid."  ");
+	        if($marketlist){
+	            $data = array();
+	            $data['code'] = 1;
+	            $data['data'] = $marketlist;
+	        }
+	        else{
+	        $data = array();
+	        $data['code'] = 0;
+	        $data['data'] = "";
+	        }
+	    }
+	    else{
+	        $data = array();
+	        $data['code'] = 0;
+	        $data['data'] = '';
+	    }
+	    echo json_encode($data);die;
 	}
 	 function shopbiaoqian()
 	 {
@@ -604,12 +676,12 @@ class method   extends areaadminbaseclass
 	}
 	function delshop()
 	{
+	   
 		 $id = IReq::get('id');
 		 if(empty($id))  $this->message('shop_noexit');
 		  $tempattr  = $this->mysql->select_one("select * from ".Mysite::$app->config['tablepre']."shop  where id=".$id." ");
-		   if(empty($tempattr))$this->message('shop_noexit');
-	     if($tempattr['admin_id'] != $this->admin['cityid']) $this->message('shop_noownadmin');
-		  
+		  if(empty($tempattr))$this->message('shop_noexit');
+	     if($tempattr['admin_id'] != $this->admin['countyid']) $this->message('shop_noownadmin');
 		  
 		 $ids = is_array($id)? join(',',$id):$id;
 		 
@@ -658,17 +730,43 @@ class method   extends areaadminbaseclass
 	 	 if(!empty($data['phone'])){
 	 	    $where .=" and phone='".$data['phone']."'";
 	 	 }
-	 	 $where .= "  and   admin_id = '".$this->admin['cityid']."' ";
+	 	 $where .= "  and   county = '".$this->admin['countyid']."' ";
 	 	 //构造查询条件
 	 	 $data['where'] = $where; 
-	    
 	    Mysite::$app->setdata($data);
 	    
 	}
+	
+	function adminmarketlist(){
+	    $this->setstatus();
+	    $where = '';
+	  
+	    
+	    $data['name'] =  trim(IReq::get('shopname'));
+	    $data['fzren'] =  trim(IReq::get('username'));
+	    $data['phone'] = trim(IReq::get('phone'));
+	    if(!empty($data['name'])){
+	        $where .= " and name like '%".$data['name']."%'";
+	    }
+	    if(!empty($data['fzren'])){
+	        $where .= " and fzren like '%".$data['fzren']."%'";
+	    }
+	    if(!empty($data['phone'])){
+	        $where .= " and phone like '%".$data['phone']."%'";
+	    }
+	    $where .= "  and   siteid = '".$this->admin['id']."' and is_deleted =0 ";
+	    $marketinfo = $this->mysql->getarr("select a.*,b.name typename from ".Mysite::$app->config['tablepre']."market a
+               left join ".Mysite::$app->config['tablepre']."shoptype b on a.typeid = b.id
+               where 1=1 $where ");
+	    
+	    $data['marketlist'] = $marketinfo;
+	    Mysite::$app->setdata($data);
+	    
+	}
+	
     function adoptshop(){
         $this->setstatus();
         $where = ' ';
-
         $data['shopname'] =  trim(IReq::get('shopname'));
         $data['username'] =  trim(IReq::get('username'));
         if(!empty($data['shopname'])){
@@ -677,7 +775,7 @@ class method   extends areaadminbaseclass
         if(!empty($data['username'])){
             $where .= " and uid in(select uid from ".Mysite::$app->config['tablepre']."member where username='".$data['username']."')";
         }
-        $where .= "  and   admin_id = '".$this->admin['cityid']."' ";
+        $where .= "  and   admin_id = '".$this->admin['countyid']."' ";
         //构造查询条件
         $data['where'] = $where;
         Mysite::$app->setdata($data);
@@ -709,6 +807,33 @@ class method   extends areaadminbaseclass
 	 
 	 	 Mysite::$app->setdata($data);  
 	}
+	
+	function addmarket(){
+	    $this->setstatus();
+	    $id =  trim(IReq::get('id'));
+	    $data['optype'] = 1;
+	    if(!empty($id)){
+	        $marketinfo = $this->mysql->select_one("select * from ".Mysite::$app->config['tablepre']."market where id = '".$id."'  ");
+	        $data["marketinfo"] = $marketinfo;
+	        $data['optype'] = 2;
+	    }
+	    $uid = $this->admin['county'];
+	    $areaadminone =  $this->mysql->select_one("select * from ".Mysite::$app->config['tablepre']."admin where groupid='4'  and uid = '".$uid."'  ");
+	    $data['areaadminone'] = $areaadminone;
+	    $catparent = $this->mysql->getarr("select * from ".Mysite::$app->config['tablepre']."shoptype  where  type='checkbox' order by cattype asc limit 0,100");
+	    $catlist = array();
+	    foreach($catparent as $key=>$value){
+	        $tempcat   = $this->mysql->getarr("select * from ".Mysite::$app->config['tablepre']."shoptype  where parent_id = '".$value['id']."'  limit 0,100");
+	        foreach($tempcat as $k=>$v){
+	            $catlist[] = $v;
+	        }
+	    }
+	    $data['catarr'] = array('0'=>'外卖','1'=>'超市');
+	    $data['catlist'] = $catlist;
+	    
+	    Mysite::$app->setdata($data);
+	}
+	
 	function moreaddshop(){
 	    $this->setstatus();  
 	    $uid = $this->admin['cityid'];
