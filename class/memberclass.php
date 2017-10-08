@@ -412,7 +412,7 @@ if($userinfo['username'] == $apiinfo['openid']){
       return $userinfo;
 	}	
 	function getadmininfo(){
-		  $adminname =  ICookie::get('adminname'); 
+		$adminname =  ICookie::get('adminname'); 
 	    $adminpwd = ICookie::get('adminpwd');  
 	    $adminuid = ICookie::get('adminuid');  
 	    $userinfo = array(); 

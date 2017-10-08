@@ -1,0 +1,57 @@
+ <{extends file="<{$tempdir}>/public/admin.html"}> 
+   <{block name=extendjs}>
+<script type="text/javascript" language="javascript" src="<{$siteurl}>/templates/<{$tempdir}>/public/js/artdialog/plugins/iframeTools.js"></script>
+ <{/block}>
+ <{block name=controlname}><{/block}>
+ <{block name=bodylist}> 
+  
+ 
+<div class="managShopCon">
+	<div class="managShopBox">
+		<div class="managShopMain">
+			<div class="managShopClas">
+				<ul>
+				    <li ><a href="<{ofunc type=url link="/areaadminpage/shop/module/adminmarketlist"}>">市场列表</a></li>
+					<li class="maShClaA"><a href="<{ofunc type=url link="/areaadminpage/shop/module/addmarket"}>">添加市场</a></li>
+				</ul>
+			</div>
+			<div class="addShopSingCon">
+			
+			
+				<div class="addShopSingL bor_no">
+<form method="post" name="form1" action="<{ofunc type=url link="/areaadminpage/shop/module/savemarket/datatype/json/optype/<{$optype}>"}>" onsubmit="return subform('<{ofunc type=url link="/areaadminpage/shop/module/adminmarketlist"}>',this);">
+
+					<h3>添加分站菜市场</h3>
+					<ul>
+						<li><span style='width: 95px;'>市场名称：</span><input type="text" name="marketname" id="marketname"  value="<{$marketinfo['name']}>"></li>
+						<li><span style='width: 95px;'>负责人名称：</span><input type="text" name="fzren" id="fzren" value="<{$marketinfo['fzren']}>"></li>
+						<li><span style='width: 95px;'>负责人电话：</span><input type="text" name="phone" id="phone" value="<{$marketinfo['phone']}>"></li>
+						<li><span style='width: 95px;'>市场类型：</span>
+							<select name="markettype">
+ 								<{foreach from=$catlist item=itv}>
+						<option value="<{$itv['id']}>"  <{if $itv['id'] == $marketinfo['typeid']}> selected <{/if}> ><{$catarr[$itv['cattype']]}>-<{$itv['name']}></option>
+								<{/foreach}>
+							</select>
+						</li>
+						<li><span style='width: 95px;'>市场描述：</span><textarea id="desc" name="desc"></textarea></li>
+					</ul>
+					<div class="addShopSingBut">
+					<input type="hidden" name="subtype" value="1">
+					<input type="hidden" name="marketid" value="<{$marketinfo['id']}>">
+					<input type="submit" value="确认提交"></div>
+					</form>
+				</div>
+				
+				
+				
+				
+				 
+			</div>
+		</div>
+	</div>
+</div>
+
+ <div class="clear"></div>
+    
+  
+<{/block}>

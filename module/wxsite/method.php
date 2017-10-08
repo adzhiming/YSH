@@ -20,9 +20,8 @@ class method   extends wxbaseclass
 	 function choice(){ 
 	  
 	  	$this->checkwxuser();
-	  	$id =IFilter::act(IReq::get('id'));   
+	  	$id =IFilter::act(IReq::get('id')); 
 	 	  if($id > 0){
-	 	
 	 	     $checkinfo =  $this->mysql->select_one("select * from ".Mysite::$app->config['tablepre']."area where id=".$id."  "); 
 	 	     
 	 	     if(empty($checkinfo)){
@@ -108,9 +107,9 @@ class method   extends wxbaseclass
 				if( !empty($areacodeone) ){
 					$adcodeid = $areacodeone['id'];
 					$pid = $areacodeone['pid'];
-   					$areainfoone =  $this->mysql->select_one("select * from ".Mysite::$app->config['tablepre']."area where  adcode=".$adcodeid." or adcode=".$pid."  ");   
+   					$areainfoone =  $this->mysql->select_one("select * from ".Mysite::$app->config['tablepre']."area where  id=".$adcodeid." or id=".$pid."  ");   
 					if( !empty($areainfoone) ){
-						$city_id = "CITY_ID_".$areainfoone['adcode'];
+						$city_id = "CITY_ID_".$areainfoone['id'];
 						$city_name = "CITY_NAME_".$areainfoone['name'];
 						ICookie::set('CITY_ID',$city_id);
 						ICookie::set('CITY_NAME',$city_name);
@@ -134,7 +133,7 @@ class method   extends wxbaseclass
 	
 	 function index(){
 	   
-		
+	
 		 $lng = ICookie::get('lng');
          $lat = ICookie::get('lat');
          $addressname = ICookie::get('addressname');
@@ -6156,12 +6155,20 @@ function shopSettled(){
 			Mysite::$app->setdata($data);
 }
 function sjapplyrz(){  
-	
+    $province	 =    IFilter::act(IReq::get('province'));
+    $city	 =    IFilter::act(IReq::get('city'));
+    $county	 =    IFilter::act(IReq::get('county'));
+    $market_id	 =    IFilter::act(IReq::get('market_id'));
+    
 	$shopphone	 =    IFilter::act(IReq::get('shopphone'));
 	$shopname    =    IFilter::act(IReq::get('shopname'));
 	$shopaddress =    IFilter::act(IReq::get('shopaddress'));
 	$shoplicense =    IFilter::act(IReq::get('shoplicense'));
 	$shoptype =    IReq::get('shoptype');
+	if(empty($province)) $this->message("请选择省份");
+	if(empty($city)) $this->message("请选择城市");
+	if(empty($county)) $this->message("请选择县/区");
+	
 	if(empty($shopphone)) $this->message("请填写联系电话");
 	if(!empty($shopphone)&&!(IValidate::phone($shopphone)))$this->message('errphone');
 	$checkphone = $this->mysql->select_one("select * from ".Mysite::$app->config['tablepre']."member  where phone = ".$shopphone." ");
@@ -6172,6 +6179,11 @@ function sjapplyrz(){
 	if(empty($shopaddress)) $this->message("请填写店铺地址");
 	if(empty($shoplicense)) $this->message("请上传营业执照");
 	
+	$data['market_id'] = $market_id;
+	$data['province'] = $province;
+	$data['city'] = $city;
+	$data['county'] = $county;
+	$data['admin_id'] = $county;
 	$data['shopphone'] = $shopphone;
 	$data['shopname'] = $shopname;
 	$data['shopaddress'] = $shopaddress;
@@ -6187,7 +6199,11 @@ function sjapplyrz(){
 	$shopname    =    IFilter::act(IReq::get('shopname'));
 	$shopaddress =    IFilter::act(IReq::get('shopaddress'));
 	$shoplicense =    IFilter::act(IReq::get('shoplicense'));
+	$province =    IFilter::act(IReq::get('province'));
+	$city =    IFilter::act(IReq::get('city'));
+	$county =    IFilter::act(IReq::get('county'));
 	$shoptype =    IReq::get('shoptype');
+	$market_id =    IReq::get('market_id');
 	$link = IUrl::creatUrl('wxsite/shangjia');
 	if(empty($shopphone)) $this->message("请填写联系电话",$link);
 	if(!empty($shopphone)&&!(IValidate::phone($shopphone)))$this->message('errphone',$link);
@@ -6197,13 +6213,17 @@ function sjapplyrz(){
 	$checkshopname = $this->mysql->select_one("select * from ".Mysite::$app->config['tablepre']."shop  where shopname = '".$shopname."' ");
 	if(!empty($checkshopname)) $this->message("店铺名字已存在",$link); 
 	if(empty($shopaddress)) $this->message("请填写店铺地址",$link);
-	
+	$data['market_id'] = $market_id;
 	$data['shopphone'] = $shopphone;
 	$data['shopname'] = $shopname;
 	$data['shopaddress'] = $shopaddress;
 	$data['shoptype'] = $shoptype;
 	$data['shoplicense'] = $shoplicense;
- 
+	$data['province'] = $province;
+	$data['city'] = $city;
+	$data['county'] = $county;
+	$data['admin_id'] = $county;
+   
 	 Mysite::$app->setdata($data);
 	
 }	
@@ -6266,12 +6286,17 @@ function lifeass(){
 //保存店铺
 	function saveshop()
 	{
+	    
 
 		$laiyuan = intval(IReq::get('laiyuan')); // 申请来源。1为微信端，主要用于判断微信端用户是否开过店
 		$subtype = intval(IReq::get('subtype'));
 		$id = intval(IReq::get('uid'));
+		$province = intval(IReq::get('province'));
+		$city = intval(IReq::get('city'));
+		$county = intval(IReq::get('county'));
+		$market_id = intval(IReq::get('market_id'));
 		if(!in_array($subtype,array(1,2))) $this->message('system_err');
-		$admin_id = empty($this->CITY_ID)?0:$this->CITY_ID;
+		$admin_id = $county;
 		if($subtype == 1){
 			  $username = IReq::get('username');
 			  if(empty($username)) $this->message('member_emptyname');
@@ -6292,7 +6317,10 @@ function lifeass(){
 			  $nowday = 24*60*60*365;
 	       $data['endtime'] = time()+$nowday;
  			   
-			   
+	       $data['province'] = empty($province)	?0:$province;
+	       $data['city'] = empty($city)?0:$city;
+	       $data['county'] = empty($county)?0:$county;
+	       $data['market_id'] = empty($market_id)?0:$market_id;
 			  
 		$shoptype =  IReq::get('shoptype') ; 
 	  $temparray = explode('_',$shoptype);
@@ -6345,7 +6373,11 @@ function lifeass(){
       $sdata['uid'] = $uid;
       $sdata['maphone'] =  $data['phone'];
       $sdata['addtime'] = time();
-      $sdata['email'] =  $data['email'];    
+      $sdata['email'] =  $data['email']; 
+      $sdata['province'] = empty($province)	?0:$province;
+      $sdata['city'] = empty($city)?0:$city;
+      $sdata['county'] = empty($county)?0:$county;
+      $sdata['market_id'] = empty($market_id)?0:$market_id;
       $sdata['admin_id'] = $admin_id;
       $nowday = 24*60*60*365;
 	     $sdata['endtime'] = time()+$nowday;
@@ -6950,5 +6982,24 @@ function gzwx(){
         $this->success($juli);
     }
 
-
+    function getSubAreaInfo(){
+        $id = trim(IReq::get('id'));
+        $rs =  $this->mysql->getarr("select * from ".Mysite::$app->config['tablepre']."area where parent_id=".$id."");
+        if($rs){
+            $this->success($rs);
+        }
+        else{
+            $this->message("获取数据失败");
+        }
+    }
+    
+    function getareainfo(){
+        $pid =  intval(IReq::get('pid'));
+        $citylist =  $this->mysql->getarr("
+         select * from ".Mysite::$app->config['tablepre']."area where parent_id =
+         (select id from ".Mysite::$app->config['tablepre']."area where id = '{$pid}')");
+        
+        $data['areainfo'] = $citylist;
+        $this->success($data);
+    }
 }

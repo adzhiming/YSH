@@ -164,7 +164,7 @@ function showroutemap(){
 
 //driving汽车路径（起点，终点）  riding 骑行
 function directionReq(shoplng,shoplat,psylng,psylat){ 
-					
+		console.log(11);			
 	var requestlink = 'http://restapi.amap.com/v3/direction/driving?origin='+shoplng+','+shoplat+'&destination='+psylng+','+psylat+'&extensions=all&output=json&key='+map_webservice_key+'&callback=makemapmoreline';
     $.getScript(requestlink); 
 }

@@ -63,18 +63,29 @@ document.addEventListener('DOMContentLoaded', function () { setTimeout(loaded, 2
  <ul>
    <li><span>联系电话：</span><input type="text" id="shopphone" value=""  placeholder="请输入电话"></li>
   <li><span>店铺名称：</span><input type="text" id="shopname" value=""  placeholder="请输入店铺名称"></li>
-  <li><span>店铺地址：</span><input type="text" id="shopaddress" value="" placeholder="请输入店铺地址"></li>
-
-
+  <!-- <li><span>店铺地址：</span><input type="text" id="shopaddress" value="" placeholder="请输入店铺地址"></li> -->
+  <li><span>省</span>
+     <select name="province" id="province"><option value="0">请选择省份</option></select>
+  </li>
+  <li><span>市</span>
+    <select name="city" id="city"><option value="0">请选择城市</option></select>
+  </li>
+  <li><span>县/区</span>
+     <select name="county" id="county"><option value="0">请选择县区</option></select>
+  </li>
+  <li><span>店铺地址：</span><input type="text" id="shopaddress" value=""  placeholder="请输入街道门号"></li>
 
 
   <li><span>店铺类型：</span>
 <select name="shoptype" id="shoptype" style="width:50%;font-size:13px;" >
                  	<{foreach from=$catlist item=itv}>
-		 <option  value="<{$itv['cattype']}>_<{$itv['id']}>"   ><{$catarr[$itv['cattype']]}>-<{$itv['name']}></option>
+		 <option  value="<{$itv['cattype']}>_<{$itv['id']}>"  data-markettype="<{$itv['id']}>" ><{$catarr[$itv['cattype']]}>-<{$itv['name']}></option>
 													<{/foreach}>
 							
                       </select>	</li>
+     <li class='market'>
+						    
+	 </li>                 
      <li style="line-height: 50px;">
          <span style="float:left;">营业执照：</span>
          <img src="" width=50px height=50px id="imgshow" class="hide"/>
@@ -158,22 +169,24 @@ document.addEventListener('DOMContentLoaded', function () { setTimeout(loaded, 2
     }
 
     function nextSub(){
-
+    	 var market_id = 0
+    	 if ( $("#market_id").length > 0 ) { 
+    		 market_id = $("#market_id").val(); 
+    		} 
 		  $('#loading').show();
-
 		url = siteurl+'/index.php?ctrl=wxsite&action=sjapplyrz&datatype=json&random=@random@';
      	  url = url.replace('@random@', 1+Math.round(Math.random()*1000));
         $.ajax({         //script定义
                  url: url.replace('@random@', 1+Math.round(Math.random()*1000)),
                  dataType: "json",
                  async:true,
-                 data:{'shopphone':$("#shopphone").val(),'shopname':$("#shopname").val(),'shopaddress':$('#shopaddress').val(),'shoptype':$('#shoptype').val(),'shoplicense':$('#shoplicense').val()},
+                 data:{'shopphone':$("#shopphone").val(),'shopname':$("#shopname").val(),'province':$('#province').val(),'city':$('#city').val(),'county':$('#county').val(),'market_id':$('#market_id').val(),'shopaddress':$('#shopaddress').val(),'shoptype':$('#shoptype').val(),'shoplicense':$('#shoplicense').val()},
                  success:function(content) { 
                  	if(content.error ==  false){
 					
-				 
-					 window.location.href=  siteurl+'/index.php?ctrl=wxsite&action=shangjiaapply&shopphone='+content.msg.shopphone+'&shoplicense='+content.msg.shoplicense+'&shopname='+content.msg.shopname+'&shopaddress='+content.msg.shopaddress+'&shoptype='+content.msg.shoptype+'  ' ;
-						 
+                 		var jurl =  siteurl+'/index.php?ctrl=wxsite&action=shangjiaapply&shopphone='+content.msg.shopphone+'&shoplicense='+content.msg.shoplicense+'&shopname='+content.msg.shopname+'&shopaddress='+content.msg.shopaddress+'&shoptype='+content.msg.shoptype+'&province='+content.msg.province+'&city='+content.msg.city+'&county='+content.msg.county+'&market_id='+content.msg.market_id ;
+                        console.log(jurl)
+                        window.location.href= 	 jurl
 							
                  	}else{
                  		Tmsg(content.msg);
@@ -189,6 +202,135 @@ document.addEventListener('DOMContentLoaded', function () { setTimeout(loaded, 2
 	  $('#loading').show();
 }
 
+  
+    
+    $(document).ready(function(){  
+   	  var markettype = $("#shoptype").find("option:selected").attr("data-markettype");
+   	    getMarketList(markettype)
+   	  
+      $('#shoptype').change(function(){   
+   	  var markettype = $("#shoptype").find("option:selected").attr("data-markettype");
+   	     getMarketList(markettype)
+      }) 
+      
+     
+   })
+    function getMarketList(markettype){
+    	url = siteurl+'/index.php?ctrl=areaadminpage&action=shop&module=getMarketbyTypeid&datatype=json&random=@random@';
+    	url = url.replace('@random@', 1+Math.round(Math.random()*1000));
+    	$('.market').html('')
+        $.ajax({         //script定义
+               url: url.replace('@random@', 1+Math.round(Math.random()*1000)),
+               dataType: "json",
+               async:true,
+               data:{'markettype':markettype},
+               success:function(data) { 
+            	   if(data.code){
+            		   var marketlist = data.data
+            		   len = marketlist.length
+            		   var html ="<span>选择菜市场：</span><select name='market_id' id='market_id'>";
+            		   for(var i = 0 ;i<len;i++){
+            			   html =html +"<option value="+marketlist[i]['id']+">"+marketlist[i]['name']+"</option>"
+            		   }
+            		   html =html +"</select>";
+            	   }
+            	   $('.market').html(html)
+               }
+         })  
+    }
+    
+    
+  
+    $(document).ready(function(e){
+    	  //当省选中的话市也会跟着变去也会变。市和区都会加载一遍
+    	  FillSheng();//省
+    	  FillShi();//市
+    	  FillQu();//区
+    	  //给省加点击事件
+    	  $("#province").change(function(){
+    	      FillShi();//市
+    	      FillQu();//区
+    	    })
+    	  //给市加点击事件
+    	  $("#city").change(function(){
+    	      FillQu();//区
+    	   })
+    });
+    
+    function FillSheng()
+    {
+      var pid = "100000";
+      $.ajax({
+        async:false,
+        url: '<{ofunc type=url link="/wxsite/getareainfo/datatype/json"}>',
+        data:{pid:pid},
+        type:"POST",
+        dataType:"TEXT",
+        success: function(data){
+        	 var obj = JSON.parse(data); 
+        	 var areainfo = obj.msg.areainfo
+          //返回数据,根据行于行之间的分隔符来拆,拆完之后会返回一数组/行的数组
+          var str = "<option value='0' >请选择省份</option>";
+          //把行的数组遍历下用for循环...length长度
+          for(var i=0;i<areainfo.length;i++)
+          {
+            str += "<option value='"+areainfo[i]['id']+"' data-id='"+areainfo[i]['id']+"'>"+areainfo[i]['shortname']+"</option>";
+            $("#province").html(str);
+          }
+        }
+      });
+    }
+    
+    	//填充市的方法
+    	function FillShi()
+    	{
+    	  var pid =$ ("#province").find ("option:selected").attr ("data-id");
+    	  $.ajax({
+    	    async:false,//****
+    	    url: '<{ofunc type=url link="/wxsite/getareainfo/datatype/json"}>',
+    	    data:{pid:pid},
+    	    type:"POST",
+    	    dataType:"TEXT",
+    	    success: function(data){
+    	   	 var obj = JSON.parse(data); 
+    	   	 var areainfo = obj.msg.areainfo
+    	     //返回数据,根据行于行之间的分隔符来拆,拆完之后会返回一数组/行的数组
+    	     var str = "<option value='0' >请选择市</option>";
+    	     //把行的数组遍历下用for循环...length长度
+    	     for(var i=0;i<areainfo.length;i++)
+    	     {
+    	       str += "<option value='"+areainfo[i]['id']+"' data-id='"+areainfo[i]['id']+"'>"+areainfo[i]['shortname']+"</option>";
+    	       $("#city").html(str);
+    	     }
+    	   }
+    	  });
+    	  
+    	}
+    	//填充区的方法
+    	function FillQu()
+    	{
+    	  var pid = $ ("#city").find ("option:selected").attr ("data-id");
+    	  $.ajax({
+    	    async:false,
+    	    url: '<{ofunc type=url link="/wxsite/getareainfo/datatype/json"}>',
+    	    data:{pid:pid},
+    	    type:"POST",
+    	    dataType:"TEXT",
+    	    success: function(data){
+    	      	 var obj = JSON.parse(data); 
+    	      	 var areainfo = obj.msg.areainfo
+    	        //返回数据,根据行于行之间的分隔符来拆,拆完之后会返回一数组/行的数组
+    	        var str = "<option value='0' >请选择县/区</option>";
+    	        //把行的数组遍历下用for循环...length长度
+    	        for(var i=0;i<areainfo.length;i++)
+    	        {
+    	          str += "<option value='"+areainfo[i]['id']+"' data-id='"+areainfo[i]['id']+"'>"+areainfo[i]['shortname']+"</option>";
+    	          $("#county").html(str);
+    	        }
+    	      }
+    	  });
+    	
+    	} 
 </script>
  
 <{/block}>

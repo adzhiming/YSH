@@ -60,6 +60,11 @@
                         	      <{$itv['name']}>
                         	      <{/if}>
                         	 <{/if}>
+
+                        	 <{load_data assign="detsublist" table="shoptype"    where="id='<{$itv['id']}>'" }>
+                        	  <{foreach from=$detsublist['list'] key=subkey item =subitv}>
+                        	       <{$detlist['list'][$mykey]['subdet'][$subkey] = $subitv}>
+                        	  <{/foreach}>
                           <{/foreach}>
                           <{$items['det'] =$detlist['list']}>
                         	<a href="#" onclick='setattr(<{$items|@json_encode}>);'>设置</a>
@@ -177,7 +182,8 @@
 	           <tr class="shujudata"><td height=25px width=70%><img src="<^%=det[i].name%^>" width=15px height=15px class="imgshow"   ><input type="hidden" name="ids[]" value="<^%=det[i].id%^>"><input type="hidden"   name="name[]" value="<^%=det[i].name%^>"><input type="text" name="instro[]" value="<^%=det[i].instro%^>"><span onclick="uploads(this);" style="font-size:12px;">上传</span></td><td width=30%><a href="#" onclick="delhang(this);">delete</a></td></tr>
 	        <^%}else{%^>   
 	           <tr class="shujudata"><td height=25px width=70%><input type="hidden" name="ids[]" value="<^%=det[i].id%^>"><input type="text" name="name[]" value="<^%=det[i].name%^>"><input type="hidden" name="instro[]" value="<^%=det[i].instro%^>"></td><td width=30%><a href="#" onclick="delhang(this);">delete</a></td></tr>
-	        <^%}%^> 
+	           "<^%=det[i].subdet[0].name%^>"
+            <^%}%^> 
 	   <^%}%^> 
 	   <^%}%^> 
 	   <tr><td colspan="3"><input type="button" value="添加一行" class="button" onclick="addhang(this,'<^%=type%^>');"></td></tr>

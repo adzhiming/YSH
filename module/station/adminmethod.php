@@ -7,7 +7,7 @@ class method   extends adminbaseclass
 	    	$searchvalue = IReq::get('searchvalue');
  	    	 $status = intval(IReq::get('status'));
  	    	 $cityid = intval(IReq::get('cityid'));
-	       $where = '  where mem.uid > 0 and mem.groupid = 4  ';
+	         $where = '  where mem.uid > 0 and mem.groupid = 4  ';
 	     
 	    	 $data['searchvalue'] ='';
 	    	 $data['querytype'] ='';
@@ -43,8 +43,8 @@ class method   extends adminbaseclass
 	    	$pageshow->setpage(IReq::get('page'),10);
 	    	 //order: id  dno 订单编号 shopuid 店铺UID shopid 店铺ID shopname 店铺名称 shopphone 店铺电话 shopaddress 店铺地址 buyeruid 购买用户ID，0未注册用户 buyername
 	    	 //
-	    	 
-	    	$data['stationlist'] = $this->mysql->getarr("select * from ".Mysite::$app->config['tablepre']."admin as mem left join  ".Mysite::$app->config['tablepre']."stationadmininfo as st on mem.uid = st.uid   ".$where." order by mem.uid desc limit ".$pageshow->startnum().", ".$pageshow->getsize()."");
+
+	    	$data['stationlist'] = $this->mysql->getarr("select * from ".Mysite::$app->config['tablepre']."admin as mem left join  ".Mysite::$app->config['tablepre']."stationadmininfo as st on mem.uid = st.uid   ".$where." order by mem.uid desc limit {$pageshow->startnum()},{$pageshow->getsize()}");
 	    	$shuliang  = $this->mysql->counts("select * from ".Mysite::$app->config['tablepre']."admin as mem left join  ".Mysite::$app->config['tablepre']."stationadmininfo as st on mem.uid = st.uid   ".$where." ");
 	    	$pageshow->setnum($shuliang);
 	    	$data['pagecontent'] = $pageshow->getpagebar($link);
@@ -55,25 +55,32 @@ class method   extends adminbaseclass
 		 $id = intval(IReq::get('id'));
 		 $data['id'] = $id;
 		 $data['citylist'] = array();
-		 $temparr =	$this->mysql->getarr("select * from ".Mysite::$app->config['tablepre']."area where   id > 0 and parent_id = 0  order by orderid asc    ");
-		 if( !empty($temparr) ){
-			 foreach($temparr as $key=>$value){
-				 $checkinfo = $this->mysql->select_one("select * from ".Mysite::$app->config['tablepre']."stationadmininfo where cityid='".$value['id']."' "); 
-				 if( empty($checkinfo) ){
-					  $data['citylist'][] = $value;
-				 } 
-			 }
-		 } 
+		 
+		 //找出以开通的区 
+		 $str ="";
+		 $rs = $this->mysql->getarr("select * from ".Mysite::$app->config['tablepre']."stationadmininfo order by id");
+		 if($rs){
+		     foreach ($rs as $v){
+		         if($str ==""){
+		             $str = $v["cityid"];
+		         }
+		         else
+		         {
+		             $str = $str . "," .$v["cityid"];
+		         }
+		     }
+		 }
+		 $data["countylist"] = $str;
 		 Mysite::$app->setdata($data);
 	 }
 	 //城市列表
 	  function citylist(){
-	  
+	   
         $newlink= ''; 
-        $where = "  id > 0 and parent_id = 0   ";
+        $where = "  id > 0  ";
         $page=new page();//实例化分页类
         $page->setpage(intval(IReq::get('page')),10);//赋初始值（偏移值、每页个数）
-        $data['citylist']=	$this->mysql->getarr("select * from ".Mysite::$app->config['tablepre']."area where   ".$where."   order by orderid asc    limit ".$page->startnum().", ".$page->getsize());
+        $data['citylist']=	$this->mysql->getarr("select * from ".Mysite::$app->config['tablepre']."area where   ".$where."   order by id asc    limit ".$page->startnum().", ".$page->getsize());
         $pageCount	=$this->mysql->counts("select id from ".Mysite::$app->config['tablepre']."area where   ".$where." order by id desc");
         $page->setnum($pageCount);//总页数
         $pagelink = IUrl::creatUrl('adminpage/station/module/citylist'.$newlink);
@@ -122,7 +129,7 @@ limitalert();
 			if(empty($data['procode']))	$this->message('获取区域编码失败2',$link);
         
 			
-		    $adreinfo = $this->mysql->select_one("select * from ".Mysite::$app->config['tablepre']."area where adcode='".$data['adcode']."' ");  
+		    $adreinfo = $this->mysql->select_one("select * from ".Mysite::$app->config['tablepre']."area where id='".$data['adcode']."' ");  
 			if( !empty($adreinfo) ){
 				$this->message('此城市已添加过，请勿重新添加');
 			}
@@ -158,7 +165,9 @@ limitalert();
 		    $stationaddress = trim(IReq::get('stationaddress'));
 		    $orderid = intval(IReq::get('orderid'));
 		    $stationis_open = trim(IReq::get('stationis_open')); 
-		    $cityid = trim(IReq::get('cityid')); 
+		    $provinceid = trim(IReq::get('provinceid')); 
+		    $cityid = trim(IReq::get('cityid'));
+		    $countyid = trim(IReq::get('countyid'));
 			//如果不允许分站自行设置优惠促销，则删除该分站下的促销活动
 			if($is_selfsitecx == 0){
 				$this->mysql->delete(Mysite::$app->config['tablepre'] . 'rule', "cityid = '$cityid'");
@@ -167,11 +176,11 @@ limitalert();
 			   
  		   if(empty($uid))
 		   {
-		   	  
+		     
 		   	  if(empty($password)) $this->message('member_emptypwd'); 
 		   	  $testinfo = $this->mysql->select_one("select * from ".Mysite::$app->config['tablepre']."admin where username='".$username."' ");  
 		   	  if(!empty($testinfo)) $this->message('member_repeatname'); 
-			  
+		   	 
 			  if(empty($stationname)){
 				   $this->message('分站名称不能为空');
 			   }
@@ -181,14 +190,20 @@ limitalert();
 			   if(empty($stationphone)){
 				   $this->message('分站负责人电话不能为空');
 			   } 
+			   if(empty($provinceid)){
+				   $this->message('请选择所属省份');
+			   }
 			   if(empty($cityid)){
-				   $this->message('请选择所属城市');
+			       $this->message('请选择所属城市');
 			   }
-			   $checkinfo = $this->mysql->select_one("select * from ".Mysite::$app->config['tablepre']."stationadmininfo where cityid='".$cityid."' ");  
+			   if(empty($countyid)){
+			       $this->message('请选择所属区');
+			   } 
+			   $checkinfo = $this->mysql->select_one("select * from ".Mysite::$app->config['tablepre']."stationadmininfo where countyid='".$countyid."' ");  
 			   if( !empty($checkinfo) ){
-				   $this->message('所选城市已占用，请选择其他城市');
+				   $this->message('所选地区已占用，请选择其他区');
 			   }
-			   
+			 
 			  /*  if(empty($stationlnglat)){
 				   $this->message('请设置分站地图坐标');
 			   }  */
@@ -197,11 +212,12 @@ limitalert();
 			   }
 			
 			  
-		   	 	$arr['username'] = $username; 
+		   	  $arr['username'] = $username; 
 	     	  $arr['password'] = md5($password);  
 	     	  $arr['time'] = time();   
-	     	  $arr['groupid'] = 4;   
-	     	  $this->mysql->insert(Mysite::$app->config['tablepre'].'admin',$arr);  
+	     	  $arr['groupid'] = 4;  
+	     	  
+	          $this->mysql->insert(Mysite::$app->config['tablepre'].'admin',$arr); 
 			  $stationuid = $this->mysql->insertid();   
 				
 			  $adddata = array();
@@ -209,7 +225,9 @@ limitalert();
 			  $adddata['stationname'] = $stationname;
 			  $adddata['stationusername'] = $stationusername;
 			  $adddata['stationphone'] = $stationphone;
+			  $adddata['provinceid'] = $provinceid;
 			  $adddata['cityid'] = $cityid;
+			  $adddata['countyid'] = $countyid;
 			  $adddata['stationlnglat'] = $stationlnglat;
 			  $adddata['stationaddress'] = $stationaddress;
 			  $adddata['orderid'] = $orderid;
@@ -381,7 +399,7 @@ limitalert();
 	       	   $newlink .= '/cityid/'.$cityid;
  	    	} 
 	     
-	     $data['orderstatus'] = '';
+	        $data['orderstatus'] = '';
 
 	    	if($orderstatus > 0)
 	    	{
@@ -405,7 +423,7 @@ limitalert();
 	    	$shuliang  = $this->mysql->counts("select ord.*,mb.username as acountname from ".Mysite::$app->config['tablepre']."order as ord left join  ".Mysite::$app->config['tablepre']."member as mb on mb.uid = ord.buyeruid   ".$where." ");
 	    	$pageshow->setnum($shuliang);
 	    	$data['pagecontent'] = $pageshow->getpagebar($link);
-	   	$data['list'] = array();
+	   	    $data['list'] = array();
 			  if($orderlist)
 			  {
 				foreach($orderlist as $key=>$value)

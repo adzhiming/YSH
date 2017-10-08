@@ -75,7 +75,7 @@ function nextSub(){
                  dataType: "json",
                  async:true,
                  data:{'maphone':'<{$shopphone}>','shopname':'<{$shopname}>','shopaddress':'<{$shopaddress}>','shoptype':'<{$shoptype}>','shoplicense':'<{$shoplicense}>','username':$("#username").val(),
-				 'password':$("#pwd").val(),'password2':$("#repwd").val(),'subtype':2,'laiyuan':1},
+				 'password':$("#pwd").val(),'password2':$("#repwd").val(),'subtype':2,'laiyuan':1,'province':'<{$shopaddress}>','province':'<{$province}>','city':'<{$city}>','county':'<{$county}>','admin_id':'<{$county}>','market_id':'<{$market_id}>'},
                  success:function(content) { 
                  	if(content.error ==  false){
 					

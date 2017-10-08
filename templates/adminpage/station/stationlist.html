@@ -5,7 +5,6 @@
  <{block name=controlname}>分站列表<{/block}>
  <{block name=bodylist}>
  <div style="width:auto;overflow-x:hidden;overflow-y:auto">
-
       	<div class="search">
 
 
@@ -13,13 +12,13 @@
             <div class="search_content">
             	 
             	 <form method="post" name="form1" action="<{ofunc type=url link="/adminpage/station/module/stationlist"}>">
-				  <select name="cityid">
-					<option value="0">全部</option> 
-                      	 <{load_data assign="arealist" table="area"    fileds="*"  where=" parent_id=0 " orderby=" orderid asc " limit="1000" }>  
+				     <!-- <select name="cityid">
+					    <option value="0">全部</option> 
+                      	 <{load_data assign="arealist" table="area"    fileds="*"  where=" id >10000 " orderby=" id asc " limit="1000" }>  
 							<{foreach from=$arealist['list'] key=myid  item=items}>  
 							   <option value="<{$items['adcode']}>" <{if $cityid == $items['adcode']}>selected<{/if}>><{$items['name']}></option>
 							<{/foreach}> 
-                      </select>
+                      </select> -->
 				 
             	  <label>查询类型：</label>
             	  <select name="querytype">
@@ -72,6 +71,7 @@
                         <th align="center">分站账号</th>
                         <th align="center">分站名称</th>
                         <th align="center">所属城市</th>
+                        <th align="center">所属区/县</th>
                         <th align="center">分站负责人</th>
                         <th align="center">分站电话</th>
                         <th align="center">分站地址</th>
@@ -85,19 +85,25 @@
 
                      <tbody>
 
-					 <{if empty($stationlist) }> 
+					 <{if empty($stationlist) }>
 						 <tr class="s_out" onmouseover="this.bgColor='#F5F5F5';" onmouseout="this.bgColor='ffffff';" bgcolor="#ffffff">
 							<td colspan=10 align="center">暂无数据  </td>
 						  </tr>
+						  
 					<{else}>
+					
                        <{foreach from=$stationlist item=items}>
+                       
                       <tr class="s_out" onmouseover="this.bgColor='#F5F5F5';" onmouseout="this.bgColor='ffffff';" bgcolor="#ffffff">
                         <td align="center" ><input type="checkbox" name="id[]" value="<{$items['id']}>"></td>
                         <td align="center"><{$items['id']}>  </td>
                         <td align="center"> <{$items['username']}> </td>
                         <td align="center"> <{$items['stationname']}> </td>
 						 <td align="center">
-						<{load_data assign="cityinfo" table="area" type="one" where="adcode='<{$items['cityid']}>'" fileds="name" }>
+						<{load_data assign="cityinfo" table="area" type="one" where="id='<{$items['cityid']}>'" fileds="name" }>
+						<{$cityinfo['name']}> </td>
+						<td align="center">
+						<{load_data assign="cityinfo" table="area" type="one" where="id='<{$items['countyid']}>'" fileds="name" }>
 						<{$cityinfo['name']}> </td>
                         <td align="center"> <{$items['stationusername']}> </td>
                         <td align="center"> <{$items['stationphone']}> </td>

@@ -70,7 +70,7 @@
 								<{$userinfo['username']}>
 							</td>
 							<td align="center"><{if $items['is_pass']==1}>是<{else}><a onclick="return remind(this);" href="<{ofunc type=url link="/areaadminpage/shop/module/passhop/id/<{$items['id']}>/admin_id/<{$items['admin_id']}>/datatype/json"}>">通过审核</a><{/if}></td>
-							<{load_data assign="arealist" table="area"  type="one"   where="adcode=<{$items['admin_id']}>" orderby=" orderid asc " limit="1000" }>
+							<{load_data assign="arealist" table="area"  type="one"   where="id=<{$items['city']}>" orderby=" id asc " limit="1000" }>
 							<td align="center"><{$arealist['name']|default:'未设置所属城市'}></td>
 							<td align="center">
 								<a onclick="return remind(this);" href="<{ofunc type=url link="/areaadminpage/shop/module/delshop/id/<{$items['id']}>"}>"><img style="width:auto;height:auto;" src="<{$siteurl}>/templates/<{$tempdir}>/public/images/admin/del.jpg"></a></td>

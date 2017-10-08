@@ -26,11 +26,14 @@
 						<li><span>店铺名称：</span><input type="text" name="shopname" id="shopname"  value=""></li>
 						<li><span>会员名称：</span><input type="text" name="username" id="username" value=""></li>
 						<li><span>店铺类型：</span>
-							<select name="shoptype">
+							<select name="shoptype"  id="shoptypey">
  								<{foreach from=$catlist item=itv}>
-						<option value="<{$itv['cattype']}>_<{$itv['id']}>"   ><{$catarr[$itv['cattype']]}>-<{$itv['name']}></option>
+						<option value="<{$itv['cattype']}>_<{$itv['id']}>"  data-markettype="<{$itv['id']}>"><{$catarr[$itv['cattype']]}>-<{$itv['name']}></option>
 								<{/foreach}>
 							</select>
+						</li>
+						<li class='markety'>
+						    
 						</li>
 					</ul>
 					<div class="addShopSingBut">
@@ -51,14 +54,18 @@
 						<li><span>登录密码：</span><input name="password" id="password"  type="text" value=""></li>
 						<li><span>确认密码：</span><input name="password2" id="password2"  type="text" value=""></li>
 						<li><span>店铺类型：</span>
-							<select name="shoptype">
+							<select name="shoptype" id="shoptypem">
 							<{foreach from=$catlist item=itv}>
-								 <option value="<{$itv['cattype']}>_<{$itv['id']}>"   ><{$catarr[$itv['cattype']]}>-<{$itv['name']}></option>
+								 <option value="<{$itv['cattype']}>_<{$itv['id']}>"  data-markettype="<{$itv['id']}>" ><{$catarr[$itv['cattype']]}>-<{$itv['name']}></option>
 							<{/foreach}>							</select>
+						</li>
+						<li class='marketm'>
+						    
 						</li>
 					</ul>
 					<div class="addShopSingBut">
 					<input type="hidden" name="subtype" value="2">
+					<input type="hidden" name="markettype" value="0">
 					<input type="submit" value="确认提交"></div>
 					</form>
 				</div>
@@ -72,6 +79,67 @@
 </div>
 
  <div class="clear"></div>
-    
-  
+<script>
+function getMarketListy(markettype){
+	url = siteurl+'/index.php?ctrl=areaadminpage&action=shop&module=getMarketbyTypeid&datatype=json&random=@random@';
+	url = url.replace('@random@', 1+Math.round(Math.random()*1000));
+	$('.markety').html('')
+    $.ajax({         //script定义
+           url: url.replace('@random@', 1+Math.round(Math.random()*1000)),
+           dataType: "json",
+           async:true,
+           data:{'markettype':markettype},
+           success:function(data) { 
+        	   if(data.code){
+        		   var marketlist = data.data
+        		   len = marketlist.length
+        		   var html ="<span>选择菜市场：</span><select name='market_id' id='market_id'>";
+        		   for(var i = 0 ;i<len;i++){
+        			   html =html +"<option value="+marketlist[i]['id']+">"+marketlist[i]['name']+"</option>"
+        		   }
+        		   html =html +"</select>";
+        	   }
+        	   $('.markety').html(html)
+           }
+     })  
+}
+function getMarketListm(markettype){
+	url = siteurl+'/index.php?ctrl=areaadminpage&action=shop&module=getMarketbyTypeid&datatype=json&random=@random@';
+	url = url.replace('@random@', 1+Math.round(Math.random()*1000));
+	$('.marketm').html('')
+    $.ajax({         //script定义
+           url: url.replace('@random@', 1+Math.round(Math.random()*1000)),
+           dataType: "json",
+           async:true,
+           data:{'markettype':markettype},
+           success:function(data) { 
+        	   if(data.code){
+        		   var marketlist = data.data
+        		   len = marketlist.length
+        		   var html ="<span>选择菜市场：</span><select name='market_id' id='market_id'>";
+        		   for(var i = 0 ;i<len;i++){
+        			   html =html +"<option value="+marketlist[i]['id']+">"+marketlist[i]['name']+"</option>"
+        		   }
+        		   html =html +"</select>";
+        	   }
+        	   $('.marketm').html(html)
+           }
+     }) 
+}
+$(document).ready(function(){  
+	 var markettype = $("#shoptypey").find("option:selected").attr("data-markettype");
+	  getMarketListy(markettype)
+	   var markettype = $("#shoptypem").find("option:selected").attr("data-markettype");
+	  getMarketListm(markettype)
+   $('#shoptypey').change(function(){   
+	  var markettype = $("#shoptypey").find("option:selected").attr("data-markettype");
+	  getMarketListy(markettype)
+   }) 
+   
+   $('#shoptypem').change(function(){   
+	  var markettype = $("#shoptypem").find("option:selected").attr("data-markettype");
+	  getMarketListm(markettype)
+   })
+}) 
+</script>  
 <{/block}>

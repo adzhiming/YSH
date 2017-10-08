@@ -124,15 +124,15 @@ document.addEventListener('DOMContentLoaded', function () { setTimeout(loaded, 2
 		 <div class="alropeCon">
 			<div class="alropeTit">
 				<div class="alropeTitL">
-					<span>已开通城市</span>
+					<span>选择地区</span>
 				</div>
 			</div>
 			<div class="alropeBox">
-				<ul>
-					<{load_data assign="arealist" table="area"   fileds="*"   limit="1000" orderby=" orderid asc" where=" id > 0 and parent_id = 0 "}> 
+				<ul class="arealist">
+					<{load_data assign="arealist" table="area"   fileds="*"   limit="1000" orderby="  id asc" where=" id > 0 and level =1 "}> 
  					<{if !empty($arealist['list']) }>
 						<{foreach from=$arealist['list'] item=items }>
-							<li cityid="<{$items['adcode']}>" <{if $CITY_ID == $items['adcode'] }> class="curaA" <{/if}> ><{$items['name']}></li>
+							<li cityid="<{$items['id']}>" onclick = getSubAreaInfo("<{$items['id']}>","<{$items['level']}>") <{if $CITY_ID == $items['id'] }> class="curaA" <{/if}> ><{$items['name']}></li>
 						<{/foreach}>
 					<{/if}>
 				</ul>
@@ -200,21 +200,7 @@ function func_getadcode(datas){
  		choiceaddress(lat,lng,address,adcode);
 	}
 }  
-$('#selectCityList ul li').bind('click',function(){
 
-	$('#selectCityList ul li').removeClass('curaA');
-	$(this).addClass('curaA');
-	$('#selectCityList').hide();
-	$('#cityname').text($(this).text());
-	var cityid = $(this).attr('cityid');
-	$('input[name="cityId"]').val(cityid);
-	
-	var searchval  = $("#wmrSearchKeywords").val();
- 	if( searchval != '' && searchval != undefined ){
-		func_searchinputAdr();
-	}
-
-});  
 $('.toptitBox .adr_toptitL').bind("click", function() {    
 		if( backtype == 1 ){
 			$("#searchAddresslist").hide();
@@ -254,11 +240,60 @@ function choiceaddress(lat,lng,address,adcode){
        });  
 		
 	}
+	
+function getSubAreaInfo(id,level){
+	if(id !='' && level <3){
+		 $.ajax({
+	           type: 'GET', 
+	           url: '<{ofunc type=url link="/wxsite/getSubAreaInfo/datatype/json"}>',
+	           async:false,
+	 		   data: {'id':id},
+	           dataType: 'json',success: function(content) { 
+	             if(content.error == false){
+	            	    var list = content.msg
+	            	    html = ""
+	            	    for(var i=0;i<list.length;i++){
+	            	    	html = html +"<li cityid=''"+list[i]['id']+" onclick = getSubAreaInfo("+list[i]['id']+","+list[i]['level']+")>"+list[i]['name']+"</li>"
+	            	    }
+	            	    $('.arealist').html(html)
+	            	    $('#selectCityList').show();
+	            	    $('#selectCityList').css({'position':'absolute','top':'84px','width':'100%','background':'#FFF','zIndex':'9999','height':($(window).height()-84)+'px'}); 
+	           		 selectaddscorl = scorllerfreach(selectaddscorl,'selectCityList');
+	 					 //$.cookie("cook_adrlistcookie",adrlistcookieList,{path: "/", expiress: 365*10});
+						
+	             }else{
+	             	  newTmsg(content.msg);
+	             }
+		    	  },
+	           error: function(content) { 
+					newTmsg('提交数据失败');
+		        }
+	       });
+	}
+	else{
+		$('#selectCityList ul li').bind('click',function(){
+
+			$('#selectCityList ul li').removeClass('curaA');
+			$(this).addClass('curaA');
+			$('#selectCityList').hide();
+			$('#cityname').text($(this).text());
+			var cityid = $(this).attr('cityid');
+			$('input[name="cityId"]').val(cityid);
+			
+			var searchval  = $("#wmrSearchKeywords").val();
+		 	if( searchval != '' && searchval != undefined ){
+				func_searchinputAdr();
+			}
+
+		});  
+	}
+}	
+	
 $('#searchButton').bind('click',function(){
 	if( lockclick() ){
 		$(".clearSerchInput").show();
 		// $("#showAdrlist").html('');
-		 $('#selectCityList').hide();
+		 //$('#selectCityList').hide();
 		 backtype = 1;
 		 $('#searchAddresslist').show();
 		 $('#searchAddresslist').css({'position':'absolute','top':'84px','width':'100%','background':'#FFF','zIndex':'9999','height':($(window).height()-84)+'px'}); 
@@ -269,7 +304,7 @@ $("#wmrSearchKeywords").bind('click',function(){
 	if( lockclick() ){
 		 $(".clearSerchInput").show();
 		// $("#showAdrlist").html('');
-		 $('#selectCityList').hide();
+		 //$('#selectCityList').hide();
 		 backtype = 1;
 		 $('#searchAddresslist').show();
 		 $('#searchAddresslist').css({'position':'absolute','top':'84px','width':'100%','background':'#FFF','zIndex':'9999','height':($(window).height()-84)+'px'}); 
@@ -297,7 +332,6 @@ function func_searchinputAdr(){
 								 
 }
 function showaddresslist(data){
-	console.log(data);
 	var datas = eval(data); 
  	if(datas.info == "OK"  && datas.status == 1  && datas.pois.length > 0 ){
 		$('#showAdrlist').html('');
@@ -305,7 +339,7 @@ function showaddresslist(data){
  		var showhtmls = '';
 		if( addresslist != '' ){
 			$('#searchHist').hide();
-			$('#selectCityList').hide();
+			//$('#selectCityList').hide();
 			$.each(addresslist, function(i, newobj) {
 			  showhtmls += '<li address="'+newobj.name+'" datalnglat="'+newobj.location+'"   ><div class="entaddL"><h3>'+newobj.name+'</h3><span>'+newobj.address+'</span></div><div class="entaddR"><span></span></div></li>';
 			});

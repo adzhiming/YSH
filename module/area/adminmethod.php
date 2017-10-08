@@ -566,7 +566,7 @@ class method   extends adminbaseclass
 	    $citylist =  $this->mysql->getarr("
          select * from ".Mysite::$app->config['tablepre']."area where parent_id =
          (select id from ".Mysite::$app->config['tablepre']."area where id = '{$pid}')");
-	    
+
 	    $data['areainfo'] = $citylist;
 	    $this->success($data);
 	}

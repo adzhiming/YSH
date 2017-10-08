@@ -20,7 +20,8 @@ class adminbaseclass
 	 	     $this->mysql =  new mysql_class(); 
 	 	     $this->memberCls = new memberclass($this->mysql);  
 	 	     $this->pageCls = new page();
-	 	     $this->admin =  $this->memberCls->getadmininfo();  
+	 	     $this->admin =  $this->memberCls->getadmininfo();
+	 	     
 	 	     $this->digui = array();//递归处理数组
 	 	     $link = IUrl::creatUrl('member/adminlogin'); 
 	 	     if($this->admin['uid'] == 0) $this->message('member_nologin',$link);
