@@ -1724,7 +1724,7 @@ if(  empty($this->member['uid']) || $this->member['uid'] ==  0){
    	
 //   	$this->checkwxweb();
 //   	$this->checkwxuser();
-	
+    
     $wxuser = $this->mysql->select_one("select * from ".Mysite::$app->config['tablepre']."wxuser where uid='".$this->member['uid']."'");
 	 $data['wxuserbangd'] =  $wxuser['is_bang'];
 		   
@@ -1733,6 +1733,7 @@ if(  empty($this->member['uid']) || $this->member['uid'] ==  0){
 		$this->message('',$link);
 	}
  */
+	 
    	 $data['juanshu'] = $this->mysql->counts("select *  from ".Mysite::$app->config['tablepre']."juan where uid='".$this->member['uid']."'  and status = 1 order by id asc limit 0,50"); 
    	 $data['wxjuanshu'] = $this->mysql->counts("select *  from ".Mysite::$app->config['tablepre']."wxuserjuan where uid='".$this->member['uid']."'  and lqstatus = 1 order by id asc limit 0,50");
    	Mysite::$app->setdata($data); 
@@ -3479,15 +3480,52 @@ function makeorder(){
 	
 	//更新店铺信息
 	function shopeditCommit(){
-		var_dump($_POST);
-		die;
-	}
-	
-	//产品管理
-	function product_list(){
+	    $link = IUrl::creatUrl('member/login');
+	    if($this->member['uid'] == 0 && $this->admin['uid'] == 0)  $this->message('未登陆',$link);
+	    $shopid = ICookie::get('adminshopid');
+	    
+	    $shopname = IFilter::act(IReq::get('shopname'));
+	    $username = IFilter::act(IReq::get('username'));
+	    $phone = IFilter::act(IReq::get('phone'));
+	    $maphone = IFilter::act(IReq::get('maphone'));
+	    $email = IFilter::act(IReq::get('email'));
+	    $address = IFilter::act(IReq::get('address'));
+	    $baidumap = IFilter::act(IReq::get('baidumap'));
+	    $starttime = IFilter::act(IReq::get('starttime'));
+	    $is_open = IFilter::act(IReq::get('is_open'));
+	    $intr_info = IFilter::act(IReq::get('intr_info'));
+	    $notice_info = IFilter::act(IReq::get('notice_info'));
+	    $baidumap = explode(",", $baidumap);
+	    
+	    $data["shopname"] = $shopname;
+	   // $data["username"] = $username;
+	    $data["phone"] = $phone;
+	    $data["maphone"] = $maphone;
+	    $data["email"] = $email;
+	    $data["address"] = $address;
+	    $data["lat"] = $baidumap[0];
+	    $data["lng"] = $baidumap[1];
+	    $data["starttime"] = $starttime;
+	    $data["is_open"] = $is_open;
+	    $data["intr_info"] = $intr_info;
+	    $data["notice_info"] = $notice_info;
+	    $rs = false;
+	    if(!empty($shopid)){
+	        $rs = $this->mysql->update(Mysite::$app->config['tablepre'].'shop',$data,"id='".$shopid."'");
+	    }
+	    $url ="index.php?ctrl=wxsite&action=shopset";
+	    if(false !== $rs){
+	        $this->success("成功",$url);
+	    }
+	    else{
+	        $this->message("失败",$url);
+	    }
+	}  
+	//上架产品管理
+	function product_list_on(){
 	    $this->checkwxweb();
 	    $this->checkwxuser();
-	    $link = IUrl::creatUrl('wxsite/shoplist');
+	    $link = IUrl::creatUrl('wxsite/login');
 	    if($this->member['uid'] == 0)  $this->message('',$link);
 	    $sql = "select id from ".Mysite::$app->config['tablepre']."shop 
                 where uid='".$this->member['uid']."'  limit 1";
@@ -3500,7 +3538,24 @@ function makeorder(){
 	    $data['goodslist'] =$goods;
 	    Mysite::$app->setdata($data);
 	}
-	
+	//下架产品管理
+	function product_list_off(){
+	    $type = empty(IReq::get('type'))?1:IReq::get('type');
+	    $this->checkwxweb();
+	    $this->checkwxuser();
+	    $link = IUrl::creatUrl('wxsite/login');
+	    if($this->member['uid'] == 0)  $this->message('',$link);
+	    $sql = "select id from ".Mysite::$app->config['tablepre']."shop
+                where uid='".$this->member['uid']."'  limit 1";
+	    $shopinfo = $this->mysql->select_one($sql);
+	    $shopid = $shopinfo['id'];
+	    $sql = "select * from ".Mysite::$app->config['tablepre']."goods
+                where shopid='".$shopid."' order by id";
+	    
+	    $goods = $this->mysql->getarr($sql);
+	    $data['goodslist'] =$goods;
+	    Mysite::$app->setdata($data);
+	}
 	//订单管理
 	function orderManage(){
 	    $data['order'] = '';
@@ -4309,7 +4364,6 @@ exit;
 	 }
 	 
 	function login(){
-	 
 		if( $this->member['uid'] > 0 ){
 						$link = IUrl::creatUrl('wxsite/member');
 	    	            $this->message('',$link); 
@@ -6172,7 +6226,7 @@ function sjapplyrz(){
 	if(empty($shopphone)) $this->message("请填写联系电话");
 	if(!empty($shopphone)&&!(IValidate::phone($shopphone)))$this->message('errphone');
 	$checkphone = $this->mysql->select_one("select * from ".Mysite::$app->config['tablepre']."member  where phone = ".$shopphone." ");
-	if(!empty($checkphone)) $this->message("手机号已存在"); 
+	//if(!empty($checkphone)) $this->message("手机号已存在"); 
 	if(empty($shopname)) $this->message("请填写店铺名称");
 	$checkshopname = $this->mysql->select_one("select * from ".Mysite::$app->config['tablepre']."shop  where shopname = '".$shopname."' ");
 	if(!empty($checkshopname)) $this->message("店铺名字已存在"); 
@@ -6208,7 +6262,7 @@ function sjapplyrz(){
 	if(empty($shopphone)) $this->message("请填写联系电话",$link);
 	if(!empty($shopphone)&&!(IValidate::phone($shopphone)))$this->message('errphone',$link);
 	$checkphone = $this->mysql->select_one("select * from ".Mysite::$app->config['tablepre']."member  where phone = ".$shopphone." ");
-	if(!empty($checkphone)) $this->message("手机号已存在",$link); 
+	//if(!empty($checkphone)) $this->message("手机号已存在",$link); 
 	if(empty($shopname)) $this->message("请填写店铺名称",$link);
 	$checkshopname = $this->mysql->select_one("select * from ".Mysite::$app->config['tablepre']."shop  where shopname = '".$shopname."' ");
 	if(!empty($checkshopname)) $this->message("店铺名字已存在",$link); 
@@ -6347,7 +6401,7 @@ function lifeass(){
 	  
 			  
 			  
-			  
+			
 			  $this->success('success');
 		}elseif($subtype ==  2){
 			/*检测*/
@@ -6360,16 +6414,12 @@ function lifeass(){
        if(empty($sdata['shopname']))  $this->message('shop_emptyname');
 		   $shopinfo = $this->mysql->select_one("select * from ".Mysite::$app->config['tablepre']."shop where  shopname='".$sdata['shopname']."'  ");
 			 if(!empty($shopinfo)) $this->message('shop_repeatname');
-			 $password2 = IReq::get('password2');
+			 $password2 = IReq::get('password2');  
 		   if($password2 != $data['password']) $this->message('member_twopwdnoequale');
 			 $uid = 0;
-			 if($this->memberCls->regester($data['email'],$data['username'],$data['password'],$data['phone'],3)){
-			 	$uid = $this->memberCls->getuid(); 
-			 	$this->mysql->update(Mysite::$app->config['tablepre'].'member',array('admin_id'=>$admin_id),"uid='".$uid."'");
-			 	
-			 }else{
-			 	 $this->message($this->memberCls->ero());
-			 }
+			 $uid = ICookie::get('uid');
+			 if(empty($uid)) $this->checkmemberlogin();
+			 $this->mysql->update(Mysite::$app->config['tablepre'].'member',array('admin_id'=>$admin_id),"uid='".$uid."'");
       $sdata['uid'] = $uid;
       $sdata['maphone'] =  $data['phone'];
       $sdata['addtime'] = time();
@@ -7001,5 +7051,29 @@ function gzwx(){
         
         $data['areainfo'] = $citylist;
         $this->success($data);
+    }
+    
+    //根据市场类型获取市场信息
+    function getMarketbyTypeid(){
+        $typeid = IReq::get('markettype');
+        if($typeid){
+            $marketlist= $this->mysql->getarr("select * from ".Mysite::$app->config['tablepre']."market where typeid=".$typeid."  ");
+            if($marketlist){
+                $data = array();
+                $data['code'] = 1;
+                $data['data'] = $marketlist;
+            }
+            else{
+                $data = array();
+                $data['code'] = 0;
+                $data['data'] = "";
+            }
+        }
+        else{
+            $data = array();
+            $data['code'] = 0;
+            $data['data'] = '';
+        }
+        echo json_encode($data);die;
     }
 }

@@ -628,7 +628,7 @@ class method   extends areaadminbaseclass
 		 if(empty($id)) $this->message('shop_noexit');
 		  $tempattr  = $this->mysql->select_one("select * from ".Mysite::$app->config['tablepre']."shop  where id=".$id." ");
 	    if(empty($tempattr))$this->message('shop_noexit');
-	     if($tempattr['admin_id'] != $this->admin['cityid']) $this->message('shop_noownadmin');
+	     if($tempattr['admin_id'] != $this->admin['countyid']) $this->message('shop_noownadmin');
 	  	$this->mysql->update(Mysite::$app->config['tablepre'].'shop',$data,"id='".$id."'");
 	  	$cdata['group'] = 3;
 	  	$this->mysql->update(Mysite::$app->config['tablepre'].'member',$cdata,"uid='".$tempattr['uid']."'");
@@ -708,7 +708,7 @@ class method   extends areaadminbaseclass
 			 $tempattr  = $this->mysql->select_one("select * from ".Mysite::$app->config['tablepre']."shop  where id=".$shopid." ");
 			 $link = IUrl::creatUrl('areaadminpage/shop');
 	    if(empty($tempattr))$this->message('shop_noexit',$link);
-	    if($tempattr['admin_id'] != $this->admin['cityid']) $this->message('shop_noownadmin',$link);
+	    if($tempattr['admin_id'] != $this->admin['countyid']) $this->message('shop_noownadmin',$link);
 	  ICookie::set('adminshopid',$shopid,86400);
 		$link = IUrl::creatUrl('shopcenter/useredit');
     $this->refunction('',$link);

@@ -83,7 +83,7 @@
 <div class="panel-list">
     <ul>
         <li onclick="dolink('<{ofunc type=url link="/wxsite/shopset"}>');"><a><span class="icon-gears "></span>基本设置<i class="icon-angle-right"></i></a></li>
-        <li onclick="dolink('<{ofunc type=url link="/wxsite/product_list"}>');"><a><span class="icon-home"></span>产品管理<i class="icon-angle-right"></i></a></li>
+        <li onclick="dolink('<{ofunc type=url link="/wxsite/product_list_on"}>');"><a><span class="icon-home"></span>产品管理<i class="icon-angle-right"></i></a></li>
         <li onclick="dolink('<{ofunc type=url link="/wxsite/orderManage"}>');"><a><span class="icon-calendar"></span>订单管理<i class="icon-angle-right"></i></a></li>
         <li onclick="dolink('<{ofunc type=url link="/wxsite/merchantFunds"}>');"><a><span class="icon-newspaper-o"></span>商家资金<i class="icon-angle-right"></i></a></li>
         <li onclick="dolink('<{ofunc type=url link="/wxsite/shopCoupon"}>');"><a><span class="icon-key"></span>优惠劵<i class="icon-angle-right"></i></a></li>       
@@ -127,16 +127,28 @@ function uploadImg(imgFile){
     //var size = file.size;//图片大小
     //var type = file.type;//文件类型
     
+    // 判断图片格式  
+    if(!(file.type.indexOf('image')==0 && file.type && /\.(?:jpg|png|gif)$/.test(file.name)) ){  
+        alert('图片只能是jpg,gif,png');  
+        return ;  
+    }  
     //检测浏览器对FileReader的支持
     if(window.FileReader) {
         var reader = new FileReader();
-        reader.onload = function(){//异步方法,文件读取成功完成时触发
-            var dataImg = reader.result;//文件一旦开始读取，无论成功或失败，实例的 result 属性都会被填充。如果读取失败，则 result 的值为 null ，否则即是读取的结果
-            syncUpload(name,dataImg);
-        };
         reader.readAsDataURL(file);//将文件读取为 DataURL
-    }else {
-        layer.msg("浏览器不支持H5的FileReader!");
+        reader.onload = function(e){ // reader onload start  
+            // ajax 上传图片  
+            var url ="?ctrl=other&action=ajaxuploadshoplogo&type=shoplogo&datatype=json"
+            $.post(url, { file: e.target.result},function(ret){  
+                if(ret.file!=''){  
+                    alert('upload success');  
+                     //$('#showimg').html('<img src="' + ret.img + '">');  
+                     $("#yushow").attr("src",ret.img)
+                }else{  
+                    alert('upload fail');  
+                }  
+            },'json');  
+        } 
     }
 }
 
@@ -145,13 +157,14 @@ function syncUpload(name,dataImg){
     imgFile = imgFile.substring(imgFile.indexOf(",")+1);//截取只保留图片的base64部分,去掉了data:image/jpeg;base64,这段内容
     imgFile = encodeURIComponent(imgFile);//把字符串作为 URI 组件进行编码。后台容器会自动解码一次
     name = encodeURIComponent(encodeURIComponent(name));//这里对中文参数进行了两次URI编码，后台容器自动解码了一次，获取到参数后还需要解码一次才能得到正确的参数内容
-    var mydata = "method=uploadImg&imgFile="+imgFile+"&imgName="+name;
+    var mydata = "imgFile="+imgFile+"&imgName="+name;
     $.ajax({
-          url: "/UploadServlet",
+          url: "?ctrl=other&action=ajaxuploadshoplogo&type=shoplogo&datatype=json",
           data: mydata,
           type: "post",
           dataType: "json",
           success: function(data){
+        	  console.log()
                   if(data.state == 'ok'){
                       document.getElementById("upload").value = "";//重置文件域
                       layer.msg(data.msg);

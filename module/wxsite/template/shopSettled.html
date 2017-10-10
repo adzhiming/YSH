@@ -185,7 +185,6 @@ document.addEventListener('DOMContentLoaded', function () { setTimeout(loaded, 2
                  	if(content.error ==  false){
 					
                  		var jurl =  siteurl+'/index.php?ctrl=wxsite&action=shangjiaapply&shopphone='+content.msg.shopphone+'&shoplicense='+content.msg.shoplicense+'&shopname='+content.msg.shopname+'&shopaddress='+content.msg.shopaddress+'&shoptype='+content.msg.shoptype+'&province='+content.msg.province+'&city='+content.msg.city+'&county='+content.msg.county+'&market_id='+content.msg.market_id ;
-                        console.log(jurl)
                         window.location.href= 	 jurl
 							
                  	}else{
@@ -216,7 +215,7 @@ document.addEventListener('DOMContentLoaded', function () { setTimeout(loaded, 2
      
    })
     function getMarketList(markettype){
-    	url = siteurl+'/index.php?ctrl=areaadminpage&action=shop&module=getMarketbyTypeid&datatype=json&random=@random@';
+    	url = siteurl+'/index.php?ctrl=wxsite&action=getMarketbyTypeid&datatype=json&random=@random@';
     	url = url.replace('@random@', 1+Math.round(Math.random()*1000));
     	$('.market').html('')
         $.ajax({         //script定义
