@@ -47,8 +47,8 @@ class method   extends baseclass
 	 }
 	 public function userupload()
 	 {
-	 	 $link = IUrl::creatUrl('member/login');
-	 	  if($this->member['uid'] == 0&&$this->admin['uid'] == 0)  $this->message('未登陆',$link);
+	 	  $link = IUrl::creatUrl('member/login');
+	 	  if($this->member['uid'] == 0 && $this->admin['uid'] == 0)  $this->message('未登陆',$link);
 	 	  $_FILES['imgFile'] = $_FILES['head'];
 	 	  $type = IFilter::act(IReq::get('type'));
 	 	  if(empty($type)) $this->message('未定义的操作');
@@ -78,6 +78,42 @@ class method   extends baseclass
 		      $this->success($filepath.$file[0]['saveName']);
 		  }
 	 }
+	 
+	 function ajaxuploadshoplogo(){
+	     $link = IUrl::creatUrl('member/login');
+	     if($this->member['uid'] == 0 && $this->admin['uid'] == 0)  $this->message('未登陆',$link);
+	     
+	     $img = isset($_POST['file'])? $_POST['file'] : '';
+	     // 获取图片
+	     list($type, $data) = explode(',', $img);
+	     // 判断类型
+	     if(strstr($type,'image/jpeg')!=''){
+	         $ext = '.jpg';
+	     }elseif(strstr($type,'image/gif')!=''){
+	         $ext = '.gif';
+	     }elseif(strstr($type,'image/png')!=''){
+	         $ext = '.png';
+	     }
+	     define('ROOT_PATH', str_replace("\\","/",realpath(dirname(dirname(__FILE__)).'/../')));
+	     
+	     // 生成的文件名
+	     $photo = time().$ext;
+	     $filepath ="/upload/user/".$photo;
+
+	     // 生成文件
+	     file_put_contents(ROOT_PATH.$filepath, base64_decode($data), true);
+	     $shopid = ICookie::get('adminshopid');
+	     if(!empty($shopid)){
+	         $data = array();
+	         $data['shoplogo'] = $filepath;
+	         $this->mysql->update(Mysite::$app->config['tablepre'].'shop',$data,"id='".$shopid."'");
+	     }
+	     // 返回
+	     header('content-type:application/json;charset=utf-8');
+	     $ret = array('img'=>$photo);
+	     echo json_encode($ret);  
+	 }
+	 
 	 function goodsupload(){
 	 	 $link = IUrl::creatUrl('member/login');
 	 	  if($this->member['uid'] == 0&&$this->admin['uid'] == 0)  $this->message('未登陆',$link);
