@@ -18,7 +18,7 @@ class method   extends baseclass
 	 	    
 	 }
 	function base(){
-	  $this->checkmemberlogin();
+	   $this->checkmemberlogin();
 	   $temparea =  $this->mysql->getarr("select * from ".Mysite::$app->config['tablepre']."area   ");
 	   $areatoname = array();   
 	   foreach($temparea as $key=>$value){
@@ -35,7 +35,7 @@ class method   extends baseclass
 		 
 		 $data['temp3'] =  $this->mysql->select_one("select count(id) as shuliang from ".Mysite::$app->config['tablepre']."order where buyeruid='".$this->member['uid']."'  ".$where."   and shoptype=0 order by id desc  limit 0,6"); 
 		 $data['temp4'] =  $this->mysql->select_one("select count(id) as shuliang from ".Mysite::$app->config['tablepre']."order where buyeruid='".$this->member['uid']."' and status = 3 and is_ping =0 order by id desc  limit 0,6");  
-	   
+	  
 		 Mysite::$app->setdata($data);
 	}
 	  
@@ -77,8 +77,6 @@ class method   extends baseclass
 	 }
 	 function login(){ 
 	 
-	 	 
-	 
 	    $uname = IFilter::act(IReq::get('uname')); 
 	    $pwd = IFilter::act(IReq::get('pwd')); 
 	    $link = IUrl::creatUrl('member/login'); 
@@ -99,8 +97,9 @@ class method   extends baseclass
 		    }
 	      if(!$this->memberCls->login($uname,$pwd)){
 	    	    $this->message($this->memberCls->ero(),$link); 
-	      }  
-        $link = IUrl::creatUrl('member/base');
+	      } 
+	     
+        $link = IUrl::creatUrl('member/base'); 
         $this->success('',$link);
       }
 	 }
@@ -673,7 +672,29 @@ function saveregester()
 	 }
 	 
 	 
-	 
+	 //根据市场类型获取市场信息
+	 function getMarketbyTypeid(){
+	     $typeid = IReq::get('markettype');
+	     if($typeid){
+	         $marketlist= $this->mysql->getarr("select * from ".Mysite::$app->config['tablepre']."market where typeid=".$typeid."  ");
+	         if($marketlist){
+	             $data = array();
+	             $data['code'] = 1;
+	             $data['data'] = $marketlist;
+	         }
+	         else{
+	             $data = array();
+	             $data['code'] = 0;
+	             $data['data'] = "";
+	         }
+	     }
+	     else{
+	         $data = array();
+	         $data['code'] = 0;
+	         $data['data'] = '';
+	     }
+	     echo json_encode($data);die;
+	 }
 	 
   
     
