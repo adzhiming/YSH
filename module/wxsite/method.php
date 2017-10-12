@@ -3532,9 +3532,11 @@ function makeorder(){
 	    $shopinfo = $this->mysql->select_one($sql);
 	    $shopid = $shopinfo['id'];
 	    $sql = "select * from ".Mysite::$app->config['tablepre']."goods
-                where shopid='".$shopid."' order by id";
+                where shopid='".$shopid."' and is_live = 1 order by id";
 	    
 	    $goods = $this->mysql->getarr($sql);
+	    $count = $this->mysql->counts($sql);
+	    $data['count'] =$count;
 	    $data['goodslist'] =$goods;
 	    Mysite::$app->setdata($data);
 	}
@@ -3550,9 +3552,11 @@ function makeorder(){
 	    $shopinfo = $this->mysql->select_one($sql);
 	    $shopid = $shopinfo['id'];
 	    $sql = "select * from ".Mysite::$app->config['tablepre']."goods
-                where shopid='".$shopid."' order by id";
+                where shopid='".$shopid."' and is_live = 0 order by id";
 	    
 	    $goods = $this->mysql->getarr($sql);
+	    $count = $this->mysql->counts($sql);
+	    $data['count'] =$count;
 	    $data['goodslist'] =$goods;
 	    Mysite::$app->setdata($data);
 	}

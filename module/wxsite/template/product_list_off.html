@@ -17,6 +17,7 @@
    <script src="<{$siteurl}>/templates/<{$tempdir}>/public/wxsite/js/shopmanage/roll.js"></script>
  <script src="<{$siteurl}>/templates/<{$tempdir}>/public/wxsite/js/shopmanage/public.js"></script>
 <script src="<{$siteurl}>/templates/<{$tempdir}>/public/wxsite/js/shopmanage/dingwei.js"></script>  
+<script src="<{$siteurl}>/templates/<{$tempdir}>/public/js/allj.js"></script> 
 <script>
             function bd_encrypt(gg_lat, gg_lon)   // 百度地图测距偏差 问题修复
             {
@@ -54,7 +55,7 @@
 <div class="serch-bar-mask" id="cate_menu" style="display:none;top:50px;">
 <div class="serch-bar-mask-list">
 <ul>
-<li><a href="cpgl-3.html">添加商品</a></li>
+<li><a href="/index.php?ctrl=wxsite&action=product_add">添加商品</a></li>
 <li><a href="cpgl-2.html">添加商品分类</a></li>
 </ul>
 </div>
@@ -106,11 +107,11 @@
 
 
 <li class="line ">
-<dt><a class="x4">商品ID：<{$items['id']}></a><a class="x8 text-right">剩余库存：97</a></dt>
+<dt><a class="x4">商品ID：<{$items['id']}></a><a class="x8 text-right">剩余库存：<{$items['count']}></a></dt>
 
 <dd class="zhong">
 <div class="x4">
-<img src="images/thumb_57415f4571546.jpg"  style="width:90%;">
+<img src="<{$items['img']}>"  style="width:90%;">
 <span class="album" style="width:70px;">分销商品</span>         </div>
 <div class="8">
 <p class="text-small">标题：<{$items['name']}></p>
@@ -133,9 +134,9 @@
 </p>
           
 <p class="text-right padding-top x6"> 
-<a class="button button-small bg-dot">下架</a>
+<a class="button button-small bg-dot" onclick="savegoodlive(<{$items['id']}>,1)">上架</a>
 <a href="#" class="button button-small bg-dot">编辑</a>
-<a  href="javascript:void(0);" rel="1"  class="jquery-delete button button-small bg-dot">删除</a>
+<a  href="javascript:void(0);" rel="<{$items['id']}>"  class="jquery-delete button button-small bg-dot" >删除</a>
 </p>
 </dl>
 </li>
@@ -159,7 +160,7 @@
 <div class="blank-20"></div>
 <div class="container login-open">
 <h5 style="text-align:center">
-<div class="paging"><span>1 条记录 1/1 页</span></div>
+<div class="paging"><span><{$count}> 条记录 1/1 页</span></div>
 <!--分页代码不要忘记加-->
 </h5>
 </div>
@@ -174,19 +175,35 @@
 				btn: ['是的', '不'], //按钮
 				shade: false //不显示遮罩
 			}, function () {
-				$.post("/store/mart/delete2.html", {goods_id: goods_id}, function (result) {
-					if (result.status == "success") {
-						layer.msg(result.msg);
+				$.post("<{ofunc type=url link="/shopcenter/delgoods/datatype/json"}>", {id: goods_id}, function (result) {
+					if (result.msg == "success") {
+						layer.msg("删除成功");
 						setTimeout(function () {
-							location.reload();
-						}, 1000);
+							window.location.reload()
+						}, 500);
 					} else {
-						layer.msg(result.msg);
+						layer.msg("删除失败");
 					}
 				}, 'json');
 			});
 		});
 	});
+	
+	 function savegoodlive(goodsid,state){
+	        var values=state
+	        var backinfo = ajaxback('<{ofunc type=url link="/shopcenter/updategoods/datatype/json"}>',{'controlname':'is_live','goodsid':goodsid,'values':values});
+	        if(backinfo.flag == true)
+	        {
+	            hideop();
+	            alert(backinfo.content)
+	        }else{
+	            hideop();
+	            alert('保存成功');
+	            window.location.reload()
+	        }
+	 }
+	 
+	
 </script>
 
 </body>

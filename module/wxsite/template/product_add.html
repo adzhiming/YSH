@@ -1,0 +1,301 @@
+<!DOCTYPE html>
+<html lang="zh-cn">
+<head>
+
+<meta http-equiv="Content-Type" content="text/html; charset=UTF-8">
+<title>商家管理中心</title>
+<meta name="viewport" content="width=device-width,initial-scale=1,maximum-scale=1,user-scalable=no">
+<link rel="stylesheet"  href="<{$siteurl}>/templates/<{$tempdir}>/public/wxsite/css/shopmanage/base.css"> 
+<link rel="stylesheet"  href="<{$siteurl}>/templates/<{$tempdir}>/public/wxsite/css/shopmanage/index.css">
+<link rel="stylesheet"  href="<{$siteurl}>/templates/<{$tempdir}>/public/wxsite/css/shopmanage/store.css">  
+<link rel="stylesheet"  href="<{$siteurl}>/templates/<{$tempdir}>/public/wxsite/css/shopmanage/layer.css"  id="layui_layer_skinlayercss">  
+<link href="<{$siteurl}>/templates/<{$tempdir}>/public/wxsite/css/shopmanage/jquery-ui.css" rel="stylesheet">
+<script src="<{$siteurl}>/templates/<{$tempdir}>/public/wxsite/css/shopmanage/jquery-ui.js"></script>
+
+  <script src="<{$siteurl}>/templates/<{$tempdir}>/public/wxsite/js/shopmanage/jquery.js"></script>    
+ <script src="<{$siteurl}>/templates/<{$tempdir}>/public/wxsite/js/shopmanage/base.js"></script>
+  <script src="<{$siteurl}>/templates/<{$tempdir}>/public/wxsite/js/shopmanage/layer.js"></script> 
+   <script src="<{$siteurl}>/templates/<{$tempdir}>/public/wxsite/js/shopmanage/roll.js"></script>
+ <script src="<{$siteurl}>/templates/<{$tempdir}>/public/wxsite/js/shopmanage/public.js"></script>
+<script src="<{$siteurl}>/templates/<{$tempdir}>/public/wxsite/js/shopmanage/dingwei.js"></script>  
+<script src="<{$siteurl}>/templates/<{$tempdir}>/public/js/allj.js"></script> 
+<script>
+            function bd_encrypt(gg_lat, gg_lon)   // 百度地图测距偏差 问题修复
+            {
+                var x_pi = 3.14159265358979324 * 3000.0 / 180.0;
+                var x = gg_lon;
+                var y = gg_lat;
+                var z = Math.sqrt(x * x + y * y) + 0.00002 * Math.sin(y * x_pi);
+                var theta = Math.atan2(y, x) + 0.000003 * Math.cos(x * x_pi);
+                var bd_lon = z * Math.cos(theta) + 0.0065;
+                var bd_lat = z * Math.sin(theta) + 0.006;
+                dingwei('#', bd_lat, bd_lon);
+
+            }
+
+            navigator.geolocation.getCurrentPosition(function (position) {
+                bd_encrypt(position.coords.latitude, position.coords.longitude);
+            });
+</script>
+</head>
+
+<body>
+
+
+
+
+<header class="top-fixed bg-yellow bg-inverse">
+<div class="top-back"><a class="top-addr" href="javascript:history.go(-1)"><i class="icon-angle-left"></i></a></div>
+<div class="top-title">添加商品</div>
+<div class="top-share"><a href="cpgl-2.html" class="top-addr icon-plus"> 分类</a></div>
+</header>
+
+<style>
+.fabu-form .form-content {border: none;resize: none;width: 100%;height: 80px;padding: 10px;font-size: 12px;}
+.fabu-form .form-content1 {border: none;resize: none;width: 100%;height: 150px;padding: 10px;font-size: 12px;}
+.shuxing{width: 16px; height: 16px;margin-bottom: 10px;}
+</style>
+
+
+<form class="fabu-form" method="post"  target="x-frame" action="#">
+
+<div class="blank-10"></div>
+<div class="Upload-img-box">
+<div class="Upload-btn"><input type="file" id="fileToUpload" name="fileToUpload" data-role="none">上传缩略图</div>
+<div class="Upload-img">
+<div class="list-img loading" style="display:none;"><img src=""></div>
+<div class="list-img jq_photo" style="display:none;"></div>
+</div>
+</div>
+
+
+
+<script type="text/javascript" src="js/ajaxfileupload.js"></script>
+<script>
+                        function ajaxupload() {
+                            $(".loading").show();
+                            $.ajaxFileUpload({
+                                url: '',
+                                type: 'post',
+                                fileElementId: 'fileToUpload',
+                                dataType: 'text',
+                                secureuri: false, //一般设置为false
+                                success: function (data, status) {
+                                    $(".loading").hide();
+                                    var str = '<img src="' + data + '"><input type="hidden" name="data[photo]" value="' + data + '" />';
+                                    $(".jq_photo").show().html(str);
+                                    $("#fileToUpload").unbind('change');
+                                    $("#fileToUpload").change(function () {
+                                        ajaxupload();
+                                    });
+                                }
+                            });
+                        }
+                        $(document).ready(function () {
+                            $("#fileToUpload").change(function () {
+                                ajaxupload();
+                            });
+                            $(document).on("click", ".photo img", function () {
+                                $(this).parent().remove();
+                            });
+                        });
+</script>
+                    
+
+
+<div class="blank-10 bg border-top"></div>
+
+<div class="row">
+<div class="line">
+<span class="x3">商品名称：</span>
+<span class="x9"><input type="text" class="text-input" name="" value="" /></span>
+</div>
+</div>
+
+<div class="row">
+<div class="line">
+<span class="x3">商品单价：</span>
+<span class="x9"><input type="text" class="text-input" name="" value="" /></span>
+</div>
+</div>
+
+<div class="row">
+<div class="line">
+<span class="x3">打包费：</span>
+<span class="x9"><input type="text" class="text-input" name="" value="" /></span>
+</div>
+</div>
+
+<div class="row">
+<div class="line">
+<span class="x3">商品库存：</span>
+<span class="x9"><input type="text" class="text-input" name="" value="" /></span>
+</div>
+</div>
+
+<div class="row">
+<div class="line">
+<span class="x3">虚拟总销量：</span>
+<span class="x9"><input type="text" class="text-input" name="" value="" /></span>
+</div>
+</div>
+
+<div class="row">
+<div class="line">
+<span class="x3">商品单位：</span>
+<span class="x9"><input type="text" class="text-input" name="" value="" /></span>
+</div>
+</div>
+
+<!--div class="row">
+<div class="line">
+<span class="x3">商品分类</span>
+<span class="x4">
+<select name="parent_id" id="parent_id" class="text-select">
+<option value="0" selected="selected">请选择</option>
+<option value="1">产品分类1</option>
+<option value="3">产品分类2</option>
+</select>
+</span>
+
+<span class="x5">
+<select name="" id="cate_id" class="text-select">
+<option value="0" selected="selected">← 选择子分类</option>
+<option value="1">产品分类1</option>
+<option value="3">产品分类2</option>
+</select>
+</span>
+
+<script>
+$(document).ready(function (e) {
+	$("#parent_id").change(function () {
+		var url = '';
+		if ($(this).val() > 0) {
+			var url2 = url.replace('0000', $(this).val());
+			$.get(url2, function (data) {
+				$("#cate_id").html(data);
+			}, 'html');
+		}
+	});
+});
+</script>
+
+</div>
+</div-->
+
+<div class="row">
+<div class="line">
+<span class="x3">商品分类：</span>
+<span class="x9">
+<select id="shopcate_id" name="" class="text-select">
+<option value="0" selected="selected">请选择</option>
+<option value="1">产品分类1</option>
+<option value="3">产品分类2</option>
+</select>
+</span>
+</div>
+</div>
+
+
+<div class="row">
+<div class="line">
+<span class="x3">商品推荐：</span>
+<span class="x9">
+<label><input class="shuxing" type="checkbox" name="" value="1"/>新品&nbsp;</label>
+<label><input class="shuxing" type="checkbox" name="" value="2"/>热销&nbsp;</label>
+<label><input class="shuxing" type="checkbox" name="" value="3"/>推荐&nbsp;</label>
+</span>
+</div>
+</div>
+  
+
+<div class="row">
+<div class="line">
+<span class="x3">标签设置：</span>
+<span class="x9">
+<label><input class="shuxing" type="checkbox" name="" value="1"/>付&nbsp;</label>
+<label><input class="shuxing" type="checkbox" name="" value="2"/>新&nbsp;</label>
+<label><input class="shuxing" type="checkbox" name="" value="3"/>折&nbsp;</label>
+</span>
+</div>
+</div>
+  
+
+<div class="row">
+<div class="line">
+<span class="x3">开启促销：</span>
+<span class="x9">
+<label><input class="shuxing" type="checkbox" name="" value="1"/>开启&nbsp;</label>
+</span>
+</div>
+</div>
+
+
+<!--下面是时间-->
+<div class="blank-10"></div>
+
+<div class="row">
+<div class="line">
+<span class="x3">发布日期：</span>
+<span class="x9">
+<input type="text" class="text-input line-input datepicker" id="svctime1" name="" size="20"  readonly="readonly"  value="" placeholder="选择过期时间" />
+</span>
+</div>
+<div class="blank-10"></div>  
+</div>
+<div class="blank-10 bg"></div>
+
+
+<div class="line border-bottom">
+<span class="x3" style=" border-bottom:solid 1px #eee; line-height:30px;width:100%;">商品简述：</span>
+<textarea class="form-content" name="" placeholder="商品简述,建议不超过100字！"></textarea>
+</div>
+
+
+<div class="blank-10 bg"></div>
+
+       
+<div class="line border-bottom" id="container"  name="content">
+<span class="x3" style=" border-bottom:solid 1px #eee; line-height:30px;width:100%;">商品详情：</span>
+<textarea class="form-content1" name="" placeholder="添加商品详情，如需上传文章详情图，直接在编辑器上传！"></textarea>
+</div> 
+
+
+<div class="blank-10 bg"></div>        
+
+
+<div class="container" style="position:fixed;bottom:0; width:100%; overflow:hidden;">
+<button  type="submit" class="button button-block button-big bg-dot">添加商品</button>
+</div>
+
+</form>
+
+<script>
+		jQuery(function($){
+			$.datepicker.regional['zh-CN'] = {
+				closeText: '关闭',
+				prevText: '&#x3c;上月',
+				nextText: '下月&#x3e;',
+				currentText: '今天',
+				monthNames: ['一月','二月','三月','四月','五月','六月',
+				'七月','八月','九月','十月','十一月','十二月'],
+				monthNamesShort: ['一','二','三','四','五','六',
+				'七','八','九','十','十一','十二'],
+				dayNames: ['星期日','星期一','星期二','星期三','星期四','星期五','星期六'],
+				dayNamesShort: ['周日','周一','周二','周三','周四','周五','周六'],
+				dayNamesMin: ['日','一','二','三','四','五','六'],
+				weekHeader: '周',
+				dateFormat: 'yy-mm-dd',
+				firstDay: 1,
+				isRTL: false,
+				showMonthAfterYear: true,
+				yearSuffix: '年'};
+			$.datepicker.setDefaults($.datepicker.regional['zh-CN']);
+		});
+		$(function() {
+			$( ".datepicker" ).datepicker();
+		});
+</script>
+
+</body>
+</html>
