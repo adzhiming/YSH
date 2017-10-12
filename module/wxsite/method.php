@@ -3560,6 +3560,108 @@ function makeorder(){
 	    $data['goodslist'] =$goods;
 	    Mysite::$app->setdata($data);
 	}
+	
+	//添加商铺
+	function product_add(){
+	    $this->checkwxweb();
+	    if($this->member['uid'] == 0)  $this->message('',$link);
+	    $shopid = ICookie::get('adminshopid');
+	    $sql = "select * from ".Mysite::$app->config['tablepre']."goodstype
+                where shopid='".$shopid."'  order by id";
+	    
+	    $goodstype = $this->mysql->getarr($sql);
+	    $data['goodstype'] =$goodstype;
+	    Mysite::$app->setdata($data);
+	}
+	function product_edit(){
+	    $this->checkwxweb();
+	    $this->checkwxuser();
+	    if($this->member['uid'] == 0)  $this->message('',$link);
+	    $shopid = ICookie::get('adminshopid');
+	    $id= IReq::get('id');
+	    if(isset($_POST["submit"])){
+	        $shopid = ICookie::get('adminshopid');
+	        $img = IFilter::act(IReq::get('img'));
+	        $name = IFilter::act(IReq::get('name'));
+	        $cost = IFilter::act(IReq::get('cost'));
+	        $bagcost = IFilter::act(IReq::get('bagcost'));
+	        $daycount = IFilter::act(IReq::get('daycount'));
+	        $virtualsellcount = IFilter::act(IReq::get('virtualsellcount'));
+	        $typeid = IFilter::act(IReq::get('typeid'));
+	        $is_new = IFilter::act(IReq::get('is_new'));
+	        $is_hot = IFilter::act(IReq::get('is_hot'));
+	        $is_com = IFilter::act(IReq::get('is_com'));
+	        $is_cx = IFilter::act(IReq::get('is_cx'));
+	        $descgoods = IFilter::act(IReq::get('descgoods'));
+	        
+	        
+	        $data["img"] = $img;
+	        $data["name"] = $name;
+	        $data["cost"] = $cost;
+	        $data["bagcost"] = $bagcost;
+	        $data["daycount"] = $daycount;
+	        $data["virtualsellcount"] = $virtualsellcount;
+	        $data["typeid"] = $typeid;
+	        $data["is_new"] = $is_new;
+	        $data["is_hot"] = $is_hot;
+	        $data["is_com"] = $is_com;
+	        $data["is_cx"] = $is_cx;
+	        $data["descgoods"] = $descgoods;
+	        if(!empty($shopid)){
+	            $rs = $this->mysql->update(Mysite::$app->config['tablepre'].'goods',$data,"id ='{$id}'");
+	        }
+	        $url ="index.php?ctrl=wxsite&action=product_list_on";
+	        if(false !== $rs){
+	            $this->success("成功",$url);
+	        }
+	        else{
+	            $this->message("失败",$url);
+	        }
+	    }
+	}
+	function product_add_commit(){
+	    $this->checkwxweb();
+	    $this->checkwxuser();
+	    if($this->member['uid'] == 0)  $this->message('',$link);
+	    
+	    $shopid = ICookie::get('adminshopid');
+	    $img = IFilter::act(IReq::get('img'));
+	    $name = IFilter::act(IReq::get('name'));
+	    $cost = IFilter::act(IReq::get('cost'));
+	    $bagcost = IFilter::act(IReq::get('bagcost'));
+	    $daycount = IFilter::act(IReq::get('daycount'));
+	    $virtualsellcount = IFilter::act(IReq::get('virtualsellcount'));
+	    $typeid = IFilter::act(IReq::get('typeid'));
+	    $is_new = IFilter::act(IReq::get('is_new'));
+	    $is_hot = IFilter::act(IReq::get('is_hot'));
+	    $is_com = IFilter::act(IReq::get('is_com'));
+	    $is_cx = IFilter::act(IReq::get('is_cx'));
+	    $descgoods = IFilter::act(IReq::get('descgoods'));
+	    
+	    $data["shopid"] = $shopid;
+	    $data["img"] = $img;
+	    $data["name"] = $name;
+	    $data["cost"] = $cost;
+	    $data["bagcost"] = $bagcost;
+	    $data["daycount"] = $daycount;
+	    $data["virtualsellcount"] = $virtualsellcount;
+	    $data["typeid"] = $typeid;
+	    $data["is_new"] = $is_new;
+	    $data["is_hot"] = $is_hot;
+	    $data["is_com"] = $is_com;
+	    $data["is_cx"] = $is_cx;
+	    $data["descgoods"] = $descgoods;
+	    if(!empty($shopid)){
+	        $rs = $this->mysql->insert(Mysite::$app->config['tablepre'].'goods',$data);
+	    }
+	    $url ="index.php?ctrl=wxsite&action=product_list_on";
+	    if(false !== $rs){
+	        $this->success("成功",$url);
+	    }
+	    else{
+	        $this->message("失败",$url);
+	    }
+	}
 	//订单管理
 	function orderManage(){
 	    $data['order'] = '';
@@ -7080,4 +7182,11 @@ function gzwx(){
         }
         echo json_encode($data);die;
     }
+    
+    function mkdirs($dir, $mode = 0777)
+    {
+        if (is_dir($dir) || @mkdir($dir, $mode)) return TRUE;
+        if (!mkdirs(dirname($dir), $mode)) return FALSE;
+        return @mkdir($dir, $mode);
+    } 
 }

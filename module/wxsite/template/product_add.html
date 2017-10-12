@@ -10,7 +10,6 @@
 <link rel="stylesheet"  href="<{$siteurl}>/templates/<{$tempdir}>/public/wxsite/css/shopmanage/store.css">  
 <link rel="stylesheet"  href="<{$siteurl}>/templates/<{$tempdir}>/public/wxsite/css/shopmanage/layer.css"  id="layui_layer_skinlayercss">  
 <link href="<{$siteurl}>/templates/<{$tempdir}>/public/wxsite/css/shopmanage/jquery-ui.css" rel="stylesheet">
-<script src="<{$siteurl}>/templates/<{$tempdir}>/public/wxsite/css/shopmanage/jquery-ui.js"></script>
 
   <script src="<{$siteurl}>/templates/<{$tempdir}>/public/wxsite/js/shopmanage/jquery.js"></script>    
  <script src="<{$siteurl}>/templates/<{$tempdir}>/public/wxsite/js/shopmanage/base.js"></script>
@@ -57,50 +56,26 @@
 </style>
 
 
-<form class="fabu-form" method="post"  target="x-frame" action="#">
+<form class="fabu-form" method="post"  action="<{ofunc type=url link='/wxsite/product_add_commit'}>">
 
 <div class="blank-10"></div>
-<div class="Upload-img-box">
-<div class="Upload-btn"><input type="file" id="fileToUpload" name="fileToUpload" data-role="none">上传缩略图</div>
-<div class="Upload-img">
-<div class="list-img loading" style="display:none;"><img src=""></div>
-<div class="list-img jq_photo" style="display:none;"></div>
+<div class="container">
+<div class="line detail-base">
+<div class="x5" style="width:30%;">
+<div class="pic">
+
+<div class="btn-uploading" onclick="uploadBtn();" style="border:none;background:none;">
+<a href="#"><img id="yushow" src=""></a>	
+<span class="album" style="width:60px;">上传商品图</span> 
+</div>
+<input type="hidden" name="img" id="img" value="">
+<input type="file" name="file" style="display:none;" onchange="previewImg(this);" id="upload" accept="image/*">
+
+</div>
+</div>		
 </div>
 </div>
 
-
-
-<script type="text/javascript" src="js/ajaxfileupload.js"></script>
-<script>
-                        function ajaxupload() {
-                            $(".loading").show();
-                            $.ajaxFileUpload({
-                                url: '',
-                                type: 'post',
-                                fileElementId: 'fileToUpload',
-                                dataType: 'text',
-                                secureuri: false, //一般设置为false
-                                success: function (data, status) {
-                                    $(".loading").hide();
-                                    var str = '<img src="' + data + '"><input type="hidden" name="data[photo]" value="' + data + '" />';
-                                    $(".jq_photo").show().html(str);
-                                    $("#fileToUpload").unbind('change');
-                                    $("#fileToUpload").change(function () {
-                                        ajaxupload();
-                                    });
-                                }
-                            });
-                        }
-                        $(document).ready(function () {
-                            $("#fileToUpload").change(function () {
-                                ajaxupload();
-                            });
-                            $(document).on("click", ".photo img", function () {
-                                $(this).parent().remove();
-                            });
-                        });
-</script>
-                    
 
 
 <div class="blank-10 bg border-top"></div>
@@ -108,89 +83,49 @@
 <div class="row">
 <div class="line">
 <span class="x3">商品名称：</span>
-<span class="x9"><input type="text" class="text-input" name="" value="" /></span>
+<span class="x9"><input type="text" class="text-input" name="name" value="" /></span>
 </div>
 </div>
 
 <div class="row">
 <div class="line">
 <span class="x3">商品单价：</span>
-<span class="x9"><input type="text" class="text-input" name="" value="" /></span>
+<span class="x9"><input type="text" class="text-input" name="cost" value="" /></span>
 </div>
 </div>
 
 <div class="row">
 <div class="line">
 <span class="x3">打包费：</span>
-<span class="x9"><input type="text" class="text-input" name="" value="" /></span>
+<span class="x9"><input type="text" class="text-input" name="bagcost" value="" /></span>
 </div>
 </div>
 
 <div class="row">
 <div class="line">
 <span class="x3">商品库存：</span>
-<span class="x9"><input type="text" class="text-input" name="" value="" /></span>
+<span class="x9"><input type="text" class="text-input" name="daycount" value="" /></span>
 </div>
 </div>
 
 <div class="row">
 <div class="line">
 <span class="x3">虚拟总销量：</span>
-<span class="x9"><input type="text" class="text-input" name="" value="" /></span>
+<span class="x9"><input type="text" class="text-input" name="virtualsellcount" value="" /></span>
 </div>
 </div>
 
-<div class="row">
-<div class="line">
-<span class="x3">商品单位：</span>
-<span class="x9"><input type="text" class="text-input" name="" value="" /></span>
-</div>
-</div>
 
-<!--div class="row">
-<div class="line">
-<span class="x3">商品分类</span>
-<span class="x4">
-<select name="parent_id" id="parent_id" class="text-select">
-<option value="0" selected="selected">请选择</option>
-<option value="1">产品分类1</option>
-<option value="3">产品分类2</option>
-</select>
-</span>
-
-<span class="x5">
-<select name="" id="cate_id" class="text-select">
-<option value="0" selected="selected">← 选择子分类</option>
-<option value="1">产品分类1</option>
-<option value="3">产品分类2</option>
-</select>
-</span>
-
-<script>
-$(document).ready(function (e) {
-	$("#parent_id").change(function () {
-		var url = '';
-		if ($(this).val() > 0) {
-			var url2 = url.replace('0000', $(this).val());
-			$.get(url2, function (data) {
-				$("#cate_id").html(data);
-			}, 'html');
-		}
-	});
-});
-</script>
-
-</div>
-</div-->
 
 <div class="row">
 <div class="line">
 <span class="x3">商品分类：</span>
 <span class="x9">
-<select id="shopcate_id" name="" class="text-select">
+<select id="typeid" name="typeid" class="text-select">
 <option value="0" selected="selected">请选择</option>
-<option value="1">产品分类1</option>
-<option value="3">产品分类2</option>
+<{foreach from=$goodstype  item=items}>
+  <option value="<{$items['id']}>" ><{$items['name']}></option>
+<{/foreach}>
 </select>
 </span>
 </div>
@@ -201,15 +136,15 @@ $(document).ready(function (e) {
 <div class="line">
 <span class="x3">商品推荐：</span>
 <span class="x9">
-<label><input class="shuxing" type="checkbox" name="" value="1"/>新品&nbsp;</label>
-<label><input class="shuxing" type="checkbox" name="" value="2"/>热销&nbsp;</label>
-<label><input class="shuxing" type="checkbox" name="" value="3"/>推荐&nbsp;</label>
+<label><input class="shuxing" type="checkbox" name="is_new" value="1"/>新品&nbsp;</label>
+<label><input class="shuxing" type="checkbox" name="is_hot" value="1"/>热销&nbsp;</label>
+<label><input class="shuxing" type="checkbox" name="is_com" value="1"/>推荐&nbsp;</label>
 </span>
 </div>
 </div>
   
 
-<div class="row">
+<!-- <div class="row">
 <div class="line">
 <span class="x3">标签设置：</span>
 <span class="x9">
@@ -218,14 +153,14 @@ $(document).ready(function (e) {
 <label><input class="shuxing" type="checkbox" name="" value="3"/>折&nbsp;</label>
 </span>
 </div>
-</div>
+</div> -->
   
 
 <div class="row">
 <div class="line">
 <span class="x3">开启促销：</span>
 <span class="x9">
-<label><input class="shuxing" type="checkbox" name="" value="1"/>开启&nbsp;</label>
+<label><input class="shuxing" type="checkbox" name="is_cx" value="1"/>开启&nbsp;</label>
 </span>
 </div>
 </div>
@@ -234,7 +169,7 @@ $(document).ready(function (e) {
 <!--下面是时间-->
 <div class="blank-10"></div>
 
-<div class="row">
+<!-- <div class="row">
 <div class="line">
 <span class="x3">发布日期：</span>
 <span class="x9">
@@ -242,13 +177,14 @@ $(document).ready(function (e) {
 </span>
 </div>
 <div class="blank-10"></div>  
-</div>
+</div> -->
+
 <div class="blank-10 bg"></div>
 
 
 <div class="line border-bottom">
 <span class="x3" style=" border-bottom:solid 1px #eee; line-height:30px;width:100%;">商品简述：</span>
-<textarea class="form-content" name="" placeholder="商品简述,建议不超过100字！"></textarea>
+<textarea class="form-content" name="descgoods" placeholder="商品简述,建议不超过100字！"></textarea>
 </div>
 
 
@@ -265,37 +201,91 @@ $(document).ready(function (e) {
 
 
 <div class="container" style="position:fixed;bottom:0; width:100%; overflow:hidden;">
-<button  type="submit" class="button button-block button-big bg-dot">添加商品</button>
+<button type="submit" class="button button-block button-big bg-dot">添加商品</button>
 </div>
 
 </form>
 
-<script>
-		jQuery(function($){
-			$.datepicker.regional['zh-CN'] = {
-				closeText: '关闭',
-				prevText: '&#x3c;上月',
-				nextText: '下月&#x3e;',
-				currentText: '今天',
-				monthNames: ['一月','二月','三月','四月','五月','六月',
-				'七月','八月','九月','十月','十一月','十二月'],
-				monthNamesShort: ['一','二','三','四','五','六',
-				'七','八','九','十','十一','十二'],
-				dayNames: ['星期日','星期一','星期二','星期三','星期四','星期五','星期六'],
-				dayNamesShort: ['周日','周一','周二','周三','周四','周五','周六'],
-				dayNamesMin: ['日','一','二','三','四','五','六'],
-				weekHeader: '周',
-				dateFormat: 'yy-mm-dd',
-				firstDay: 1,
-				isRTL: false,
-				showMonthAfterYear: true,
-				yearSuffix: '年'};
-			$.datepicker.setDefaults($.datepicker.regional['zh-CN']);
-		});
-		$(function() {
-			$( ".datepicker" ).datepicker();
-		});
-</script>
 
+
+<script type="text/javascript">
+function uploadBtn(){
+    $("#upload").click();
+}
+
+//图片预览
+function previewImg(imgFile){
+    //console.log(imgFile);//这里打印出是整个input标签
+    var extension = imgFile.value.substring(imgFile.value.lastIndexOf("."),imgFile.value.length);//扩展名
+    extension = extension.toLowerCase();//把文件扩展名转换为小写
+    if ((extension!='.jpg')&&(extension!='.gif')&&(extension!='.jpeg')&&(extension!='.png')&&(extension!='.bmp')){
+        layer.msg("对不起，系统仅支持标准格式的照片，请您调整格式后重新上传，谢谢 !");
+        $(".btn-uploading").focus();//将焦点定位在文件上传的按钮上，可以直接按确定键再次触发
+    }else{
+        var path;//预览地址
+        if(document.all){//IE
+            imgFile.select();
+                path = document.selection.createRange().text;
+        }else{//火狐，谷歌
+            path = window.URL.createObjectURL(imgFile.files[0]);
+        }
+        $("#yushow").attr("src",path);//设置预览地址
+        uploadImg(imgFile);
+    }
+}
+
+//开始上传
+function uploadImg(imgFile){
+    //获取图片文件
+    var file = imgFile.files[0];//文件对象
+    var name = file.name;//图片名
+    //var size = file.size;//图片大小
+    //var type = file.type;//文件类型
+    
+    // 判断图片格式  
+    if(!(file.type.indexOf('image')==0 && file.type && /\.(?:jpg|png|gif)$/.test(file.name)) ){  
+        alert('图片只能是jpg,gif,png');  
+        return ;  
+    }  
+    //检测浏览器对FileReader的支持
+    if(window.FileReader) {
+        var reader = new FileReader();
+        reader.readAsDataURL(file);//将文件读取为 DataURL
+        reader.onload = function(e){ // reader onload start  
+            // ajax 上传图片  
+            var url ="?ctrl=other&action=ajaxuploadimg&imgtype=addgoods&datatype=json"
+            
+            $.post(url, {file: e.target.result},function(ret){  
+            	
+                if(ret.file!=''){ 
+                	$("#img").val(ret.img)
+                	layer.msg("上传成功");
+                }else{  
+                    alert('upload fail');  
+                }  
+            },'json');  
+        } 
+    }
+}
+
+
+
+//删除图片
+function deleteImg(){
+    $.ajax({
+          url: "/UploadServlet",
+          data: "method=deleteImg",
+          type:"post",
+          dataType: "json",
+          success: function(data){
+                  if(data.state == 'ok'){
+                      layer.msg(data.msg);
+                }else if(data.state == 'error'){
+                    layer.msg(data.msg);
+                }
+          }
+    });
+}
+</script>
 </body>
 </html>

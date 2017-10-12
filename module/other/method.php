@@ -79,10 +79,12 @@ class method   extends baseclass
 		  }
 	 }
 	 
-	 function ajaxuploadshoplogo(){
+	 function ajaxuploadimg(){
 	     $link = IUrl::creatUrl('member/login');
 	     if($this->member['uid'] == 0 && $this->admin['uid'] == 0)  $this->message('未登陆',$link);
-	     
+	     $shopid = ICookie::get('adminshopid');
+	     $imgtype = IReq::get('imgtype');
+	     if(empty($imgtype)) $this->message('未定义的操作');
 	     $img = isset($_POST['file'])? $_POST['file'] : '';
 	     // 获取图片
 	     list($type, $data) = explode(',', $img);
@@ -97,21 +99,40 @@ class method   extends baseclass
 	     define('ROOT_PATH', str_replace("\\","/",realpath(dirname(dirname(__FILE__)).'/../')));
 	     
 	     // 生成的文件名
-	     $photo = time().$ext;
-	     $filepath ="/upload/user/".$photo;
+	     $photo = date("YmdHis",time()).rand(1000,9999).$ext;
+	     if($imgtype == 'shoplogo'){
+	         $uploadDir = "upload/shoplogo";
+	        
+	     }
+	     if($imgtype == 'userlogo'){
+	         $uploadDir = "upload/userlogo";
+	     }
+	     if($imgtype == 'goods' || $imgtype == 'addgoods'){
+	         $uploadDir = "upload/goods";
+	     }
 
+	     mkdir($uploadDir);
+
+	     $filepath ="/".$uploadDir."/".$photo;
 	     // 生成文件
 	     file_put_contents(ROOT_PATH.$filepath, base64_decode($data), true);
-	     $shopid = ICookie::get('adminshopid');
+	    
 	     if(!empty($shopid)){
 	         $data = array();
-	         $data['shoplogo'] = $filepath;
-	         $this->mysql->update(Mysite::$app->config['tablepre'].'shop',$data,"id='".$shopid."'");
+	         if($imgtype == 'shoplogo'){
+    	         $data['shoplogo'] = $filepath;
+    	         $this->mysql->update(Mysite::$app->config['tablepre'].'shop',$data,"id='".$shopid."'");
+	         }
+	         if($imgtype == 'goods'){
+	             $data['img'] = $filepath;
+	             $this->mysql->update(Mysite::$app->config['tablepre'].'goods',$data,"shopid='".$shopid."'");
+	         }
 	     }
 	     // 返回
 	     header('content-type:application/json;charset=utf-8');
-	     $ret = array('img'=>$photo);
+	     $ret = array('img'=>$filepath);
 	     echo json_encode($ret);  
+	     die;
 	 }
 	 
 	 function goodsupload(){
@@ -150,6 +171,13 @@ class method   extends baseclass
 	   }
 	    Mysite::$app->setdata(array('type'=>$type,'goodsid'=>$goodsid,'imgurl'=>$imgurl));
 	 }
+	 
+	 function mkdirs($dir, $mode = 0777)
+	 {
+	     if (is_dir($dir) || @mkdir($dir, $mode)) return TRUE;
+	     if (!mkdirs(dirname($dir), $mode)) return FALSE;
+	     return @mkdir($dir, $mode);
+	 } 
 }
 
 

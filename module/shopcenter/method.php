@@ -204,21 +204,9 @@ class method   extends baseclass
 	            $Searchk->setdata(1,$shopid,$data['shopname']);
 	            $Searchk->save();
 	         }
-			  
-			  
-	 
-			 
-			 
-			 
 			  	 $this->success('success');   
 			  }
-			   
-			  
 		} 
-		
-		
-		
-		
 		
 		$shopid = ICookie::get('adminshopid');
 		$checkinfo = $this->mysql->select_one("select * from ".Mysite::$app->config['tablepre']."shop  where id = '".$shopid."' ");

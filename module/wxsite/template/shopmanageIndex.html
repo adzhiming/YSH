@@ -138,12 +138,11 @@ function uploadImg(imgFile){
         reader.readAsDataURL(file);//将文件读取为 DataURL
         reader.onload = function(e){ // reader onload start  
             // ajax 上传图片  
-            var url ="?ctrl=other&action=ajaxuploadshoplogo&type=shoplogo&datatype=json"
+            var url ="?ctrl=other&action=ajaxuploadimg&imgtype=shoplogo&datatype=json"
             $.post(url, { file: e.target.result},function(ret){  
                 if(ret.file!=''){  
-                    alert('upload success');  
-                     //$('#showimg').html('<img src="' + ret.img + '">');  
-                     $("#yushow").attr("src",ret.img)
+                	layer.msg("上传成功");
+                    
                 }else{  
                     alert('upload fail');  
                 }  
