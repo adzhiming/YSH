@@ -70,27 +70,7 @@ ul {padding-left: 0px !important;}
 </div>
 </div>
 
-<script type="text/javascript" language="javascript">
-        	$(document).ready(function(){
-				$('#add').click(function(){
-					var cate_name = $('.sh_waimai_cate_add_mask_box #cate_name').val();
-					var orderby = $('.sh_waimai_cate_add_mask_box #orderby').val();
-					$.post('',{cate_name:cate_name,orderby:orderby},function(result){
-						if(result.status == 'success'){
-							layer.msg(result.message,{icon:1});
-							setTimeout(function(){
-								location.reload(true);
-							},2500)
-						}else{
-							layer.msg(result.message,{icon:2});
-						}
-					},'json')
-				})
-				$('#add_close').click(function(){
-					$('.sh_waimai_cate_add_mask_box').hide();
-				})
-			})
-</script>
+
 
 </div>
 
@@ -104,7 +84,7 @@ ul {padding-left: 0px !important;}
 <span>名称：</span><input type="text" value="" name="cate_name" id="cate_name">
 </div>
 <div class="sh_waimai_cate_add_input mb10">
-<span>排序：</span><input type="text" value="" name="orderby" id="orderby"></div>
+<span>排序：</span><input type="text" value="1" name="orderby" id="orderby"></div>
 </div>
 
 <div class="sh_mask_btn">
@@ -222,19 +202,20 @@ ul {padding-left: 0px !important;}
 		})
 		
 		$("#add").click(function(){
-			var cate_name = $('.sh_mask_box sh_waimai_cate_add_mask_box #cate_name').val();
-			var orderby = $('.sh_mask_box sh_waimai_cate_add_mask_box #orderby').val();
+			var cate_name = $('.sh_waimai_cate_add_mask_box #cate_name').val();
+			var orderby = $('.sh_waimai_cate_add_mask_box #orderby').val();
 			var shopid ="<{$shopid}>"
-			var url = "<{ofunc type=url link='/wxsite/category_add'}>"
+			if(cate_name =='') layer.msg("分类名不能为空");
+			var url = "<{ofunc type=url link='/wxsite/category_add/datatype/json'}>"
 			$.post(url,{cate_name:cate_name,orderby:orderby,shopid:shopid},function(result){
 				if(result.status == 'success'){
 					$(".sh_waimai_cate_edit_mask_box").hide();
-					layer.msg(result.message,{icon:1});
-					/* setTimeout(function(){
+					layer.msg(result.msg);
+					setTimeout(function(){
 						location.reload(true);
-					},2500) */
+					},500) 
 				}else{
-					layer.msg(result.message,{icon:2});
+					layer.msg(result.msg);
 				}
 		},'json')
 		})

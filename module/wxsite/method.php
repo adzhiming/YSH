@@ -3657,17 +3657,16 @@ function makeorder(){
 	    $orderby = IFilter::act(IReq::get('orderby'));
 	    $data = array();
 	    $data["shopid"] = $shopid;
-	    $data["cate_name"] = $img;
-	    $data["orderby"] = $name;
+	    $data["name"] = $cate_name;
+	    $data["orderid"] = $orderby;
 	    if(!empty($shopid)){
 	        $rs = $this->mysql->insert(Mysite::$app->config['tablepre'].'goodstype',$data);
 	    }
-	    $url ="index.php?ctrl=wxsite&action=product_list_on";
 	    if(false !== $rs){
-	        $this->success("成功",$url);
+	        $this->success("成功");
 	    }
 	    else{
-	        $this->message("失败",$url);
+	        $this->message("失败");
 	    }
 	    $this->success($data);
 	}
