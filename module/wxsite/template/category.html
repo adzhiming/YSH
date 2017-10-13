@@ -1,0 +1,246 @@
+<!DOCTYPE html>
+<html lang="zh-cn">
+<head>
+
+<meta http-equiv="Content-Type" content="text/html; charset=UTF-8">
+<title>商家管理中心</title>
+<meta name="viewport" content="width=device-width,initial-scale=1,maximum-scale=1,user-scalable=no">
+<link rel="stylesheet"  href="<{$siteurl}>/templates/<{$tempdir}>/public/wxsite/css/shopmanage/base.css"> 
+<link rel="stylesheet"  href="<{$siteurl}>/templates/<{$tempdir}>/public/wxsite/css/shopmanage/index.css">
+<link rel="stylesheet"  href="<{$siteurl}>/templates/<{$tempdir}>/public/wxsite/css/shopmanage/store.css">  
+<link rel="stylesheet"  href="<{$siteurl}>/templates/<{$tempdir}>/public/wxsite/css/shopmanage/layer.css"  id="layui_layer_skinlayercss">  
+ 
+  <script src="<{$siteurl}>/templates/<{$tempdir}>/public/wxsite/js/shopmanage/jquery.js"></script>    
+ <script src="<{$siteurl}>/templates/<{$tempdir}>/public/wxsite/js/shopmanage/base.js"></script>
+  <script src="<{$siteurl}>/templates/<{$tempdir}>/public/wxsite/js/shopmanage/layer.js"></script> 
+   <script src="<{$siteurl}>/templates/<{$tempdir}>/public/wxsite/js/shopmanage/roll.js"></script>
+ <script src="<{$siteurl}>/templates/<{$tempdir}>/public/wxsite/js/shopmanage/public.js"></script>
+<script src="<{$siteurl}>/templates/<{$tempdir}>/public/wxsite/js/shopmanage/dingwei.js"></script> 
+<script>
+            function bd_encrypt(gg_lat, gg_lon)   // 百度地图测距偏差 问题修复
+            {
+                var x_pi = 3.14159265358979324 * 3000.0 / 180.0;
+                var x = gg_lon;
+                var y = gg_lat;
+                var z = Math.sqrt(x * x + y * y) + 0.00002 * Math.sin(y * x_pi);
+                var theta = Math.atan2(y, x) + 0.000003 * Math.cos(x * x_pi);
+                var bd_lon = z * Math.cos(theta) + 0.0065;
+                var bd_lat = z * Math.sin(theta) + 0.006;
+                dingwei('#', bd_lat, bd_lon);
+
+            }
+
+            navigator.geolocation.getCurrentPosition(function (position) {
+                bd_encrypt(position.coords.latitude, position.coords.longitude);
+            });
+</script>
+</head>
+
+<body>
+
+<header class="top-fixed bg-yellow bg-inverse">
+<div class="top-back"><a class="top-addr" href="javascript:history.go(-1)"><i class="icon-angle-left"></i></a></div>
+<div class="top-title">添加产品分类</div>
+<div class="top-share"><a class="sh_waimai_cate_add  icon-plus" href="javascript:void(0);" id="cate-btn"> 分类</a></div>
+</header>
+
+<style>
+ul {padding-left: 0px !important;}
+</style>
+
+<section>
+
+
+<div class="sh_mask_box sh_waimai_cate_add_mask_box" style="display:none;">
+<div class="sh_mask_nr">
+<div class="sh_mask_bt">添加产品分类</div>
+
+<div class="sh_waimai_cate_add_mask">
+<div class="sh_waimai_cate_add_input mb10">
+<span>名称：</span><input type="text" value="" name="cate_name" id="cate_name">
+</div>
+<div class="sh_waimai_cate_add_input mb10">
+<span>排序：</span><input type="text" value="" name="orderby" id="orderby">
+</div>
+</div>
+
+<div class="sh_mask_btn">
+<input class="reco" type="button" value="确认" id="add">
+<input class="cancel" type="button" value="取消" id="add_close">
+</div>
+</div>
+
+<script type="text/javascript" language="javascript">
+        	$(document).ready(function(){
+				$('#add').click(function(){
+					var cate_name = $('.sh_waimai_cate_add_mask_box #cate_name').val();
+					var orderby = $('.sh_waimai_cate_add_mask_box #orderby').val();
+					$.post('',{cate_name:cate_name,orderby:orderby},function(result){
+						if(result.status == 'success'){
+							layer.msg(result.message,{icon:1});
+							setTimeout(function(){
+								location.reload(true);
+							},2500)
+						}else{
+							layer.msg(result.message,{icon:2});
+						}
+					},'json')
+				})
+				$('#add_close').click(function(){
+					$('.sh_waimai_cate_add_mask_box').hide();
+				})
+			})
+</script>
+
+</div>
+
+
+<div class="sh_mask_box sh_waimai_cate_edit_mask_box" style="display:none;">
+<div class="sh_mask_nr">
+<div class="sh_mask_bt">编辑产品分类</div>
+
+<div class="sh_waimai_cate_add_mask">
+<div class="sh_waimai_cate_add_input mb10">
+<span>名称：</span><input type="text" value="" name="cate_name" id="cate_name">
+</div>
+<div class="sh_waimai_cate_add_input mb10">
+<span>排序：</span><input type="text" value="" name="orderby" id="orderby"></div>
+</div>
+
+<div class="sh_mask_btn">
+<input class="reco" type="button" value="确认" id="edit">
+<input class="cancel edit_close" type="button" value="取消">
+</div>
+</div>
+</div>
+    
+<script type="text/javascript" language="javascript">
+        $(document).ready(function(){
+            $('.edit_close').click(function(){
+                $('.sh_waimai_cate_edit_mask_box').hide();
+            })
+        })
+</script>
+<script>
+		$(function(){
+			$(".sh_prompt_infor_closs").click(function(){
+				$(".sh_prompt_infor_box").hide();
+			});
+		});
+</script>
+
+<div class="sh_prompt_infor_box">
+<div class="sh_prompt_infor_closs"></div>
+</div>
+    
+<div class="blank-10 bg"></div>
+
+<div class="sh_buy_fabu">
+<div class="sh_list_public_box">
+<ul>
+
+<{foreach from=$goodstype  item=items}>
+
+<li class="list_box mb10">
+<div class="sh_waimai_cate_list">
+<div class="fl left">
+<div class="nr">
+<p>ID：<span class="black3"><{$items['id']}></span></p>
+<p>名称：<span class="black3"><{$items['name']}></span></p>
+</div>
+</div>
+
+<div class="fr right">
+<a href="javascript:void(0);" v="1" n="<{$items['name']}>" s="<{$items['orderid']}>" class="btn sh_waimai_cate_edit" style="background:#ff6e6e;color:#fff;">编辑</a>
+<a href="javascript:void(0);" rel="1" v="1" n="<{$items['name']}>" s="<{$items['orderid']}>" class="btn jquery-delete">删除</a>
+</div>
+<div class="clear"></div>
+
+</div>
+</li>
+<{/foreach}>
+
+
+</ul>
+</div>
+</div>
+</section>
+
+<script>
+	$(document).ready(function () {
+		$(document).on('click', ".jquery-delete", function (e) {
+			var goods_id = $(this).attr('rel');
+			layer.confirm('您确定要删除该商品？', {
+				skin: 'layer-ext-demo', 
+				area: ['50%', 'auto'], //宽高
+				btn: ['是的', '不'], //按钮
+				shade: false //不显示遮罩
+			}, function () {
+				$.post("", {goods_id: goods_id}, function (result) {
+					if (result.status == "success") {
+						layer.msg(result.msg);
+						setTimeout(function () {
+							location.reload();
+						}, 1000);
+					} else {
+						layer.msg(result.msg);
+					}
+				}, 'json');
+			});
+		});
+	});
+</script>
+<script>
+	$(function(){
+		$(".sh_waimai_cate_add").click(function(){
+			$(".sh_waimai_cate_add_mask_box").show();
+		});
+		$(".sh_waimai_cate_edit").click(function(){
+			var v = $(this).attr('v');
+			var n = $(this).attr('n');
+			var s = $(this).attr('s');
+			$(".sh_waimai_cate_edit_mask_box").show();
+			$(".sh_waimai_cate_edit_mask_box").find('#cate_name').val(n);
+			$(".sh_waimai_cate_edit_mask_box").find('#orderby').val(s);
+			$('#edit').attr('cate_id',v);
+		});
+		$('#edit').click(function(){
+			var cate_name = $('.sh_waimai_cate_edit_mask_box #cate_name').val();
+			var orderby = $('.sh_waimai_cate_edit_mask_box #orderby').val();
+			var v = $(this).attr('cate_id');
+			$.post('',{cate_name:cate_name,orderby:orderby,v:v},function(result){
+					if(result.status == 'success'){
+						$(".sh_waimai_cate_edit_mask_box").hide();
+						layer.msg(result.message,{icon:1});
+						setTimeout(function(){
+							location.reload(true);
+						},2500)
+					}else{
+						layer.msg(result.message,{icon:2});
+					}
+			},'json')
+		})
+		
+		$("#add").click(function(){
+			var cate_name = $('.sh_mask_box sh_waimai_cate_add_mask_box #cate_name').val();
+			var orderby = $('.sh_mask_box sh_waimai_cate_add_mask_box #orderby').val();
+			var shopid ="<{$shopid}>"
+			var url = "<{ofunc type=url link='/wxsite/category_add'}>"
+			$.post(url,{cate_name:cate_name,orderby:orderby,shopid:shopid},function(result){
+				if(result.status == 'success'){
+					$(".sh_waimai_cate_edit_mask_box").hide();
+					layer.msg(result.message,{icon:1});
+					/* setTimeout(function(){
+						location.reload(true);
+					},2500) */
+				}else{
+					layer.msg(result.message,{icon:2});
+				}
+		},'json')
+		})
+	});
+
+</script>
+
+</body>
+</html>

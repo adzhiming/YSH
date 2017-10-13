@@ -56,7 +56,7 @@
 <div class="serch-bar-mask-list">
 <ul>
 <li><a href="/index.php?ctrl=wxsite&action=product_add">添加商品</a></li>
-<li><a href="cpgl-2.html">添加商品分类</a></li>
+<li><a href="/index.php?ctrl=wxsite&action=category">添加商品分类</a></li>
 </ul>
 </div>
 </div>
@@ -135,7 +135,7 @@
           
 <p class="text-right padding-top x6"> 
 <a class="button button-small bg-dot" onclick="savegoodlive(<{$items['id']}>,1)">上架</a>
-<a href="#" class="button button-small bg-dot">编辑</a>
+<a href="/index.php?ctrl=wxsite&action=product_edit&goodsid=<{$items['id']}>" class="button button-small bg-dot">编辑</a>
 <a  href="javascript:void(0);" rel="<{$items['id']}>"  class="jquery-delete button button-small bg-dot" >删除</a>
 </p>
 </dl>

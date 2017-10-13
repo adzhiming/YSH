@@ -1,0 +1,292 @@
+<!DOCTYPE html>
+<html lang="zh-cn">
+<head>
+
+<meta http-equiv="Content-Type" content="text/html; charset=UTF-8">
+<title>商家管理中心</title>
+<meta name="viewport" content="width=device-width,initial-scale=1,maximum-scale=1,user-scalable=no">
+<link rel="stylesheet"  href="<{$siteurl}>/templates/<{$tempdir}>/public/wxsite/css/shopmanage/base.css"> 
+<link rel="stylesheet"  href="<{$siteurl}>/templates/<{$tempdir}>/public/wxsite/css/shopmanage/index.css">
+<link rel="stylesheet"  href="<{$siteurl}>/templates/<{$tempdir}>/public/wxsite/css/shopmanage/store.css">  
+<link rel="stylesheet"  href="<{$siteurl}>/templates/<{$tempdir}>/public/wxsite/css/shopmanage/layer.css"  id="layui_layer_skinlayercss">  
+<link href="<{$siteurl}>/templates/<{$tempdir}>/public/wxsite/css/shopmanage/jquery-ui.css" rel="stylesheet">
+
+  <script src="<{$siteurl}>/templates/<{$tempdir}>/public/wxsite/js/shopmanage/jquery.js"></script>    
+ <script src="<{$siteurl}>/templates/<{$tempdir}>/public/wxsite/js/shopmanage/base.js"></script>
+  <script src="<{$siteurl}>/templates/<{$tempdir}>/public/wxsite/js/shopmanage/layer.js"></script> 
+   <script src="<{$siteurl}>/templates/<{$tempdir}>/public/wxsite/js/shopmanage/roll.js"></script>
+ <script src="<{$siteurl}>/templates/<{$tempdir}>/public/wxsite/js/shopmanage/public.js"></script>
+<script src="<{$siteurl}>/templates/<{$tempdir}>/public/wxsite/js/shopmanage/dingwei.js"></script>  
+<script src="<{$siteurl}>/templates/<{$tempdir}>/public/js/allj.js"></script> 
+<script>
+            function bd_encrypt(gg_lat, gg_lon)   // 百度地图测距偏差 问题修复
+            {
+                var x_pi = 3.14159265358979324 * 3000.0 / 180.0;
+                var x = gg_lon;
+                var y = gg_lat;
+                var z = Math.sqrt(x * x + y * y) + 0.00002 * Math.sin(y * x_pi);
+                var theta = Math.atan2(y, x) + 0.000003 * Math.cos(x * x_pi);
+                var bd_lon = z * Math.cos(theta) + 0.0065;
+                var bd_lat = z * Math.sin(theta) + 0.006;
+                dingwei('#', bd_lat, bd_lon);
+
+            }
+
+            navigator.geolocation.getCurrentPosition(function (position) {
+                bd_encrypt(position.coords.latitude, position.coords.longitude);
+            });
+</script>
+</head>
+
+<body>
+
+
+
+
+<header class="top-fixed bg-yellow bg-inverse">
+<div class="top-back"><a class="top-addr" href="javascript:history.go(-1)"><i class="icon-angle-left"></i></a></div>
+<div class="top-title">添加商品</div>
+<div class="top-share"><a href="cpgl-2.html" class="top-addr icon-plus"> 分类</a></div>
+</header>
+
+<style>
+.fabu-form .form-content {border: none;resize: none;width: 100%;height: 80px;padding: 10px;font-size: 12px;}
+.fabu-form .form-content1 {border: none;resize: none;width: 100%;height: 150px;padding: 10px;font-size: 12px;}
+.shuxing{width: 16px; height: 16px;margin-bottom: 10px;}
+</style>
+
+
+<form class="fabu-form" method="post"  action="<{ofunc type=url link='/wxsite/product_edit'}>">
+
+<div class="blank-10"></div>
+<div class="container">
+<div class="line detail-base">
+<div class="x5" style="width:30%;">
+<div class="pic">
+
+<div class="btn-uploading" onclick="uploadBtn();" style="border:none;background:none;">
+<a href="#"><img id="yushow" src="<{$goods['img']}>"></a>	
+<span class="album" style="width:60px;">上传商品图</span> 
+</div>
+<input type="hidden" name="img" id="img" value="<{$goods['img']}>">
+<input type="hidden" name="goodsid" id="goodsid" value="<{$goods['id']}>">
+<input type="file" name="file" style="display:none;" onchange="previewImg(this);" id="upload" accept="image/*">
+
+</div>
+</div>		
+</div>
+</div>
+
+
+
+<div class="blank-10 bg border-top"></div>
+
+<div class="row">
+<div class="line">
+<span class="x3">商品名称：</span>
+<span class="x9"><input type="text" class="text-input" name="name" value="<{$goods['name']}>" /></span>
+</div>
+</div>
+
+<div class="row">
+<div class="line">
+<span class="x3">商品单价：</span>
+<span class="x9"><input type="text" class="text-input" name="cost" value="<{$goods['cost']}>" /></span>
+</div>
+</div>
+
+<div class="row">
+<div class="line">
+<span class="x3">打包费：</span>
+<span class="x9"><input type="text" class="text-input" name="bagcost" value="<{$goods['bagcost']}>" /></span>
+</div>
+</div>
+
+<div class="row">
+<div class="line">
+<span class="x3">商品库存：</span>
+<span class="x9"><input type="text" class="text-input" name="daycount" value="<{$goods['daycount']}>" /></span>
+</div>
+</div>
+
+<div class="row">
+<div class="line">
+<span class="x3">虚拟总销量：</span>
+<span class="x9"><input type="text" class="text-input" name="virtualsellcount" value="<{$goods['virtualsellcount']}>" /></span>
+</div>
+</div>
+
+
+
+<div class="row">
+<div class="line">
+<span class="x3">商品分类：</span>
+<span class="x9">
+<select id="typeid" name="typeid" class="text-select">
+<option value="0" selected="selected">请选择</option>
+<{foreach from=$goodstype  item=items}>
+  <option value="<{$items['id']}>" <{if $goods['typeid'] eq $items['id']}> selected<{/if}>><{$items['name']}></option>
+<{/foreach}>
+</select>
+</span>
+</div>
+</div>
+
+
+<div class="row">
+<div class="line">
+<span class="x3">商品推荐：</span>
+<span class="x9">
+<label><input class="shuxing" type="checkbox" name="is_new" value="1" <{if $goods['is_new'] eq 1}> checked <{/if}>/>新品&nbsp;</label>
+<label><input class="shuxing" type="checkbox" name="is_hot" value="1" <{if $goods['is_hot'] eq 1}> checked <{/if}>/>热销&nbsp;</label>
+<label><input class="shuxing" type="checkbox" name="is_com" value="1" <{if $goods['is_com'] eq 1}> checked <{/if}>/>推荐&nbsp;</label>
+</span>
+</div>
+</div>
+  
+
+<!-- <div class="row">
+<div class="line">
+<span class="x3">标签设置：</span>
+<span class="x9">
+<label><input class="shuxing" type="checkbox" name="" value="1"/>付&nbsp;</label>
+<label><input class="shuxing" type="checkbox" name="" value="2"/>新&nbsp;</label>
+<label><input class="shuxing" type="checkbox" name="" value="3"/>折&nbsp;</label>
+</span>
+</div>
+</div> -->
+  
+
+<div class="row">
+<div class="line">
+<span class="x3">开启促销：</span>
+<span class="x9">
+<label><input class="shuxing" type="checkbox" name="is_cx" value="1" <{if $goods['is_cx'] eq 1}> checked <{/if}>/>开启&nbsp;</label>
+</span>
+</div>
+</div>
+
+
+<!--下面是时间-->
+<div class="blank-10"></div>
+
+<!-- <div class="row">
+<div class="line">
+<span class="x3">发布日期：</span>
+<span class="x9">
+<input type="text" class="text-input line-input datepicker" id="svctime1" name="" size="20"  readonly="readonly"  value="" placeholder="选择过期时间" />
+</span>
+</div>
+<div class="blank-10"></div>  
+</div> -->
+
+<div class="blank-10 bg"></div>
+
+
+<div class="line border-bottom">
+<span class="x3" style=" border-bottom:solid 1px #eee; line-height:30px;width:100%;">商品简述：</span>
+<textarea class="form-content" name="descgoods" placeholder="商品简述,建议不超过100字！"><{$goods['descgoods']}></textarea>
+</div>
+
+
+<div class="blank-10 bg"></div>
+
+       
+<div class="line border-bottom" id="container"  name="content">
+<span class="x3" style=" border-bottom:solid 1px #eee; line-height:30px;width:100%;">商品详情：</span>
+<textarea class="form-content1" name="" placeholder="添加商品详情，如需上传文章详情图，直接在编辑器上传！"></textarea>
+</div> 
+
+
+<div class="blank-10 bg"></div>        
+
+
+<div class="container" style="position:fixed;bottom:0; width:100%; overflow:hidden;">
+<button type="submit" class="button button-block button-big bg-dot">修改</button>
+</div>
+
+</form>
+
+
+
+<script type="text/javascript">
+function uploadBtn(){
+    $("#upload").click();
+}
+
+//图片预览
+function previewImg(imgFile){
+    //console.log(imgFile);//这里打印出是整个input标签
+    var extension = imgFile.value.substring(imgFile.value.lastIndexOf("."),imgFile.value.length);//扩展名
+    extension = extension.toLowerCase();//把文件扩展名转换为小写
+    if ((extension!='.jpg')&&(extension!='.gif')&&(extension!='.jpeg')&&(extension!='.png')&&(extension!='.bmp')){
+        layer.msg("对不起，系统仅支持标准格式的照片，请您调整格式后重新上传，谢谢 !");
+        $(".btn-uploading").focus();//将焦点定位在文件上传的按钮上，可以直接按确定键再次触发
+    }else{
+        var path;//预览地址
+        if(document.all){//IE
+            imgFile.select();
+                path = document.selection.createRange().text;
+        }else{//火狐，谷歌
+            path = window.URL.createObjectURL(imgFile.files[0]);
+        }
+        $("#yushow").attr("src",path);//设置预览地址
+        uploadImg(imgFile);
+    }
+}
+
+//开始上传
+function uploadImg(imgFile){
+    //获取图片文件
+    var file = imgFile.files[0];//文件对象
+    var name = file.name;//图片名
+    //var size = file.size;//图片大小
+    //var type = file.type;//文件类型
+    
+    // 判断图片格式  
+    if(!(file.type.indexOf('image')==0 && file.type && /\.(?:jpg|png|gif)$/.test(file.name)) ){  
+        alert('图片只能是jpg,gif,png');  
+        return ;  
+    }  
+    //检测浏览器对FileReader的支持
+    if(window.FileReader) {
+        var reader = new FileReader();
+        reader.readAsDataURL(file);//将文件读取为 DataURL
+        reader.onload = function(e){ // reader onload start  
+            // ajax 上传图片  
+            var url ="?ctrl=other&action=ajaxuploadimg&imgtype=addgoods&datatype=json"
+            
+            $.post(url, {file: e.target.result},function(ret){  
+            	
+                if(ret.file!=''){ 
+                	$("#img").val(ret.img)
+                	layer.msg("上传成功");
+                }else{  
+                    alert('upload fail');  
+                }  
+            },'json');  
+        } 
+    }
+}
+
+
+
+//删除图片
+function deleteImg(){
+    $.ajax({
+          url: "/UploadServlet",
+          data: "method=deleteImg",
+          type:"post",
+          dataType: "json",
+          success: function(data){
+                  if(data.state == 'ok'){
+                      layer.msg(data.msg);
+                }else if(data.state == 'error'){
+                    layer.msg(data.msg);
+                }
+          }
+    });
+}
+</script>
+</body>
+</html>

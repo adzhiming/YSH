@@ -3460,6 +3460,7 @@ function makeorder(){
 	
 	    $shopinfo = $this->mysql->getarr($sql);
 	    $data['shopinfo'] = $shopinfo[0];
+	    ICookie::set('adminshopid',$shopinfo[0]['id'],2592000);
 		Mysite::$app->setdata($data);
 	}
 	//店铺基本设置
@@ -3576,11 +3577,17 @@ function makeorder(){
 	function product_edit(){
 	    $this->checkwxweb();
 	    $this->checkwxuser();
-	    if($this->member['uid'] == 0)  $this->message('',$link);
+	    $url ="index.php?ctrl=wxsite&action=product_list_on";
+	    if($this->member['uid'] == 0)  $this->message('',$url);
 	    $shopid = ICookie::get('adminshopid');
-	    $id= IReq::get('id');
-	    if(isset($_POST["submit"])){
-	        $shopid = ICookie::get('adminshopid');
+	    $id= IReq::get('goodsid');
+	    if(empty($id)){
+	     $this->message("非法操作",$url);
+	     }
+	    $sql = "select * from ".Mysite::$app->config['tablepre']."goods
+                where  shopid = '{$shopid}' and id = '{$id}' limit 1";
+	    $goods = $this->mysql->select_one($sql);
+	    if(isset($_POST["goodsid"])){
 	        $img = IFilter::act(IReq::get('img'));
 	        $name = IFilter::act(IReq::get('name'));
 	        $cost = IFilter::act(IReq::get('cost'));
@@ -3610,7 +3617,6 @@ function makeorder(){
 	        if(!empty($shopid)){
 	            $rs = $this->mysql->update(Mysite::$app->config['tablepre'].'goods',$data,"id ='{$id}'");
 	        }
-	        $url ="index.php?ctrl=wxsite&action=product_list_on";
 	        if(false !== $rs){
 	            $this->success("成功",$url);
 	        }
@@ -3618,6 +3624,52 @@ function makeorder(){
 	            $this->message("失败",$url);
 	        }
 	    }
+	    $sql = "select * from ".Mysite::$app->config['tablepre']."goodstype
+                where shopid='".$shopid."'  order by id";
+	    
+	    $goodstype = $this->mysql->getarr($sql);
+	    $data['goodstype'] =$goodstype;
+	    $data['goods'] = $goods;
+	    Mysite::$app->setdata($data);
+	}
+	
+	function category(){
+	    $this->checkwxweb();
+	    $this->checkwxuser();
+	    $url ="index.php?ctrl=wxsite&action=product_list_on";
+	    if($this->member['uid'] == 0)  $this->message('',$url);
+	    $shopid = ICookie::get('adminshopid');
+	    $sql = "select * from ".Mysite::$app->config['tablepre']."goodstype
+                where shopid='".$shopid."'  order by id";
+	    
+	    $goodstype = $this->mysql->getarr($sql);
+	    $data['goodstype'] =$goodstype;
+	    $data['shopid'] =$shopid;
+	    Mysite::$app->setdata($data);
+	}
+	function category_add(){
+	    $this->checkwxweb();
+	    $this->checkwxuser();
+	    $url ="index.php?ctrl=wxsite&action=product_list_on";
+	    if($this->member['uid'] == 0)  $this->message('',$url);
+	    $shopid = ICookie::get('adminshopid');
+	    $cate_name = IFilter::act(IReq::get('cate_name'));
+	    $orderby = IFilter::act(IReq::get('orderby'));
+	    $data = array();
+	    $data["shopid"] = $shopid;
+	    $data["cate_name"] = $img;
+	    $data["orderby"] = $name;
+	    if(!empty($shopid)){
+	        $rs = $this->mysql->insert(Mysite::$app->config['tablepre'].'goodstype',$data);
+	    }
+	    $url ="index.php?ctrl=wxsite&action=product_list_on";
+	    if(false !== $rs){
+	        $this->success("成功",$url);
+	    }
+	    else{
+	        $this->message("失败",$url);
+	    }
+	    $this->success($data);
 	}
 	function product_add_commit(){
 	    $this->checkwxweb();
