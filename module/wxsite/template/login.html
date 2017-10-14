@@ -26,12 +26,13 @@ document.addEventListener('DOMContentLoaded', function () { setTimeout(loaded, 2
 <script>
  	$(function(){
  	$('.intexbg1').click(function(){ 
+ 		
  		var checkuname = $('#logEmailOrPhone').val();
  		if(checkuname != ''){
  		  
   	 	$('#loading').toggle(); 
   	  	var info = {'uname':$('#logEmailOrPhone').val(),'pwd':$('#logPassword').val(),'logintype':'html5'}; 
-  	 	  var  url = siteurl+'/index.php?ctrl=member&action=login&datatype=json&random=@random@' 
+  	 	var  url = siteurl+'/index.php?ctrl=member&action=login&datatype=json&random=@random@' 
   	 	   $.ajax({ 
              url: url.replace('@random@', 1+Math.round(Math.random()*1000)), 
             dataType: "json", 

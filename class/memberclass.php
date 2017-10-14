@@ -600,7 +600,6 @@ if($userinfo['username'] == $apiinfo['openid']){
 		  $agentadminname =  ICookie::get('agentadminname');  
 	      $agentadminpwd  =  ICookie::get('agentadminpwd');  
 	      $agentadminuid  =  ICookie::get('agentadminuid');  
-		  	 
 	    $userinfo = array(); 
 	    if(!empty($agentadminuid)){
 	 	  	  $userinfo = $this->mysql->select_one("select * from ".Mysite::$app->config['tablepre']."admin where uid='".$agentadminuid."' and password  = '".md5($agentadminpwd)."'"); 

@@ -90,6 +90,7 @@ class baseclass
 		   	   	      	$link = $newtr;
 		   	   	       
 		   	   	      	if(empty($link)){
+		   	   	      	   
 		   	   	      		 $link = IUrl::creatUrl('wxsite/index'); 
 		   	   	      	}
 		   	   	      }
@@ -164,11 +165,12 @@ class baseclass
       exit;
    }
    public static function success($msg,$link=''){
-   	   $datatype = IFilter::act(IReq::get('datatype')); 
+   	   $datatype = IFilter::act(IReq::get('datatype'));
 	 		if($datatype == 'json'){
 	 			 echo json_encode(array('error'=>false,'msg'=>$msg)); 
-	       exit; 
+	             exit; 
 	 		}else{
+	 		   
 	 			 self::refunction($msg,$link); 
 	 		}
     	

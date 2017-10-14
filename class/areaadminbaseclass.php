@@ -22,6 +22,7 @@ class areaadminbaseclass
 	 	     $this->memberCls = new memberclass($this->mysql);  
 	 	     $this->pageCls = new page();
 	 	     $this->admin =  $this->memberCls->getareaadmininfo(); 
+	 	    
 	 	     if( !empty( $this->admin ) ){
 				 $stationinfo =  $this->mysql->select_one("select * from ".Mysite::$app->config['tablepre']."stationadmininfo  where uid='".$this->admin['uid']."'  ");  
 				
@@ -32,7 +33,7 @@ class areaadminbaseclass
 					 $this->admin = array_merge($this->admin,$stationinfo);
 				 }
  				 
- 			 } 
+	 	     }
 			 $platpsinfo =  $this->mysql->select_one("select * from ".Mysite::$app->config['tablepre']."platpsset  where cityid='".$stationinfo['cityid']."' ");   
 			 
 			 $this->platpsinfo = $platpsinfo;
