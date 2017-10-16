@@ -13,7 +13,9 @@ class wxbaseclass
 	 public $admin;
 	 public $digui;
 	 public $CITY_ID;
+	 public $COUNTY_ID;
 	 public $CITY_NAME;
+	 public $COUNTY_NAME;
 	 public $platpsinfo;
 	 function init(){
 	 	     //主要是检测权限  
@@ -29,13 +31,23 @@ class wxbaseclass
 	 	     $data['admininfo'] = $this->admin;   
  	 	     $logintype = ICookie::get('logintype');  
  	 	    
-			 $cityId = 0;
+			$cityId = 0;
 			$CITY_ID = ICookie::get('CITY_ID');
 			if( !empty($CITY_ID) ){
 				$CITY_IDArr = explode('_',$CITY_ID);
 				$cityId = $CITY_IDArr[2];
 			}
+			
 			$this->CITY_ID = $cityId;
+			
+			$countyId = 0;
+			$COUNTY_ID = ICookie::get('COUNTY_ID');
+			if( !empty($COUNTY_ID) ){
+			    $COUNTY_IDArr = explode('_',$COUNTY_ID);
+			    $countyId = $COUNTY_IDArr[2];
+			}
+			
+			$this->COUNTY_ID = $countyId;
 			
 		/* 	if(  $action == 'index' ||   $action == 'loadindexcontent' ||   $action == 'indexshoplistdata' ||   $action == 'saveloation' ||   
 			$action == 'dwLocation' ||   $action == 'address' || $action == 'login' ||   $action == 'reg' ||   $action == 'forpwd' ||    $action == 'myaccount' ||   $action == 'member' ||  $action == 'choice' ||   $action == 'checkOpenCity'  ) {  
@@ -52,6 +64,16 @@ class wxbaseclass
 				$CITY_NAME = $CITY_NameArr[2];
 			}
 			$this->CITY_NAME = $CITY_NAME;
+			
+			$COUNTY_NAME = ICookie::get('COUNTY_NAME');
+			if( !empty($COUNTY_NAME) ){
+			    $COUNTY_NameArr = explode('_',$COUNTY_NAME);
+			    $COUNTY_NAME = $COUNTY_NameArr[2];
+			}
+			$this->COUNTY_NAME = $COUNTY_NAME;
+			
+			$data['COUNTY_ID'] = $this->COUNTY_ID;
+			$data['COUNTY_NAME'] = $this->COUNTY_NAME;
 			$data['CITY_ID'] = $this->CITY_ID;
 			$data['CITY_NAME'] = $this->CITY_NAME;
 			

@@ -131,8 +131,8 @@ ul {padding-left: 0px !important;}
 </div>
 
 <div class="fr right">
-<a href="javascript:void(0);" v="1" n="<{$items['name']}>" s="<{$items['orderid']}>" class="btn sh_waimai_cate_edit" style="background:#ff6e6e;color:#fff;">编辑</a>
-<a href="javascript:void(0);" rel="1" v="1" n="<{$items['name']}>" s="<{$items['orderid']}>" class="btn jquery-delete">删除</a>
+<a href="javascript:void(0);" v="<{$items['id']}>"  n="<{$items['name']}>" s="<{$items['orderid']}>" class="btn sh_waimai_cate_edit" style="background:#ff6e6e;color:#fff;">编辑</a>
+<a href="javascript:void(0);" rel="1" v="<{$items['id']}>" n="<{$items['name']}>" s="<{$items['orderid']}>" class="btn jquery-delete">删除</a>
 </div>
 <div class="clear"></div>
 
@@ -149,19 +149,20 @@ ul {padding-left: 0px !important;}
 <script>
 	$(document).ready(function () {
 		$(document).on('click', ".jquery-delete", function (e) {
-			var goods_id = $(this).attr('rel');
+			var cate_id = $(this).attr('v');
+			console.log(this)
 			layer.confirm('您确定要删除该商品？', {
 				skin: 'layer-ext-demo', 
 				area: ['50%', 'auto'], //宽高
 				btn: ['是的', '不'], //按钮
 				shade: false //不显示遮罩
 			}, function () {
-				$.post("", {goods_id: goods_id}, function (result) {
+				var url = "<{ofunc type=url link='/wxsite/category_del/datatype/json'}>"
+				
+				$.post(url, {cate_id:cate_id}, function (result) {
 					if (result.status == "success") {
 						layer.msg(result.msg);
-						setTimeout(function () {
-							location.reload();
-						}, 1000);
+						window.location.reload();
 					} else {
 						layer.msg(result.msg);
 					}
@@ -174,6 +175,9 @@ ul {padding-left: 0px !important;}
 	$(function(){
 		$(".sh_waimai_cate_add").click(function(){
 			$(".sh_waimai_cate_add_mask_box").show();
+		});
+		$("#add_close").click(function(){
+			$(".sh_waimai_cate_add_mask_box").hide();
 		});
 		$(".sh_waimai_cate_edit").click(function(){
 			var v = $(this).attr('v');
@@ -188,15 +192,16 @@ ul {padding-left: 0px !important;}
 			var cate_name = $('.sh_waimai_cate_edit_mask_box #cate_name').val();
 			var orderby = $('.sh_waimai_cate_edit_mask_box #orderby').val();
 			var v = $(this).attr('cate_id');
-			$.post('',{cate_name:cate_name,orderby:orderby,v:v},function(result){
+			var url = "<{ofunc type=url link='/wxsite/category_edit/datatype/json'}>"
+			$.post(url,{cate_name:cate_name,orderby:orderby,cate_id:v},function(result){
 					if(result.status == 'success'){
-						$(".sh_waimai_cate_edit_mask_box").hide();
-						layer.msg(result.message,{icon:1});
+						layer.msg(result.msg);
 						setTimeout(function(){
-							location.reload(true);
-						},2500)
+							window.location.reload();
+						},500) 
+						
 					}else{
-						layer.msg(result.message,{icon:2});
+						layer.msg(result.msg);
 					}
 			},'json')
 		})
@@ -212,7 +217,7 @@ ul {padding-left: 0px !important;}
 					$(".sh_waimai_cate_edit_mask_box").hide();
 					layer.msg(result.msg);
 					setTimeout(function(){
-						location.reload(true);
+						window.location.reload();
 					},500) 
 				}else{
 					layer.msg(result.msg);

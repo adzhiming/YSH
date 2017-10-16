@@ -19,7 +19,7 @@
 </div>
 
 <div id="loadindecContent">
-	 
+
 </div>
  
  
@@ -48,6 +48,7 @@ var lat = '<{$lat|default:0}>';
 var lng = '<{$lng|default:0}>';
 var addressname = '<{$addressname|default:''}>';
 var CITY_ID = '<{$CITY_ID|default:0}>';
+var COUNTY_ID = '<{$COUNTY_ID|default:0}>';
 var is_loading = false; 
 var html5_config = {'showheader':true,'showfooter':true,'bodyscller':true,'Canfresh':false,'CanloadMore':true,'titilename':'外卖频道'};  
 $(function(){    
@@ -97,6 +98,7 @@ function changelnglat(datas){
 
 
 function newrenderReverse(datas){
+
   	if(datas.status == 1   && datas.info == 'OK' ) {
 	    var lnglat = '';
 		var adcode = datas.regeocode.addressComponent.adcode;
@@ -132,7 +134,8 @@ function newrenderReverse(datas){
   					 if( areainfo == '' || areainfo.name == undefined ){
 						 setTimeout('goChoiceAdr()',1000);
 					 }else{
-						CITY_ID = areainfo.adcode;
+						CITY_ID = areainfo.id;
+						COUNTY_ID = areainfo.countyid;
 						loadindexcontent();
 					 }
 					 

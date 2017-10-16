@@ -14,6 +14,8 @@ class baseclass
 	 public $digui;
 	 public $CITY_ID;
 	 public $CITY_NAME;
+	 public $COUNTY_ID;
+	 public $COUNTY_NAME;
 	 public $platpsinfo;
  	 function init(){
 	 	     //主要是检测权限 
@@ -30,6 +32,7 @@ class baseclass
 			 
 			$cityId = 0;
 			$CITY_ID = ICookie::get('CITY_ID');
+			
 			if( !empty($CITY_ID) ){
 				$CITY_IDArr = explode('_',$CITY_ID);
 				$cityId = $CITY_IDArr[2];

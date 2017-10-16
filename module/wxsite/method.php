@@ -85,6 +85,8 @@ class method   extends wxbaseclass
 			ICookie::clear('addressname');
 			ICookie::clear('CITY_ID');
 			ICookie::clear('CITY_NAME');
+			ICookie::clear('COUNTY_ID');
+			ICookie::clear('COUNTY_NAME');
 			$adcode = IFilter::act(IReq::get('adcode'));   
 			$lat = IFilter::act(IReq::get('lat'));   
 			$lng = IFilter::act(IReq::get('lng')); 
@@ -107,15 +109,25 @@ class method   extends wxbaseclass
 				if( !empty($areacodeone) ){
 					$adcodeid = $areacodeone['id'];
 					$pid = $areacodeone['pid'];
-   					$areainfoone =  $this->mysql->select_one("select * from ".Mysite::$app->config['tablepre']."area where  id=".$adcodeid." or id=".$pid."  ");   
-					if( !empty($areainfoone) ){
-						$city_id = "CITY_ID_".$areainfoone['id'];
-						$city_name = "CITY_NAME_".$areainfoone['name'];
+					$areainfocity =  $this->mysql->select_one("select * from ".Mysite::$app->config['tablepre']."area where  id=".$pid."  "); 
+   					$areainfocounty =  $this->mysql->select_one("select * from ".Mysite::$app->config['tablepre']."area where  id=".$adcodeid."  "); 
+   					
+   					if( !empty($areainfocity) ){
+   					    $city_id = "CITY_ID_".$areainfocity['id'];
+   					    $city_name = "CITY_NAME_".$areainfocity['name'];
 						ICookie::set('CITY_ID',$city_id);
 						ICookie::set('CITY_NAME',$city_name);
-						$data['areainfoone']  = $areainfoone;
+						
  					}
-					
+ 					if( !empty($areainfocounty) ){
+ 					    $city_id = "COUNTY_ID_".$areainfocounty['id'];
+ 					    $city_name = "COUNTY_NAME_".$areainfocounty['name'];
+ 					    ICookie::set('COUNTY_ID',$city_id);
+ 					    ICookie::set('COUNTY_NAME',$city_name);
+ 					}
+ 					$areainfocity['countyid'] = $areainfocounty['id'];
+ 					$areainfocity['countyname'] = $areainfocounty['name'];
+ 					$data['areainfoone']  = $areainfocity;
 				}
 			}
 		 
@@ -133,7 +145,6 @@ class method   extends wxbaseclass
 	
 	 function index(){
 	   
-	
 		 $lng = ICookie::get('lng');
          $lat = ICookie::get('lat');
          $addressname = ICookie::get('addressname');
@@ -168,14 +179,15 @@ class method   extends wxbaseclass
 		 $lng = ICookie::get('lng');
          $lat = ICookie::get('lat');
          $addressname = ICookie::get('addressname');
-		 
+		
 		 $lat = empty($lat)?0:$lat;
 		 $lng = empty($lng)?0:$lng;
-		 $where = "  and admin_id=".$this->CITY_ID."   ";  
+		 $where = "  and city=".$this->CITY_ID."  and admin_id = ".$this->COUNTY_ID." ";  
 		 $where = empty($where)?'   and  SQRT((`lat` -'.$lat.') * (`lat` -'.$lat.' ) + (`lng` -'.$lng.' ) * (`lng` -'.$lng.' )) < (`pradiusa`*0.01094-0.01094) ': $where.' and SQRT((`lat` -'.$lat.') * (`lat` -'.$lat.' ) + (`lng` -'.$lng.' ) * (`lng` -'.$lng.' )) < (`pradiusa`*0.01094-0.01094) ';
-                 $where = Mysite::$app->config['plateshopid'] > 0? $where.' and  id != '.Mysite::$app->config['plateshopid'] .' ':$where;
+		 $where = Mysite::$app->config['plateshopid'] > 0? $where.' and  id != '.Mysite::$app->config['plateshopid'] .' ':$where; 
 		 $fyshoplist =   $this->mysql->getarr("select id,shopname,shoplogo,shoptype from ".Mysite::$app->config['tablepre']."shop where is_pass = 1  and is_open = 1 and isforyou = 1 and endtime > ".time()."  ".$where."   limit  6 ");		
-         #print_r($fyshoplist);
+		 
+		 #print_r($fyshoplist);
 		 $data['fyshoplist'] = $fyshoplist;
 		 if(empty($addressname)){
 				 $addressname = '' ;
@@ -722,7 +734,7 @@ class method   extends wxbaseclass
 	 
 	 
 	  function indexshoplistdata(){		// 首页获取附近商家列表（外卖和超市）
-		
+
 		$typelx = IFilter::act(IReq::get('typelx')); 
 		
 		 if(!empty($typelx)){
@@ -741,9 +753,9 @@ class method   extends wxbaseclass
 		 }else{
 			 
 			 $shopshowtype = ICookie::get('shopshowtype');
-			 
+
 		 }
-	  
+		
 		
 		$cxsignlist = $this->mysql->getarr("select * from ".Mysite::$app->config['tablepre']."goodssign where type='cx' order by id desc limit 0, 100");
 		$cxarray  =  array();
@@ -751,7 +763,7 @@ class method   extends wxbaseclass
 		   $cxarray[$value['id']] = $value['imgurl'];
 		}
 		
-		 $where = "  and admin_id=".$this->CITY_ID."   ";  
+		$where = "  and admin_id=".$this->CITY_ID."   ";  
  		$lng = 0;
 		$lat = 0;
 
@@ -3670,6 +3682,49 @@ function makeorder(){
 	    }
 	    $this->success($data);
 	}
+	
+	function category_edit(){
+	    $this->checkwxweb();
+	    $this->checkwxuser();
+	    $url ="index.php?ctrl=wxsite&action=product_list_on";
+	    if($this->member['uid'] == 0)  $this->message('登录超时',$url);
+	    $shopid = ICookie::get('adminshopid');
+	    $cate_name = IFilter::act(IReq::get('cate_name'));
+	    $orderby = IFilter::act(IReq::get('orderby'));
+	    $cate_id = IFilter::act(IReq::get('cate_id'));
+	    $data = array();
+	    $data["name"] = $cate_name;
+	    $data["orderid"] = $orderby;
+	    if(!empty($shopid)){
+	        $rs = $this->mysql->update(Mysite::$app->config['tablepre'].'goodstype',$data,"shopid ='{$shopid}' and id ='{$cate_id}'");
+	    }
+	    if(false !== $rs){
+	        $this->success("成功");
+	    }
+	    else{
+	        $this->message("失败");
+	    }
+	}
+	
+	function category_del(){
+	    $this->checkwxweb();
+	    $this->checkwxuser();
+	    $url ="index.php?ctrl=wxsite&action=product_list_on";
+	    if($this->member['uid'] == 0)  $this->message('登录超时',$url);
+	    $shopid = ICookie::get('adminshopid');
+	    $cate_id = IFilter::act(IReq::get('cate_id'));
+	    $data = array();
+	    if(!empty($shopid)){
+	        $rs = $this->mysql->delete(Mysite::$app->config['tablepre'].'goodstype',"shopid ='{$shopid}' and id ='{$cate_id}'");
+	    }
+	    if(false !== $rs){
+	        $this->success("成功");
+	    }
+	    else{
+	        $this->message("失败");
+	    }
+	}
+	
 	function product_add_commit(){
 	    $this->checkwxweb();
 	    $this->checkwxuser();
@@ -3715,7 +3770,70 @@ function makeorder(){
 	}
 	//订单管理
 	function orderManage(){
-	    $data['order'] = '';
+	    $this->checkshoplogin();
+	    $shopid = ICookie::get('adminshopid');
+	    if(empty($shopid)) $this->message('emptycookshop');
+	    $starttime = trim(IFilter::act(IReq::get('starttime')));
+	    $orderSource = intval(IReq::get('orderSource'));
+	    $nowday = date('Y-m-d',time());
+	    $starttime = empty($starttime)? $nowday:$starttime;
+	    $endtime = empty($endtime)? $nowday:$endtime;
+	    $where = '';
+	    $where = '  and addtime > '.strtotime($starttime.' 00:00:00').' and addtime < '.strtotime($starttime.' 23:59:59');
+	   
+	    $data['orderSource'] = $orderSource;
+	    $data['starttime'] = $starttime;
+	    $this->setstatus();
+	    //获取订单的方式是所有 有效订单  status > 0 and < 4 and (paytype == 'outpay' or paytype='open_acout or (paystatus=1)  //
+	    
+	    $orderSourcetoarray = array(
+	        '0'=>' and status > 0  ',
+	        '1'=>' and ordertype !=2 and status > 0 and status < 4 and ( paytype = 0 or  paystatus=1)',
+	        '2'=>' and ordertype =2 and status > 0 and status < 4 and ( paytype = 0 or  paystatus=1)',
+	        '3'=>' and is_make = 0 and status > 0 and status < 3 and ( paytype = 0 or  paystatus=1)',
+	        '4'=>' and status = 1 and is_make = 1 and ( paytype =0 or  paystatus=1)',
+	        '5'=>' and status > 1 and status < 4  and ( paytype = 0 or  paystatus=1)  ' ,
+	        '6'=>' and status > 0 and status < 4  and ( paytype = 1 or  paystatus=1) and is_reback = 1 ' ,
+	        '7'=>' and status = 4 and ( paytype = 1 or  paystatus=1) and is_reback = 2 ' ,
+	        '8'=>' and status > 0 and status < 4  and ( paytype = 1 or  paystatus=1) and is_reback = 3 '
+	        
+	    );
+	    
+	    
+	    
+	    if(isset($orderSourcetoarray[$orderSource])){
+	        
+	        $where .= ''.$orderSourcetoarray[$orderSource];
+	    }
+	    
+	    
+	    $orderlist = $this->mysql->getarr("select * from ".Mysite::$app->config['tablepre']."order where shopid='".$shopid."'  ".$where." order by id desc limit 0,1000");
+	    $shuliang  = $this->mysql->select_one("select count(id) as shuliang,sum(allcost) as allcost from ".Mysite::$app->config['tablepre']."order where shopid='".$shopid."' ".$where." limit 0,1000");
+	    $data['tongji'] = $shuliang;
+	    $data['list'] = array();
+	    if($orderlist)
+	    {
+	        foreach($orderlist as $key=>$value)
+	        {
+	            $value['detlist'] = $this->mysql->getarr("select * from ".Mysite::$app->config['tablepre']."orderdet where   order_id = ".$value['id']." order by id desc ");
+	            if( $value['is_reback'] > 0 ){
+	                $value['drawbacklog'] = $this->mysql->select_one("select * from ".Mysite::$app->config['tablepre']."drawbacklog where   orderid = ".$value['id']." limit 1 ");
+	            }
+	            $value['maijiagoumaishu'] = 0;
+	            if($value['buyeruid'] > 0)
+	            {
+	                $value['maijiagoumaishu'] =$this->mysql->counts("select * from ".Mysite::$app->config['tablepre']."order where buyeruid='".$value['buyeruid']."' and  status = 3 order by id desc");
+	            }
+	            $data['list'][] = $value;
+	        }
+	    }
+	    
+	    
+	    $daymintime = strtotime(date('Y-m-d',time()));
+	    $tempshu =  $this->mysql->select_one("select count(id) as shuliang  from ".Mysite::$app->config['tablepre']."order where shopid='".$shopid."' and  status > 0  and  status <  4 and posttime > ".$daymintime." limit 0,1000");
+	    //统计当天订单
+	    $data['hidecount'] = $tempshu['shuliang'];
+	    $data['playwave'] = ICookie::get('playwave'); //shoporderlist
 	    Mysite::$app->setdata($data);
 	}
 	//商家资金
@@ -7240,4 +7358,49 @@ function gzwx(){
         if (!mkdirs(dirname($dir), $mode)) return FALSE;
         return @mkdir($dir, $mode);
     } 
+    
+    function setstatus(){
+        $data['buyerstatus'] = array(
+            '0'=>'待处理订单',
+            '1'=>'待发货',
+            '2'=>'订单已发货',
+            '3'=>'订单完成',
+            '4'=>'买家取消订单',
+            '5'=>'卖家取消订单'
+        );
+        $paytypelist = array(0=>'货到支付',1=>'在线支付');
+        
+        $data['shoptype'] = array(
+            '0'=>'外卖',
+            '1'=>'超市',
+            '2'=>'其他',
+        );
+        $data['ordertypearr'] = array(
+            '0'=>'网站',
+            '1'=>'网站',
+            '2'=>'电话',
+            '3'=>'微信',
+            '4'=>'AndroidAPP',
+            '5'=>'手机网站',
+            '6'=>'iosApp',
+            '7'=>'后台客服下单',
+            '8'=>'商家后台下单',
+            '9'=>'html5手机站'
+        );
+        $data['backarray'] = array(
+            '0'=>'',
+            '1'=>'退款中..',
+            '2'=>'退款成功',
+            '3'=>'拒绝退款'
+        );
+        $data['payway'] = array(
+            'open_acout'=>'余额支付',
+            'weixin'=>'微信支付',
+            'alipay'=>'支付宝',
+            'alimobile'=>'手机支付宝'
+        );
+        $data['paytypearr'] = $paytypelist;
+        Mysite::$app->setdata($data);
+    }
+    
 }

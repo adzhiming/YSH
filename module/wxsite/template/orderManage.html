@@ -168,103 +168,125 @@ body {padding: 20px 0;}
 <ul>
 <div class="blank-10 bg"></div>
 
-
+<!--订单循环-->
+    <{foreach from=$list key=myid item=items}> 
 <li class="line">
-<dt><a class="x4">订单ID：4</a><a class="x8 text-right">交易时间：2016-07-01 22:55:46 </a></dt>
+<dt><a class="x4">订单ID：<{$items['dno']}></a><a class="x8 text-right">交易时间：<{$items['addtime']|date_format:"%Y-%m-%d %H:%M:%S"}> </a></dt>
 <!--循环商品开始-->
+ <{foreach from=$items['detlist'] item=value}>
 <dd class="zhong">
 <div class="x2">
 <img src="images/thumb_57415f4571546.jpg"  style="width:90%;">
 </div>
 <div class="10">
-<p class="text-gray">名称：港版苹果Apple 笔记本电脑</p>
-<p class="text-gray">单价：5688 * 1 = 5688</p>
+<p class="text-gray">名称：<{$value['goodsname']}><{if $value['is_send'] == 1}><font color=red>[赠品]</font><{/if}><{if $value['shopid'] == 0}><font color=blue>[商城]</font><{/if}></p>
+<p class="text-gray">单价：<{$value['goodscost']}> * <{$value['goodscost']}> = <{$value['goodscount']*$value['goodscost']}></p>
 <p class="text-gray"></p>
 </div>
 </dd>
+ <{/foreach}>
 <!--循环商品开始--> 
 <!--如果不是到付就显示--> 
+
 <dt>
 <div class="x12">
-<p class="text-small">总价：5688  - 积分抵现：1元（消耗100积分） =实付金额：<a class="text-dot">5687</a>元</p>
+<p class="text-small"><{if $items['scoredown'] > 0}> 积分：<font color=red><{$items['scoredown']}></font>个<{/if}>
+                                 <{if $items['is_goshop'] != 1}>	 配送费：<font color=red><{$items['shopps']}></font>元   <{/if}>
+                               	 <{if $items['yhjcost']> 0}> 优惠券金额：<font color=red><{$items['yhjcost']}></font>元<{/if}>
+                               	<{if $items['cxcost']> 0}> 促销优惠：<font color=red><{$items['cxcost']}></font>元<{/if}>
+                               	 <{if $items['bagcost']> 0}>打包费：<font color=red><{$items['bagcost']}></font>元<{/if}>
+                               	 <span class="info_name ml20">应收金额：<a class="text-dot"><{$items['allcost']}></a>元</p>
 </div>
 </dt> 
 <!--信息end-->   
 <!--收货地址开始-->          
 <dt>
 <div class="x12">
-<p class="text-gray">买家姓名：123456@qq.com</p>
-<p class="text-gray">买家电话：13855512345</p>
-<p class="text-gray">收货地址：-深圳-生态公园-测试能不能跳转回去-测试-13344555554</p>
+<p class="text-gray">买家姓名：<{$items['buyername']}></p>
+<p class="text-gray">买家电话：<{$items['buyerphone']}></p>
+ <{if $items['is_goshop'] != 1}><p class="text-gray">顾客地址:<{$items['buyeraddress']}></p> <{/if}>
 </div>
 </dt> 
 <!--地址end-->       
 <dl>
 <p class="text-right padding-top x12">
-<a class="button button-small bg-dot">等待付款</a>        
+<a class="button button-small bg-dot">
+                      <{if $items['is_goshop'] == 1}>
+							<{if $items['is_make'] < 2 }>					
+									<{if $items['status'] == 1 }>
+											等待用户到店消费
+										<{elseif $items['status'] == 0  }>
+											等待处理	
+										<{elseif $items['status'] == 2 || $items['status'] ==3 }>
+											已完成，用户已消费
+										<{elseif $items['status'] == 4  }>
+											商家已取消订单
+										<{elseif $items['status'] ==5 }>
+											管理员已取消订单
+										<{/if}>
+									<{else}>
+								
+								商家已取消订单
+
+							<{/if}>
+					
+			 <{else}>
+					<{if $items['is_reback'] == 0 }>
+						<{if $items['paytype'] == 1 }>
+						      <{if $items['status'] == 0}>
+							     待平台审核-<{$buyerstatus[$items['status']]}>
+							  <{elseif $items['status'] == 1}> 
+								<{if $items['is_make'] == 0}>
+								   待确认制作 
+							   <{elseif $items['is_make'] == 1}>
+								 <{$buyerstatus[$items['status']]}>
+								<{else}>
+								   取消制作-<{$buyerstatus[$items['status']]}>
+								<{/if}>	
+							  <{elseif $items['status'] == 2}>
+							    已发货待用户确认  
+							  <{elseif $items['status'] == 3}>
+							    已完成 
+							  <{else}>
+							  订单取消 
+							  <{/if}>
+						<{else}> 
+						   
+						   <{if $items['status'] == 0}>
+							     待平台审核-<{$buyerstatus[$items['status']]}>
+							  <{elseif $items['status'] == 1}> 
+								<{if $items['is_make'] == 0}>
+								   待确认制作 
+							   <{elseif $items['is_make'] == 1}>
+								 <{$buyerstatus[$items['status']]}>
+								<{else}>
+								   商家已取消制作
+								<{/if}>	
+							  <{elseif $items['status'] == 2}>
+							    已发货待用户确认  
+							  <{elseif $items['status'] == 3}>
+							    已完成 
+							  <{else}>
+							  订单取消 
+							  <{/if}>
+
+						<{/if}>
+					<{else}>
+						
+							<{if $items['is_reback'] == 1 }>已申请退款等待平台处理<{/if}>
+							<{if $items['is_reback'] == 2 }>已退款<{/if}>
+						
+					<{/if}>
+          	<{/if}></a>        
 <!--配送逻辑代码开始-->
 <!--配送逻辑代码结束-->
 </p>
 </dl>
 </li>
+ <{/foreach}>
+   <div class="blank-10 bg"></div>     
+ <!---订单循环-->
 
-
-<div class="blank-10 bg"></div>
-
-
-
-<li class="line"  >
-<dt><a class="x4">订单ID：1</a><a class="x8 text-right">交易时间：2016-06-03 09:01:34 </a></dt>
-<!--循环商品开始-->
-<dd class="zhong">
-<div class="x2">
-<img src="images/thumb_57415f4571546.jpg"  style="width:90%;">
-</div>
-<div class="10">
-<p class="text-gray">名称：港版苹果Apple 笔记本电脑</p>
-<p class="text-gray">单价：5688 * 1 = 5688</p>
-<p class="text-gray"></p>
-</div>
-</dd>
-<!--循环商品开始--> 
-<!--如果不是到付就显示--> 
-<dt>
-<div class="x12">
-<p class="text-small">总价：5688 - 积分抵现：1元（消耗100积分）-手机优惠：10元=实付金额：<a class="text-dot">5677</a>元</p>
-</div>
-</dt> 
-<!--信息end-->   
-<!--收货地址开始-->          
-<dt>
-<div class="x12">
-<p class="text-gray">买家姓名：123456@qq.com</p>
-<p class="text-gray">买家电话：138567123456</p>
-<p class="text-gray">收货地址：-深圳-生态公园-测试能不能跳转回去-测试-13344555554</p>
-</div>
-</dt> 
-<!--地址end-->       
-<dl>
-<p class="text-right padding-top x12">
-<a class="button button-small bg-main">手机订单</a>        
-<a class="button button-small bg-dot">已完成配送</a>        
-<!--配送逻辑代码开始-->
-<!--配送逻辑代码结束-->
-<a id="is_pei1" class="button button-small bg-yellow">配送员资料</a>
-<script type="text/javascript">
-$('#is_pei1').mouseover(function(){
-	var n = '李小姐';
-	var m = '13356782345';
-	layer.tips('配送员姓名：'+n+'<br>电话：'+m+'',$(this),{
-	tips: [2, '#7a7a7a']
-	});
-})
-</script>      
-</p>
-</dl>
-</li>
-
-
-<div class="blank-10 bg"></div>   
 </ul>
 </div> 
 
