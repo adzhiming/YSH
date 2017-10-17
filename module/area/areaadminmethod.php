@@ -151,7 +151,7 @@ class method   extends areaadminbaseclass
 	 	 Mysite::$app->setdata($data);
 	 }
 	 function setps(){
-		$shopid =  intval(IReq::get('shopid'));
+	     $shopid =  intval(IReq::get('shopid'));
 	 	  if(empty($shopid))
 	 	  {
 	 	  	 echo '店铺不存在';
@@ -171,10 +171,9 @@ class method   extends areaadminbaseclass
 	 	  }
 	   $data['shopinfo'] = $shopinfo;
 	   $data['shopdetinfo'] = $tempinfo;
-	   
-	   
+	 
 	   //地区信息 
-	    $areainfo = $this->mysql->getarr("select * from ".Mysite::$app->config['tablepre']."area  where admin_id = '".$this->admin['uid']."' order by orderid asc");
+	    $areainfo = $this->mysql->getarr("select * from ".Mysite::$app->config['tablepre']."area  where id = '".$this->admin['countyid']."' order by id asc");
 	  //	print_r($areainfo);
 		//&nbsp;&nbsp;&nbsp;&nbsp;
 		$parentids = array();

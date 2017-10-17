@@ -762,8 +762,8 @@ class method   extends wxbaseclass
 		foreach($cxsignlist as $key=>$value){
 		   $cxarray[$value['id']] = $value['imgurl'];
 		}
-		
-		$where = "  and admin_id=".$this->CITY_ID."   ";  
+		$where = "  and city=".$this->CITY_ID."  and admin_id = ".$this->COUNTY_ID." "; 
+		//$where = "  and admin_id=".$this->CITY_ID."   ";  
  		$lng = 0;
 		$lat = 0;
 
