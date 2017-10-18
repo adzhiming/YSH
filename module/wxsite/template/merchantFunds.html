@@ -58,10 +58,10 @@
 <style>ul { padding-left: 0px;}</style>
 <!-- 筛选TAB -->
 <ul id="shangjia_tab">
-<li style="width:25%;"><a href="sjzj.html" class="on">商家资金</a></li>
-<li style="width:25%;"><a href="sjzj-1.html">资金日志</a></li>
-<li style="width:25%;"><a href="sjzj-2.html">提现日志</a></li>
-<li style="width:25%;"><a href="sjzj-3.html">申请提现</a></li>
+<li style="width:25%;"><a href="<{ofunc type=url link='/wxsite/merchantFunds'}>" class="on">商家资金</a></li>
+<li style="width:25%;"><a href="<{ofunc type=url link='/wxsite/merchantFundslog'}>">资金日志</a></li>
+<li style="width:25%;"><a href="<{ofunc type=url link='/wxsite/withdraw_log'}>">提现日志</a></li>
+<li style="width:25%;"><a href="<{ofunc type=url link='/wxsite/withdraw_apply'}>">申请提现</a></li>
 </ul>  
 
 <div class="blank-10 bg"></div>
@@ -72,7 +72,7 @@
 
 <div class="container">
 <div class="blank-40"></div>
-<p><span>尊敬的：脆皮玉米（1）</span></p>
+<p><span>尊敬的：<{$username}></span></p>
 </div>
 
 <div class="blank-10 bg"></div>
@@ -85,7 +85,7 @@
 <div class="blank-10 bg"></div>
 <div class="panel-list">
 <ul>
-<li><a>当前余额：5778元</a></li>
+<li><a>当前余额：<{$cost}>元</a></li>
 </ul>
 </div>
 

@@ -3838,10 +3838,53 @@ function makeorder(){
 	}
 	//商家资金
 	function merchantFunds(){
+	    $this->checkshoplogin();
+	    $shopid = ICookie::get('adminshopid');
+	    if(empty($shopid)) $this->message('emptycookshop');
+	    //var_dump($this->member);
+	    $data['username'] = $this->member['username'];
+	    $data['cost'] = $this->member['cost'];
+	    Mysite::$app->setdata($data);
+	}
+	//商家资金日志
+	function merchantFundslog(){
+	    $this->checkshoplogin();
+	    $shopid = ICookie::get('adminshopid');
+	    if(empty($shopid)) $this->message('emptycookshop'); 
+	    $bg_date =trim(IFilter::act(IReq::get('bg_date')));
+	    $end_date =trim(IFilter::act(IReq::get('end_date')));
+	    $data['count'] = $this->mysql->counts("select * from ".Mysite::$app->config['tablepre']."order where   shopid = ".$shopid." and paystatus = 1 and is_acceptorder = 1 order by id desc ");
+	    $rs = $this->mysql->getarr("select * from ".Mysite::$app->config['tablepre']."order where   shopid = ".$shopid." and paystatus = 1 and is_acceptorder = 1 order by id desc ");
+	    if($rs){
+	        foreach ($rs as $k=>$v){
+	            $rs[$k]['addtime'] = date("Y-m-d H:i:s",$v['addtime']);
+	        }
+	    }
+	    $data['orderlist'] = $rs;
+	    Mysite::$app->setdata($data);
+	}
+	//商家资金提现日志
+	function withdraw_log(){
+	    $this->checkshoplogin();
+	    $shopid = ICookie::get('adminshopid');
+	    if(empty($shopid)) $this->message('emptycookshop');
 	    $data['order'] = '';
 	    Mysite::$app->setdata($data);
 	}
-	
+	//商家资金申请提现
+	function withdraw_apply(){
+	    $this->checkshoplogin();
+	    $shopid = ICookie::get('adminshopid');
+	    if(empty($shopid)) $this->message('emptycookshop');
+	    
+	    $sql = "select * from ".Mysite::$app->config['tablepre']."shop where  id = ".$shopid."  order by id desc ";
+	    $shopinfo = $this->mysql->select_one($sql);
+	   
+	    $data['shopinfo'] = $shopinfo;
+	    $data['username'] = $this->member['username'];
+	    $data['cost'] = $this->member['cost'];
+	    Mysite::$app->setdata($data);
+	}
 	//优惠券
 	function shopCoupon(){
 	    $data['order'] = '';
