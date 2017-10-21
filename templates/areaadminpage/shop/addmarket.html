@@ -34,6 +34,19 @@
 							</select>
 						</li>
 						<li><span style='width: 95px;'>市场描述：</span><textarea id="desc" name="desc"></textarea></li>
+						<li>
+						
+						<div class="serxuanze" style=" width:767px;">
+						<div  style="float:left">
+                    	<span style='width: 95px;'>高德坐标：</span>
+                        <input type="text" style="width:200px; " name="baidumap" value="<{$marketinfo['lng']}>,<{$marketinfo['lat']}>"  />
+                         </div>
+                        <div class="geiquAdd curbtn fr" onclick="biaoji();" style="float:left">
+                        	给取地址
+                        </div>
+                        <div class="cl"></div>
+                    </div>
+						</li>
 					</ul>
 					<div class="addShopSingBut">
 					<input type="hidden" name="subtype" value="1">
@@ -52,6 +65,20 @@
 </div>
 
  <div class="clear"></div>
-    
+<script type="text/javascript">
+
+var ditulog;
+function biaoji(){
+    	mydialog = art.dialog.open(siteurl+'/index.php?ctrl=area&action=marketbaidumap',{height:'550px',width:'850px'},false);
+    	//http://www.hanwoba.com/index.php?ctrl=admin&action=baidumap&id=2#
+	 	 mydialog.title('设置标记高德地图位置'); 
+  }
+function setmap(mylnglat,mymapname){
+	$('input[name="baidumap"]').val(mylnglat);
+}
+function closemydilog(){
+ 	mydialog.close();
+}
+</script>    
   
 <{/block}>

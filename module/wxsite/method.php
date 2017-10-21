@@ -365,6 +365,79 @@ class method   extends wxbaseclass
 		  $data['areaid'] = $areaid;  
 		  Mysite::$app->setdata($data);  
 	 }
+	 
+	 //市场下的店铺
+	 function marketshoplist(){
+	     
+	     
+	     if( !strpos($_SERVER["HTTP_USER_AGENT"],'MicroMessenger')    ){    //判断是微信浏览器不
+	         $data['wxType'] = 2;
+	     }else{
+	         $data['wxType'] = 1;
+	     }
+	     $marketid = IReq::get('id');
+	     $typelx = IFilter::act(IReq::get('typelx'));
+	     
+	     if(!empty($typelx)){
+	         if($typelx == 'wm'){
+	             ICookie::set('shopshowtype','waimai',2592000);
+	             $shopshowtype = 'waimai';
+	         }
+	         if($typelx == 'mk'){
+	             ICookie::set('shopshowtype','market',2592000);
+	             $shopshowtype = 'market';
+	         }
+	         if($typelx == 'yd'){
+	             ICookie::set('shopshowtype','dingtai',2592000);
+	             $shopshowtype = 'dingtai';
+	         }
+	     }else{
+	         
+	         $shopshowtype = ICookie::get('shopshowtype');
+	         
+	     }
+	     
+	    
+	     
+	     $areaid = IFilter::act(IReq::get('areaid'));
+	     if( $areaid <= 0 ){
+	         ICookie::clear('myaddress');
+	     }
+	     $data['typeid'] = IFilter::act(IReq::get('typeid'));
+	     
+	     
+	     
+	     $catewhere = "  and   cityid = '".$this->CITY_ID."' ";
+	     $shopcateinfo =array();
+	     $shopcateinfo = $this->mysql->select_one("select img,link from ".Mysite::$app->config['tablepre']."shopcateadv where cateid='".$data['typeid']."' ".$catewhere." order by orderid asc  ");  //暂时只读取一条
+	     $data['shopcateinfo']  = $shopcateinfo;
+	     
+	     
+	     if($shopshowtype == 'market'){
+	         $templist = $this->mysql->select_one("select * from ".Mysite::$app->config['tablepre']."shoptype where  cattype = 1 and parent_id = 0 and is_search = 1 and type ='checkbox'  order by orderid asc limit 0,1000");
+	         $data['caipin'] = array();
+	         if(!empty($templist)){
+	             $data['caipin']  = $this->mysql->getarr("select id,name from ".Mysite::$app->config['tablepre']."shoptype where parent_id='".$templist['id']."'  ");
+	         }
+	     }else{
+	         
+	         $templist = $this->mysql->select_one("select * from ".Mysite::$app->config['tablepre']."shoptype where  cattype = 0 and parent_id = 0 and is_search = 1 and type ='checkbox'  order by orderid asc limit 0,1000");
+	         
+	         $data['caipin'] = array();
+	         if(!empty($templist)){
+	             $data['caipin']  = $this->mysql->getarr("select id,name from ".Mysite::$app->config['tablepre']."shoptype where parent_id='".$templist['id']."'  ");
+	         }
+	     }
+	     
+	     $data['shopshowtype'] = $shopshowtype;
+	     $shopsearch = IFilter::act(IReq::get('search_input'));
+	     $data['search_input'] = $shopsearch;
+	     $data['marketid'] = $marketid;
+	     $data['areaid'] = $areaid;
+	     $data['typelx'] = $typelx;
+	     Mysite::$app->setdata($data);
+	 }
+	 
 	 function shoplistdata(){
 		$typelx = IFilter::act(IReq::get('typelx')); 
 			
@@ -732,6 +805,430 @@ class method   extends wxbaseclass
 	    $this->success($data); */
 	 } 
 	 
+	 //市场商家列表
+	 function marketshoplistdata(){
+	     $typelx = IFilter::act(IReq::get('typelx'));
+	     $marketid = IFilter::act(IReq::get('marketid'));
+	     if(!empty($typelx)){
+	         if($typelx == 'wm'){
+	             ICookie::set('shopshowtype','waimai',2592000);
+	             $shopshowtype = 'waimai';
+	         }
+	         if($typelx == 'mk'){
+	             ICookie::set('shopshowtype','market',2592000);
+	             $shopshowtype = 'market';
+	         }
+	         if($typelx == 'yd'){
+	             ICookie::set('shopshowtype','dingtai',2592000);
+	             $shopshowtype = 'dingtai';
+	         }
+	     }else{
+	         
+	         $shopshowtype = ICookie::get('shopshowtype');
+	         
+	     }
+	     $cxsignlist = $this->mysql->getarr("select * from ".Mysite::$app->config['tablepre']."goodssign where type='cx' order by id desc limit 0, 100");
+	     $cxarray  =  array();
+	     foreach($cxsignlist as $key=>$value){
+	         $cxarray[$value['id']] = $value['imgurl'];
+	     }
+	     #	print_r($shopshowtype);
+	     if($shopshowtype == 'market'){
+	         $where = '';
+	         $shopsearch = IFilter::act(IReq::get('search_input'));
+	         $shopsearch = urldecode($shopsearch);
+	         if(!empty($shopsearch)) $where=" and b.shopname like '%".$shopsearch."%' ";
+	         $areaid= intval(IFilter::act(IReq::get('areaid'))); //  ICookie::get('myaddress');
+	         $catid = intval(IReq::get('catid'));
+	         $order = intval(IReq::get('order'));
+	         $order = in_array($order,array(1,2,3))? $order:0;
+	         $qsjid = intval(IReq::get('qsjid'));
+	         $qsjid = in_array($qsjid,array(1,2,3))? $qsjid:0;
+	         //构造菜品查询
+	         $where2 = '';
+	         if($catid > 0) $where2 = 'where sh.second_id = '.$catid;
+	         $checkareaid = $areaid;
+	         if($checkareaid > 0) {
+	             $where2 = empty($where2) ?' where  ard.areaid = '.$checkareaid:$where2.' and  ard.areaid = '.$checkareaid;
+	             $where = empty($where2)? $where:$where." and b.id in(select ard.shopid from ".Mysite::$app->config['tablepre']."areashop as ard left join ".Mysite::$app->config['tablepre']."shopsearch  as sh  on ard.shopid = sh.shopid   ".$where2."  group by shopid  ) ";
+	         }else{
+	             $where = empty($where2)? $where:$where." and b.id in(select sh.shopid from  ".Mysite::$app->config['tablepre']."shopsearch  as sh    ".$where2."  group by shopid  ) ";
+	         }
+	         $lng = 0;
+	         $lat = 0;
+	         if($checkareaid > 0){
+	             $areainfo =    $this->mysql->select_one("select * from ".Mysite::$app->config['tablepre']."area where id=".$checkareaid."  ");
+	             if(!empty($areainfo)){
+	                 $lng = $areainfo['lng'];
+	                 $lat = $areainfo['lat'];
+	                 
+	             }
+	         }else{
+	             $lng = ICookie::get('lng');
+	             $lat = ICookie::get('lat');
+	             $lng = empty($lng)?0:$lng;
+	             $lat =empty($lat)?0:$lat;
+	             #      $where = empty($where)?'   and  SQRT((`lat` -'.$lat.') * (`lat` -'.$lat.' ) + (`lng` -'.$lng.' ) * (`lng` -'.$lng.' )) < (`pradius`*0.01094-0.01094) ': $where.' and SQRT((`lat` -'.$lat.') * (`lat` -'.$lat.' ) + (`lng` -'.$lng.' ) * (`lng` -'.$lng.' )) < (`pradius`*0.01094-0.01094) ';
+	         }
+	         
+	         $lng = trim($lng);
+	         $lat = trim($lat);
+	         $lng = empty($lng)?0:$lng;
+	         $lat =empty($lat)?0:$lat;
+	         
+	         $orderarray = array(
+	             //     '0'=>' (`lat` -'.$lat.') * (`lat` -'.$lat.' ) + (`lng` -'.$lng.' ) * (`lng` -'.$lng.' ) ASC       ',
+	             '0'=>'  sort ASC       ',
+	             '1'=>' (`lat` -'.$lat.') * (`lat` -'.$lat.' ) + (`lng` -'.$lng.' ) * (`lng` -'.$lng.' ) ASC  ',
+	             '2'=>' limitcost asc     ',
+	             '3'=>' is_com desc '
+	         );
+	         $qsjarray = array(
+	             '0'=>'  ',
+	             '1'=>' and limitcost < 5  ',
+	             '2'=>' and limitcost >= 5 and limitcost <= 10 ',
+	             '3'=>' and limitcost > 10 '
+	         );
+	         
+	         
+	         $templist = $this->mysql->getarr("select * from ".Mysite::$app->config['tablepre']."shoptype where  cattype = 1 and parent_id = 0    order by orderid asc limit 0,1000");
+	         $attra['input'] = 0;
+	         $attra['img'] = 0;
+	         $attra['checkbox'] = 0;
+	         foreach($templist as $key=>$value){
+	             if($value['type'] == 'input'){
+	                 $attra['input'] =  $attra['input'] > 0?$attra['input']:$value['id'];
+	             }elseif($value['type'] == 'img'){
+	                 $attra['img'] =  $attra['img'] > 0?$attra['img']:$value['id'];
+	             }elseif($value['type'] == 'checkbox'){
+	                 $attra['checkbox'] =  $attra['checkbox'] > 0?$attra['checkbox']:$value['id'];
+	             }
+	         }
+	         /*获取店铺*/
+	         $pageinfo = new page();
+	         $pageinfo->setpage(intval(IReq::get('page')));
+	         $where .= $qsjarray[$qsjid];
+	         $where .= $qsjarray[$qsjid];
+	         $where .= "  and admin_id=".$this->CITY_ID."   ";
+	         $where .= ' and shoptype=1 ';
+	         $where = Mysite::$app->config['plateshopid'] > 0? $where.' and a.shopid != '.Mysite::$app->config['plateshopid'] .' ':$where;
+	         $temb = array();
+	         # $temb[] = $this->mysql->getarr("select * from ".Mysite::$app->config['tablepre']."shopmarket as a left join ".Mysite::$app->config['tablepre']."shop as b  on a.shopid = b.id  where  b.is_pass = 1 and b.is_recom = 1 ".$where."    order by ".$orderarray[$order]." limit ".$pageinfo->startnum().", ".$pageinfo->getsize()."");
+	         
+	         //and b.is_recom != 1
+	         $temb[] = $this->mysql->getarr("select * from ".Mysite::$app->config['tablepre']."shopmarket as a left join ".Mysite::$app->config['tablepre']."shop as b  on a.shopid = b.id  where  b.is_pass = 1  ".$where."    order by ".$orderarray[$order]." limit ".$pageinfo->startnum().", ".$pageinfo->getsize()."");
+	         
+	         $nowhour = date('H:i:s',time());
+	         $nowhour = strtotime($nowhour);
+	         $templist = array();
+	         $cxclass = new sellrule();
+	         foreach($temb as $kc=>$list){
+	             if(is_array($list)){
+	                 foreach($list as $keys=>$values){
+	                     
+	                     if($values['id'] > 0){
+	                         $values['shoplogo'] = empty($values['shoplogo'])? Mysite::$app->config['imgserver'].Mysite::$app->config['shoplogo']:Mysite::$app->config['imgserver'].$values['shoplogo'];
+	                         $checkinfo = $this->shopIsopen($values['is_open'],$values['starttime'],$values['is_orderbefore'],$nowhour);
+	                         $values['opentype'] = $checkinfo['opentype'];
+	                         $values['newstartime']  =  $checkinfo['newstartime'];
+	                         $attrdet = $this->mysql->getarr("select * from ".Mysite::$app->config['tablepre']."shopattr where  cattype = 1 and shopid = ".$values['id']."");
+	                         $cxclass->setdata($values['id'],1000,$values['shoptype']);
+	                         $checkps = 	 $this->pscost($values);
+	                         $values['pscost'] = $checkps['pscost'];
+	                         
+	                         $mi = $this->GetDistance($lat,$lng, $values['lat'],$values['lng'], 1);
+	                         $tempmi = $mi;
+	                         $mi = $mi > 1000? round($mi/1000,2).'km':$mi.'m';
+	                         $values['juli'] = 		$mi;
+	                         
+	                         $shopcounts = $this->mysql->select_one( "select count(id) as shuliang  from ".Mysite::$app->config['tablepre']."order	 where   status = 3 and  shopid = ".$values['id']."" );
+	                         #	print_r(  $shopcounts );
+	                         if(empty( $shopcounts['shuliang']  )){
+	                             $values['ordercount'] = 0;
+	                         }else{
+	                             $values['ordercount']  = $shopcounts['shuliang'];
+	                         }
+	                         $values['ordercount'] = $values['ordercount']+$values['virtualsellcounts'];
+	                         $cxinfo = $this->mysql->getarr("select name,id,signid from ".Mysite::$app->config['tablepre']."rule where  FIND_IN_SET(".$values['id'].",shopid)  and status = 1 and starttime  < ".time()." and endtime > ".time()." ");
+	                         $values['cxlist'] = array();
+	                         
+	                         foreach($cxinfo as $k1=>$v1){
+	                             if(isset($cxarray[$v1['signid']])){
+	                                 $v1['imgurl'] = $cxarray[$v1['signid']];
+	                                 $values['cxlist'][] = $v1;
+	                             }
+	                         }
+	                         
+	                         //可预订情况下第一个配送时间
+	                         $nowhout = strtotime(date('Y-m-d',time()));//当天最小linux 时间
+	                         $timelist = !empty($values['postdate'])?unserialize($values['postdate']):array();
+	                         $values['pstime'] = date('H:i',$nowhout+$timelist[0]['s']);
+	                         
+	                         
+	                         /* 店铺星级计算 */
+	                         $zongpoint = $values['point'];
+	                         $zongpointcount = $values['pointcount'];
+	                         if($zongpointcount != 0 ){
+	                             $shopstart = intval( round($zongpoint/$zongpointcount) );
+	                         }else{
+	                             $shopstart= 0;
+	                         }
+	                         $values['point'] = 	$shopstart;
+	                         $values['attrdet'] = array();
+	                         foreach($attrdet as $k=>$v){
+	                             if($v['firstattr'] == $attra['input']){
+	                                 $values['attrdet']['input'] = $v['value'];
+	                             }elseif($v['firstattr'] == $attra['img']){
+	                                 $values['attrdet']['img'][] = $v['value'];
+	                             }elseif($v['firstattr'] == $attra['checkbox']){
+	                                 $values['attrdet']['checkbox'][] = $v['value'];
+	                             }
+	                         }
+	                         
+	                         
+	                         $templist[] = $values;
+	                     }
+	                 }
+	             }
+	         }
+	         $data  = $templist;
+	     }else{
+	         $where = '';
+	         $shopsearch = IFilter::act(IReq::get('search_input'));
+	         $shopsearch = urldecode($shopsearch);
+	         if(!empty($shopsearch)) $where=" and b.name like '%".$shopsearch."%' ";
+	         $areaid= intval(IFilter::act(IReq::get('areaid'))); //  ICookie::get('myaddress');
+	         $catid = intval(IReq::get('catid'));
+	         $order = intval(IReq::get('order'));
+	         $order = in_array($order,array(1,2,3))? $order:0;
+	         $qsjid = intval(IReq::get('qsjid'));
+	         $qsjid = in_array($qsjid,array(1,2,3))? $qsjid:0;
+	         //构造菜品查询
+	         $where2 = '';
+	         if($catid > 0) $where2 = 'where sh.second_id = '.$catid;
+	         $checkareaid = $areaid;
+	         if($checkareaid > 0) {
+	             $where2 = empty($where2) ?' where  ard.areaid = '.$checkareaid:$where2.' and  ard.areaid = '.$checkareaid;
+	             $where = empty($where2)? $where:$where." and b.id in(select ard.shopid from ".Mysite::$app->config['tablepre']."areashop as ard left join ".Mysite::$app->config['tablepre']."shopsearch  as sh  on ard.shopid = sh.shopid   ".$where2."  group by shopid  ) ";
+	         }else{
+	             $where = empty($where2)? $where:$where." and b.id in(select sh.shopid from  ".Mysite::$app->config['tablepre']."shopsearch  as sh    ".$where2."  group by shopid  ) ";
+	         }
+	         
+	         $lng = 0;
+	         $lat = 0;
+	         if($checkareaid > 0){
+	             $areainfo =    $this->mysql->select_one("select * from ".Mysite::$app->config['tablepre']."area where id=".$checkareaid."  ");
+	             if(!empty($areainfo)){
+	                 $lng = $areainfo['lng'];
+	                 $lat = $areainfo['lat'];
+	                 
+	             }
+	         }else{
+	             $lng = ICookie::get('lng');
+	             $lat = ICookie::get('lat');
+	             $lng = empty($lng)?0:$lng;
+	             $lat =empty($lat)?0:$lat;
+	             #     $where = empty($where)?'   and  SQRT((`lat` -'.$lat.') * (`lat` -'.$lat.' ) + (`lng` -'.$lng.' ) * (`lng` -'.$lng.' )) < (`pradius`*0.01094-0.01094) ': $where.' and SQRT((`lat` -'.$lat.') * (`lat` -'.$lat.' ) + (`lng` -'.$lng.' ) * (`lng` -'.$lng.' )) < (`pradius`*0.01094-0.01094) ';
+	         }
+	         
+	         $lng = trim($lng);
+	         $lat = trim($lat);
+	         $lng = empty($lng)?0:$lng;
+	         $lat =empty($lat)?0:$lat;
+	         
+	         $orderarray = array(
+	             //   	   '0'=>'  sort ASC       ',
+	             '0'=>' (`lat` -'.$lat.') * (`lat` -'.$lat.' ) + (`lng` -'.$lng.' ) * (`lng` -'.$lng.' ) ASC  ',
+	             '1'=>' (`lat` -'.$lat.') * (`lat` -'.$lat.' ) + (`lng` -'.$lng.' ) * (`lng` -'.$lng.' ) ASC   ',
+	             '2'=>' limitcost asc ',
+	             '3'=>' is_com desc '
+	         );
+	         $qsjarray = array(
+	             '0'=>'  ',
+	             '1'=>' and limitcost < 5 ',
+	             '2'=>' and limitcost >= 5 and limitcost <= 10 ',
+	             '3'=>' and limitcost > 10 '
+	         );
+	         
+	         
+	         $templist = $this->mysql->getarr("select * from ".Mysite::$app->config['tablepre']."shoptype where  cattype = 0 and parent_id = 0 and is_main =1  order by orderid asc limit 0,1000");
+	         $attra['input'] = 0;
+	         $attra['img'] = 0;
+	         $attra['checkbox'] = 0;
+	         foreach($templist as $key=>$value){
+	             if($value['type'] == 'input'){
+	                 $attra['input'] =  $attra['input'] > 0?$attra['input']:$value['id'];
+	             }elseif($value['type'] == 'img'){
+	                 $attra['img'] =  $attra['img'] > 0?$attra['img']:$value['id'];
+	             }elseif($value['type'] == 'checkbox'){
+	                 $attra['checkbox'] =  $attra['checkbox'] > 0?$attra['checkbox']:$value['id'];
+	             }
+	         }
+	         /*获取店铺*/
+	         $pageinfo = new page();
+	         $pageinfo->setpage(intval(IReq::get('page')));
+	         $where .= $qsjarray[$qsjid];
+	         $tempwhere = $shopshowtype == 'dingtai'?' and is_goshop =1 ':' and is_waimai =1 ';
+	         $where .= " and shoptype =  0  ";
+	         
+	         $where .= "  and county=".$this->COUNTY_ID."  and market_id = ".$marketid;
+	         
+	         $where = Mysite::$app->config['plateshopid'] > 0? $where.' and a.shopid != '.Mysite::$app->config['plateshopid'] .' ':$where;
+	         $teempd = array();
+	         #   $teempd[] = $this->mysql->getarr("select * from ".Mysite::$app->config['tablepre']."shopfast as a left join ".Mysite::$app->config['tablepre']."shop as b  on a.shopid = b.id  where  b.is_pass = 1 and b.is_recom = 1  ".$tempwhere." ".$where."    order by ".$orderarray[$order]." limit ".$pageinfo->startnum().", ".$pageinfo->getsize()."");
+	         //            	 and b.is_recom != 1
+	        // echo "select * from ".Mysite::$app->config['tablepre']."shopfast as a left join ".Mysite::$app->config['tablepre']."shop as b  on a.shopid = b.id  where  b.is_pass = 1  ".$tempwhere." ".$where."    order by ".$orderarray[$order]." limit ".$pageinfo->startnum().", ".$pageinfo->getsize()."";
+	         $teempd[] = $this->mysql->getarr("select * from ".Mysite::$app->config['tablepre']."shopfast as a left join ".Mysite::$app->config['tablepre']."shop as b  on a.shopid = b.id  where  b.is_pass = 1  ".$tempwhere." ".$where."    order by ".$orderarray[$order]." limit ".$pageinfo->startnum().", ".$pageinfo->getsize()."");
+	         
+	         $nowhour = date('H:i:s',time());
+	         $nowhour = strtotime($nowhour);
+	         $templist = array();
+	         $cxclass = new sellrule();
+	         foreach($teempd as $kv=>$list){
+	             if(is_array($list)){
+	                 foreach($list as $keys=>$values){
+	                     
+	                     if($values['id'] > 0){
+	                         $values['shoplogo'] = empty($values['shoplogo'])? Mysite::$app->config['imgserver'].Mysite::$app->config['shoplogo']:Mysite::$app->config['imgserver'].$values['shoplogo'];
+	                         $checkinfo = $this->shopIsopen($values['is_open'],$values['starttime'],$values['is_orderbefore'],$nowhour);
+	                         $values['opentype'] = $checkinfo['opentype'];
+	                         $values['newstartime']  =  $checkinfo['newstartime'];
+	                         $attrdet = $this->mysql->getarr("select * from ".Mysite::$app->config['tablepre']."shopattr where  cattype = 0 and shopid = ".$values['id']."");
+	                         $cxclass->setdata($values['id'],1000,$values['shoptype']);
+	                         
+	                         
+	                         
+	                         $checkps = 	 $this->pscost($values);
+	                         if( $shopshowtype == 'dingtai'){
+	                             $values['pscost'] =0;
+	                         }else{
+	                             $values['pscost'] = $checkps['pscost'];
+	                         }
+	                         
+	                         $mi = $this->GetDistance($lat,$lng, $values['lat'],$values['lng'], 1);
+	                         $tempmi = $mi;
+	                         $mi = $mi > 1000? round($mi/1000,2).'km':$mi.'m';
+	                         
+	                         $values['juli'] = 		$mi;
+	                         
+	                         $shopcounts = $this->mysql->select_one( "select count(id) as shuliang  from ".Mysite::$app->config['tablepre']."order	 where  status = 3 and  shopid = ".$values['id']."" );
+	                         #	print_r(  $shopcounts );
+	                         if(empty( $shopcounts['shuliang']  )){
+	                             $values['ordercount'] = 0;
+	                         }else{
+	                             $values['ordercount']  = $shopcounts['shuliang'];
+	                         }
+	                         $values['ordercount'] = $values['ordercount']+$values['virtualsellcounts'];
+	                         $cxinfo = $this->mysql->getarr("select name,id,signid from ".Mysite::$app->config['tablepre']."rule where  FIND_IN_SET(".$values['id'].",shopid)   and status = 1 and starttime  < ".time()." and endtime > ".time()." ");
+	                         $values['cxlist'] = array();
+	                         
+	                         foreach($cxinfo as $k1=>$v1){
+	                             if(isset($cxarray[$v1['signid']])){
+	                                 $v1['imgurl'] = $cxarray[$v1['signid']];
+	                                 $values['cxlist'][] = $v1;
+	                             }
+	                         }
+	                         
+	                         //可预订情况下第一个配送时间
+	                         $nowhout = strtotime(date('Y-m-d',time()));//当天最小linux 时间
+	                         $timelist = !empty($values['postdate'])?unserialize($values['postdate']):array();
+	                         $values['pstime'] = date('H:i',$nowhout+$timelist[0]['s']);
+	                         
+	                         
+	                         /* 店铺星级计算 */
+	                         $zongpoint = $values['point'];
+	                         $zongpointcount = $values['pointcount'];
+	                         if($zongpointcount != 0 ){
+	                             $shopstart = intval( round($zongpoint/$zongpointcount) );
+	                         }else{
+	                             $shopstart= 0;
+	                         }
+	                         $values['point'] = 	$shopstart;
+	                         $values['attrdet'] = array();
+	                         foreach($attrdet as $k=>$v){
+	                             if($v['firstattr'] == $attra['input']){
+	                                 $values['attrdet']['input'] = $v['value'];
+	                             }elseif($v['firstattr'] == $attra['img']){
+	                                 $values['attrdet']['img'][] = $v['value'];
+	                             }elseif($v['firstattr'] == $attra['checkbox']){
+	                                 $values['attrdet']['checkbox'][] = $v['value'];
+	                             }
+	                         }
+	                         
+	                         $templist[] = $values;
+	                     }
+	                 }
+	             }
+	         }
+	         $data  = $templist;
+	     }
+	     
+	    
+	     $data['shopshowtype'] = $shopshowtype;
+	     $data['shoplist']  = $templist;
+	     
+	     Mysite::$app->setdata($data);
+	     /*  $datas = json_encode($data);
+	      echo 'showmoreshop('.$datas.')';
+	      exit;
+	      $this->success($data); */
+	 } 
+	 
+	 
+	 function indexmarketlistdata(){// 首页获取附近市场
+	     $typelx = IFilter::act(IReq::get('typelx'));
+	     
+	     if(!empty($typelx)){
+	         if($typelx == 'wm'){
+	             ICookie::set('shopshowtype','waimai',2592000);
+	             $shopshowtype = 'waimai';
+	         }
+	         if($typelx == 'mk'){
+	             ICookie::set('shopshowtype','market',2592000);
+	             $shopshowtype = 'market';
+	         }
+	         if($typelx == 'yd'){
+	             ICookie::set('shopshowtype','dingtai',2592000);
+	             $shopshowtype = 'dingtai';
+	         }
+	     }else{
+	         $shopshowtype = ICookie::get('shopshowtype');
+	     }
+	     $where = " and county = ".$this->COUNTY_ID." "; 
+	     
+	     $lng = 0;
+	     $lat = 0;
+	     
+	     $lng = ICookie::get('lng');
+	     $lat = ICookie::get('lat');
+	     
+	     
+	     $lng = empty($lng)?0:$lng;
+	     $lat =empty($lat)?0:$lat;
+	     $where = empty($where)?'   and  SQRT((`lat` -'.$lat.') * (`lat` -'.$lat.' ) + (`lng` -'.$lng.' ) * (`lng` -'.$lng.' )) < (5*0.01094-0.01094) ': $where.' and SQRT((`lat` -'.$lat.') * (`lat` -'.$lat.' ) + (`lng` -'.$lng.' ) * (`lng` -'.$lng.' )) < (5*0.01094-0.01094) ';
+	     
+	     $lng = trim($lng);
+	     $lat = trim($lat);
+	     $lng = empty($lng)?0:$lng;
+	     $lat =empty($lat)?0:$lat;
+	     
+	     /*获取市场列表*/
+	     $pageinfo = new page();
+	     $pageinfo->setpage(intval(IReq::get('page'))); 
+	     $tempdd = array();
+	     $templist = array();
+	     $tempdd[] =   $this->mysql->getarr("select * from ".Mysite::$app->config['tablepre']."market where is_deleted = 0    ".$where."    order by id limit ".$pageinfo->startnum().", ".$pageinfo->getsize()."  ");
+	     
+	     foreach ($tempdd[0] as $k=>$list){
+	         $mi = $this->GetDistance($lat,$lng, $list['lat'],$list['lng'], 1);
+             $tempmi = $mi;
+             $mi = $mi > 1000? round($mi/1000,2).'km':$mi.'m';
+             $templist[$k] = $list;
+             $templist[$k]['juli'] = $mi;
+	     }
+	     $data['marketlist']  = $templist; 
+	     Mysite::$app->setdata($data); 
+	 }
 	 
 	  function indexshoplistdata(){		// 首页获取附近商家列表（外卖和超市）
 
@@ -751,9 +1248,7 @@ class method   extends wxbaseclass
 				 $shopshowtype = 'dingtai';
 			 }
 		 }else{
-			 
 			 $shopshowtype = ICookie::get('shopshowtype');
-
 		 }
 		
 		
@@ -773,7 +1268,7 @@ class method   extends wxbaseclass
 
 		$lng = empty($lng)?0:$lng;
 		$lat =empty($lat)?0:$lat;
-	 $where = empty($where)?'   and  SQRT((`lat` -'.$lat.') * (`lat` -'.$lat.' ) + (`lng` -'.$lng.' ) * (`lng` -'.$lng.' )) < (`pradiusa`*0.01094-0.01094) ': $where.' and SQRT((`lat` -'.$lat.') * (`lat` -'.$lat.' ) + (`lng` -'.$lng.' ) * (`lng` -'.$lng.' )) < (`pradiusa`*0.01094-0.01094) ';
+	    $where = empty($where)?'   and  SQRT((`lat` -'.$lat.') * (`lat` -'.$lat.' ) + (`lng` -'.$lng.' ) * (`lng` -'.$lng.' )) < (`pradiusa`*0.01094-0.01094) ': $where.' and SQRT((`lat` -'.$lat.') * (`lat` -'.$lat.' ) + (`lng` -'.$lng.' ) * (`lng` -'.$lng.' )) < (`pradiusa`*0.01094-0.01094) ';
 
 		$lng = trim($lng);
 		$lat = trim($lat);

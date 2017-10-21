@@ -598,7 +598,7 @@ function saveregester()
   	        $data['loginip'] = IClient::getIp();
   	        $data['logintime'] = time();
   	       $this->mysql->update(Mysite::$app->config['tablepre'].'admin',$data,"uid='".$userinfo['uid']."'");	
-         	 ICookie::set('agentadminname',$userinfo['username'],86400);
+           ICookie::set('agentadminname',$userinfo['username'],86400);
            ICookie::set('agentadminpwd',$signup_password,86400);
            ICookie::set('agentadminuid',$userinfo['uid'],86400);  
   	   	   $this->success('success'); 

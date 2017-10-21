@@ -215,24 +215,37 @@ class method   extends areaadminbaseclass
 	//保存店铺
 	function savemarket()
 	{
-
+	    
+	    $marketname = IReq::get('marketname');
+	    if(empty($marketname)){
+	        $this->message('市场名称不能为空');
+	    }
+	    $baidumap=  trim(IFilter::act(IReq::get('baidumap')));
+	    $baidumapArr = explode(",", $baidumap);
+	    if(empty($baidumapArr[0]) || empty($baidumapArr[1])){
+	        $this->message('地图坐标不能为空');
+	    }
 	    $optype = intval(IReq::get('optype'));
 	    $marketid =  intval(IReq::get('marketid'));
-	    $data['siteid'] = $this->admin['id'];
-	    $data['name'] = IReq::get('marketname');
+	    $data['siteid'] = $this->admin['uid'];
+	    $data['province'] = $this->admin['provinceid'];
+	    $data['city'] = $this->admin['cityid'];
+	    $data['county'] = $this->admin['countyid'];
+	    $data['name'] = $marketname;
 	    $data['typeid'] = intval(IReq::get('markettype'));
 	    $data['fzren'] = IReq::get('fzren');
 	    $data['phone'] = IReq::get('phone');
 	    $data['desc'] = IReq::get('desc');
+	    $data['lng'] = $baidumapArr[0];
+	    $data['lat'] = $baidumapArr[1];
+	    
 	    if($optype == 1){
 	        $this->mysql->insert(Mysite::$app->config['tablepre'].'market',$data);
-	        
 	    }
 	    else
 	    {
 	        $this->mysql->update(Mysite::$app->config['tablepre'].'market',$data, "id = '".$marketid."'");
 	    }
-	    
 	    $this->success('success');
 	}
 	
@@ -747,21 +760,27 @@ class method   extends areaadminbaseclass
 	    $data['phone'] = trim(IReq::get('phone'));
 	    if(!empty($data['name'])){
 	        $where .= " and name like '%".$data['name']."%'";
-	    }
+	    } 
 	    if(!empty($data['fzren'])){
 	        $where .= " and fzren like '%".$data['fzren']."%'";
 	    }
 	    if(!empty($data['phone'])){
 	        $where .= " and phone like '%".$data['phone']."%'";
 	    }
-	    $where .= "  and   siteid = '".$this->admin['id']."' and is_deleted =0 ";
+	    $where .= "  and   siteid = '".$this->admin['uid']."' and is_deleted =0 and county ='".$this->admin['countyid']."'";
 	    $marketinfo = $this->mysql->getarr("select a.*,b.name typename from ".Mysite::$app->config['tablepre']."market a
                left join ".Mysite::$app->config['tablepre']."shoptype b on a.typeid = b.id
                where 1=1 $where ");
-	    
+
 	    $data['marketlist'] = $marketinfo;
 	    Mysite::$app->setdata($data);
 	    
+	}
+	
+	function savemapmarketlocation(){
+	    $this->setstatus();
+
+	    $this->success('success');
 	}
 	
     function adoptshop(){
@@ -808,6 +827,7 @@ class method   extends areaadminbaseclass
 	 	 Mysite::$app->setdata($data);  
 	}
 	
+	
 	function addmarket(){
 	    $this->setstatus();
 	    $id =  trim(IReq::get('id'));
@@ -817,7 +837,7 @@ class method   extends areaadminbaseclass
 	        $data["marketinfo"] = $marketinfo;
 	        $data['optype'] = 2;
 	    }
-	    $uid = $this->admin['county'];
+	    $uid = $this->admin['uid'];
 	    $areaadminone =  $this->mysql->select_one("select * from ".Mysite::$app->config['tablepre']."admin where groupid='4'  and uid = '".$uid."'  ");
 	    $data['areaadminone'] = $areaadminone;
 	    $catparent = $this->mysql->getarr("select * from ".Mysite::$app->config['tablepre']."shoptype  where  type='checkbox' order by cattype asc limit 0,100");
