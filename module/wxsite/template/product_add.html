@@ -47,7 +47,7 @@
 <header class="top-fixed bg-yellow bg-inverse">
 <div class="top-back"><a class="top-addr" href="javascript:history.go(-1)"><i class="icon-angle-left"></i></a></div>
 <div class="top-title">添加商品</div>
-<div class="top-share"><a href="cpgl-2.html" class="top-addr icon-plus"> 分类</a></div>
+<div class="top-share"><a href="/index.php?ctrl=wxsite&amp;action=category" class="top-addr icon-plus"> 分类</a></div>
 </header>
 
 <style>
@@ -66,7 +66,7 @@
 <div class="pic">
 
 <div class="btn-uploading" onclick="uploadBtn();" style="border:none;background:none;">
-<a href="#"><img id="yushow" src=""></a>	
+<div><a href="#"><img id="yushow" src=""></a></div>	
 <span class="album" style="width:60px;">上传商品图</span> 
 </div>
 <input type="hidden" name="img" id="img" value="">
@@ -295,7 +295,14 @@ function uploadImg(imgFile){
             $.post(url, {file: e.target.result},function(ret){  
             	
                 if(ret.file!=''){ 
-                	$("#img").val(ret.img)
+                	var imgval = $("#img").val()
+                	if(imgval ==''){
+                		$("#img").val(ret.img)
+                	}
+                	else{
+                		imgval = imgval+","+ret.img
+                		$("#img").val(imgval)
+                	}
                 	layer.msg("上传成功");
                 }else{  
                     alert('upload fail');  
