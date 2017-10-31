@@ -65,7 +65,9 @@
 <div class="pic">
 
 <div class="btn-uploading" onclick="uploadBtn();" style="border:none;background:none;">
-<a href="#"><img id="yushow" src="<{$goods['img']}>"></a>	
+<{foreach from=$imglist key=mykey item=items}>
+<a href="#"><img id="yushow" src="<{$items}>"></a>
+<{/foreach}>	
 <span class="album" style="width:60px;">上传商品图</span> 
 </div>
 <input type="hidden" name="img" id="img" value="<{$goods['img']}>">

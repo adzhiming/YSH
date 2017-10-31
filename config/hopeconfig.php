@@ -8,7 +8,7 @@
   'sitetemp' => 'm7',
   'authkey' => 'likexxx',
   'hta' => true,
-  'dbname' => 'waimai',
+  'dbname' => 'waimairen',
   'siteurl' => '',
   'admindir' => '',
   'sitename' => '源生活配送',

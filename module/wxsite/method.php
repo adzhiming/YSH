@@ -144,7 +144,6 @@ class method   extends wxbaseclass
 	}
 	
 	 function index(){
-	   
 		 $lng = ICookie::get('lng');
          $lat = ICookie::get('lat');
          $addressname = ICookie::get('addressname');
@@ -704,12 +703,13 @@ class method   extends wxbaseclass
              		   $tempwhere = $shopshowtype == 'dingtai'?' and is_goshop =1 ':' and is_waimai =1 ';
 					   $where .= " and shoptype =  0  ";
 					   
-					   $where .= "  and admin_id=".$this->CITY_ID."   "; 
+					   $where .= "  and county=".$this->COUNTY_ID."   "; 
 					   
 					    $where = Mysite::$app->config['plateshopid'] > 0? $where.' and a.shopid != '.Mysite::$app->config['plateshopid'] .' ':$where;
 					$teempd = array();
             	 #   $teempd[] = $this->mysql->getarr("select * from ".Mysite::$app->config['tablepre']."shopfast as a left join ".Mysite::$app->config['tablepre']."shop as b  on a.shopid = b.id  where  b.is_pass = 1 and b.is_recom = 1  ".$tempwhere." ".$where."    order by ".$orderarray[$order]." limit ".$pageinfo->startnum().", ".$pageinfo->getsize()."");
-			//            	 and b.is_recom != 1  
+			//            	 and b.is_recom != 1 
+					#echo "select * from ".Mysite::$app->config['tablepre']."shopfast as a left join ".Mysite::$app->config['tablepre']."shop as b  on a.shopid = b.id  where  b.is_pass = 1  ".$tempwhere." ".$where."    order by ".$orderarray[$order]." limit ".$pageinfo->startnum().", ".$pageinfo->getsize()."";
 				   $teempd[] = $this->mysql->getarr("select * from ".Mysite::$app->config['tablepre']."shopfast as a left join ".Mysite::$app->config['tablepre']."shop as b  on a.shopid = b.id  where  b.is_pass = 1  ".$tempwhere." ".$where."    order by ".$orderarray[$order]." limit ".$pageinfo->startnum().", ".$pageinfo->getsize()."");
             	     
             			$nowhour = date('H:i:s',time()); 
@@ -1205,7 +1205,7 @@ class method   extends wxbaseclass
 	     
 	     $lng = empty($lng)?0:$lng;
 	     $lat =empty($lat)?0:$lat;
-	     $where = empty($where)?'   and  SQRT((`lat` -'.$lat.') * (`lat` -'.$lat.' ) + (`lng` -'.$lng.' ) * (`lng` -'.$lng.' )) < (5*0.01094-0.01094) ': $where.' and SQRT((`lat` -'.$lat.') * (`lat` -'.$lat.' ) + (`lng` -'.$lng.' ) * (`lng` -'.$lng.' )) < (5*0.01094-0.01094) ';
+	     $where = empty($where)?'   and  SQRT((`lat` -'.$lat.') * (`lat` -'.$lat.' ) + (`lng` -'.$lng.' ) * (`lng` -'.$lng.' )) < (10*0.01094-0.01094) ': $where.' and SQRT((`lat` -'.$lat.') * (`lat` -'.$lat.' ) + (`lng` -'.$lng.' ) * (`lng` -'.$lng.' )) < (10*0.01094-0.01094) ';
 	     
 	     $lng = trim($lng);
 	     $lat = trim($lat);
@@ -1220,11 +1220,26 @@ class method   extends wxbaseclass
 	     $tempdd[] =   $this->mysql->getarr("select * from ".Mysite::$app->config['tablepre']."market where is_deleted = 0    ".$where."    order by id limit ".$pageinfo->startnum().", ".$pageinfo->getsize()."  ");
 	     
 	     foreach ($tempdd[0] as $k=>$list){
+	         
 	         $mi = $this->GetDistance($lat,$lng, $list['lat'],$list['lng'], 1);
              $tempmi = $mi;
              $mi = $mi > 1000? round($mi/1000,2).'km':$mi.'m';
              $templist[$k] = $list;
              $templist[$k]['juli'] = $mi;
+             $sql = "select sum(a.sellcount) totalcount,min(b.limitcost) qscost ,min(b.pscost) pscost  from ".Mysite::$app->config['tablepre']."shop a 
+                     left join ".Mysite::$app->config['tablepre']."shopfast b on a.id = b.shopid
+                     where a.market_id ='{$list['id']}'";
+             $shopinfo = $this->mysql->select_one($sql);
+             if($shopinfo){
+                 $templist[$k]['sellcount'] = empty($shopinfo['totalcount'])?0:$shopinfo['totalcount'];
+                 $templist[$k]['qscost'] = empty($shopinfo['qscost'])?1:$shopinfo['qscost'];
+                 $templist[$k]['pscost'] = empty($shopinfo['qscost'])?1:$shopinfo['pscost'];
+             }
+             else{
+                 $templist[$k]['sellcount'] = 0;
+                 $templist[$k]['qscost'] = 1;
+                 $templist[$k]['pscost'] = 1;
+             }
 	     }
 	     $data['marketlist']  = $templist; 
 	     Mysite::$app->setdata($data); 
@@ -4043,6 +4058,14 @@ function makeorder(){
                 where shopid='".$shopid."' and is_live = 1 order by id";
 	    
 	    $goods = $this->mysql->getarr($sql);
+	    if($goods){
+	        foreach ($goods as $k=>$v){
+	            if($v['img']){
+	               $imgarr = explode(",", $v['img']);
+	               $goods[$k]['img'] = $imgarr[0];//获取第一张图
+	            }
+	        }
+	    }
 	    $count = $this->mysql->counts($sql);
 	    $data['count'] =$count;
 	    $data['goodslist'] =$goods;
@@ -4063,6 +4086,14 @@ function makeorder(){
                 where shopid='".$shopid."' and is_live = 0 order by id";
 	    
 	    $goods = $this->mysql->getarr($sql);
+	    if($goods){
+	        foreach ($goods as $k=>$v){
+	            if($v['img']){
+	                $imgarr = explode(",", $v['img']);
+	                $goods[$k]['img'] = $imgarr[0];//获取第一张图
+	            }
+	        }
+	    }
 	    $count = $this->mysql->counts($sql);
 	    $data['count'] =$count;
 	    $data['goodslist'] =$goods;
@@ -4136,6 +4167,18 @@ function makeorder(){
 	    
 	    $goodstype = $this->mysql->getarr($sql);
 	    $data['goodstype'] =$goodstype;
+	    if($goods){
+	        if($goods['img']){
+	            $imgarr = explode(",", $goods['img']);
+	            if($imgarr){
+	                foreach ($imgarr as $k=>$v){
+	                    $imglist[$k] = $v;
+	                }
+	            }
+               
+            }
+	    }
+	    $data['imglist'] = $imglist;
 	    $data['goods'] = $goods;
 	    Mysite::$app->setdata($data);
 	}

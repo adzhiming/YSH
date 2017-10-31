@@ -66,7 +66,7 @@
 <div class="pic">
 
 <div class="btn-uploading" onclick="uploadBtn();" style="border:none;background:none;">
-<div><a href="#"><img id="yushow" src=""></a></div>	
+<div class="shopimglist"><a href="#"><img id="yushow" src=""></a></div>	
 <span class="album" style="width:60px;">上传商品图</span> 
 </div>
 <input type="hidden" name="img" id="img" value="">
@@ -253,6 +253,7 @@ function uploadBtn(){
 //图片预览
 function previewImg(imgFile){
     //console.log(imgFile);//这里打印出是整个input标签
+    var img =""
     var extension = imgFile.value.substring(imgFile.value.lastIndexOf("."),imgFile.value.length);//扩展名
     extension = extension.toLowerCase();//把文件扩展名转换为小写
     if ((extension!='.jpg')&&(extension!='.gif')&&(extension!='.jpeg')&&(extension!='.png')&&(extension!='.bmp')){
@@ -266,7 +267,10 @@ function previewImg(imgFile){
         }else{//火狐，谷歌
             path = window.URL.createObjectURL(imgFile.files[0]);
         }
-        $("#yushow").attr("src",path);//设置预览地址
+         img = "<a href='#'><img id='yushow' src="+path+"></a>"
+        var has = $(".shopimglist").html();
+        var newhtml = has + img
+        $(".shopimglist").html(newhtml)
         uploadImg(imgFile);
     }
 }

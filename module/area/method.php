@@ -345,6 +345,16 @@ class method   extends baseclass
 		  Mysite::$app->setdata($data);
   }
   
+  function mobileshopbaidumap(){
+      $this->checkshoplogin();
+      $shopid = ICookie::get('adminshopid');
+      $shopinfo = $this->mysql->select_one("select * from ".Mysite::$app->config['tablepre']."shop where  id = '".$shopid."' order by id asc");
+      $data['dlng'] = empty($shopinfo['lng'])||$shopinfo['lng']=='0.000000'?Mysite::$app->config['baidulng']:$shopinfo['lng'];
+      $data['dlat'] = empty($shopinfo['lat'])||$shopinfo['lat']=='0.000000'?Mysite::$app->config['baidulat']:$shopinfo['lat'];
+      $data['baidumapkey'] = Mysite::$app->config['baidumapkey'];
+      Mysite::$app->setdata($data);
+  }
+  
   function marketbaidumap(){
       $this->checkshoplogin();
       $shopid = ICookie::get('adminshopid');
