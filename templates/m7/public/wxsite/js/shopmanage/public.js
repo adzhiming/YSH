@@ -25,6 +25,20 @@ function Local(position) {
 	}, 'html');
 };
 
+//提示信息弹出层
+function Tmsg(popupMsg){ 
+	 $('body').append('<div id="GhPopup" class="curProCon"><div class="curProBox"><span>'+popupMsg+'</span></div></div>');
+	  setTimeout( "closedGhPopup();",2000);
+ 	 return false;
+} 
+function newTmsg(popupMsg){ 
+	 $('body').append('<div id="GhPopup" class="curProCon"><div class="curProBox"><span>'+popupMsg+'</span></div></div>');
+	  setTimeout( "closedGhPopup();",2000);
+ 	 return false;
+} 
+function closedGhPopup(){
+	$("#GhPopup").remove();
+}
 
 function showLoader(msg) {
 	layer.load();

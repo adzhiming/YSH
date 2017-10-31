@@ -207,10 +207,14 @@ ul {padding-left: 0px !important;}
 		})
 		
 		$("#add").click(function(){
+		
 			var cate_name = $('.sh_waimai_cate_add_mask_box #cate_name').val();
 			var orderby = $('.sh_waimai_cate_add_mask_box #orderby').val();
 			var shopid ="<{$shopid}>"
-			if(cate_name =='') layer.msg("分类名不能为空");
+			if(cate_name ==''){
+				Tmsg('请填写商品分类名称');
+				return false;
+			} 
 			var url = "<{ofunc type=url link='/wxsite/category_add/datatype/json'}>"
 			$.post(url,{cate_name:cate_name,orderby:orderby,shopid:shopid},function(result){
 				if(result.status == 'success'){

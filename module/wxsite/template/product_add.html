@@ -36,6 +36,7 @@
                 bd_encrypt(position.coords.latitude, position.coords.longitude);
             });
 </script>
+
 </head>
 
 <body>
@@ -46,7 +47,7 @@
 <header class="top-fixed bg-yellow bg-inverse">
 <div class="top-back"><a class="top-addr" href="javascript:history.go(-1)"><i class="icon-angle-left"></i></a></div>
 <div class="top-title">添加商品</div>
-<div class="top-share"><a href="cpgl-2.html" class="top-addr icon-plus"> 分类</a></div>
+<div class="top-share"><a href="/index.php?ctrl=wxsite&amp;action=category" class="top-addr icon-plus"> 分类</a></div>
 </header>
 
 <style>
@@ -56,7 +57,7 @@
 </style>
 
 
-<form class="fabu-form" method="post"  action="<{ofunc type=url link='/wxsite/product_add_commit'}>">
+<form class="fabu-form" method="post"  action="<{ofunc type=url link='/wxsite/product_add_commit'}>" onsubmit="return checksubmit()">
 
 <div class="blank-10"></div>
 <div class="container">
@@ -65,7 +66,7 @@
 <div class="pic">
 
 <div class="btn-uploading" onclick="uploadBtn();" style="border:none;background:none;">
-<a href="#"><img id="yushow" src=""></a>	
+<div><a href="#"><img id="yushow" src=""></a></div>	
 <span class="album" style="width:60px;">上传商品图</span> 
 </div>
 <input type="hidden" name="img" id="img" value="">
@@ -83,35 +84,35 @@
 <div class="row">
 <div class="line">
 <span class="x3">商品名称：</span>
-<span class="x9"><input type="text" class="text-input" name="name" value="" /></span>
+<span class="x9"><input type="text" class="text-input" name="name"  id="name"  value="" /></span>
 </div>
 </div>
 
 <div class="row">
 <div class="line">
 <span class="x3">商品单价：</span>
-<span class="x9"><input type="text" class="text-input" name="cost" value="" /></span>
+<span class="x9"><input type="text" class="text-input" name="cost"  id="cost"  value="" /></span>
 </div>
 </div>
 
 <div class="row">
 <div class="line">
 <span class="x3">打包费：</span>
-<span class="x9"><input type="text" class="text-input" name="bagcost" value="" /></span>
+<span class="x9"><input type="text" class="text-input" name="bagcost"  id="bagcost"  value="" /></span>
 </div>
 </div>
 
 <div class="row">
 <div class="line">
 <span class="x3">商品库存：</span>
-<span class="x9"><input type="text" class="text-input" name="daycount" value="" /></span>
+<span class="x9"><input type="text" class="text-input" name="daycount"  id="daycount"  value="" /></span>
 </div>
 </div>
 
 <div class="row">
 <div class="line">
 <span class="x3">虚拟总销量：</span>
-<span class="x9"><input type="text" class="text-input" name="virtualsellcount" value="" /></span>
+<span class="x9"><input type="text" class="text-input" name="virtualsellcount"  id="virtualsellcount"  value="" /></span>
 </div>
 </div>
 
@@ -122,7 +123,7 @@
 <span class="x3">商品分类：</span>
 <span class="x9">
 <select id="typeid" name="typeid" class="text-select">
-<option value="0" selected="selected">请选择</option>
+<option value="" selected="selected">请选择</option>
 <{foreach from=$goodstype  item=items}>
   <option value="<{$items['id']}>" ><{$items['name']}></option>
 <{/foreach}>
@@ -209,6 +210,42 @@
 
 
 <script type="text/javascript">
+
+function checksubmit(){
+	$img = $('#img').val();
+	if($img ==''){
+		 Tmsg('请选择上传图片');
+		return false;
+	}
+	$name = $('#name').val();
+	if($name ==''){
+		Tmsg('请填写商品名称');
+		return false;
+	}
+	$cost = $('#cost').val();
+	if($cost ==''){
+		Tmsg('请填写商品单价');
+		return false;
+	}
+	$bagcost = $('#bagcost').val();
+	if($bagcost ==''){
+		Tmsg('请填写商品打包费');
+		return false;
+	}
+	$daycount = $('#daycount').val();
+	if($daycount ==''){
+		Tmsg('请填写商品库存');
+		return false;
+	}
+	
+	$typeid = $('#typeid').val();
+	if($typeid ==''){
+		Tmsg('请选择商品类型');
+		return false;
+	}
+	return true;
+}
+
 function uploadBtn(){
     $("#upload").click();
 }
@@ -258,7 +295,14 @@ function uploadImg(imgFile){
             $.post(url, {file: e.target.result},function(ret){  
             	
                 if(ret.file!=''){ 
-                	$("#img").val(ret.img)
+                	var imgval = $("#img").val()
+                	if(imgval ==''){
+                		$("#img").val(ret.img)
+                	}
+                	else{
+                		imgval = imgval+","+ret.img
+                		$("#img").val(imgval)
+                	}
                 	layer.msg("上传成功");
                 }else{  
                     alert('upload fail');  

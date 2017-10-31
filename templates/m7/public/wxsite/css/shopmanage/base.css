@@ -1255,3 +1255,37 @@ ol,ul{list-style:none}
 .p_tabs li{-webkit-box-flex:1;-webkit-flex:1;flex:1;text-align:center;font-size:1em}
 .p_tabs li.card_down,.p_tabs li.cur,.p_tabs li.current{color:#ff9b42;border-bottom:2px solid #ff9b42}
 
+
+.curProCon{
+	width: 100%;
+	display: table;
+	text-align: center;
+	position: fixed;
+	left: 0;
+	bottom: 11%;
+	z-index: 99999999999;
+}
+
+.curProHide{
+	animation: fade-in;/*动画名称*/  
+    animation-duration: .18s;/*动画持续时间*/  
+    -webkit-animation:fade-in .18s;/*针对webkit内核*/
+}
+
+.curProCon .curProBox{
+	width: 100%;
+	text-align: center;
+	display: table-cell;
+}
+
+.curProCon .curProBox span{
+	max-width: 80%;
+	min-width: 150px;
+	line-height: 22px;
+	padding: 6px 5px;
+	font-size: 14px;
+	color: #fff;
+	display: inline-block;
+	background-color: #404040;
+	border-radius: 5px;
+}
