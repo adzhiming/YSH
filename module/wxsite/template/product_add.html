@@ -62,11 +62,11 @@
 <div class="blank-10"></div>
 <div class="container">
 <div class="line detail-base">
-<div class="x5" style="width:30%;">
+<div class="x5">
 <div class="pic">
 
 <div class="btn-uploading" onclick="uploadBtn();" style="border:none;background:none;">
-<div class="shopimglist"><a href="#"><img id="yushow" src=""></a></div>	
+<div class="shopimglist" style='height:100px;width:100%'></div>	
 <span class="album" style="width:60px;">上传商品图</span> 
 </div>
 <input type="hidden" name="img" id="img" value="">
@@ -267,7 +267,7 @@ function previewImg(imgFile){
         }else{//火狐，谷歌
             path = window.URL.createObjectURL(imgFile.files[0]);
         }
-         img = "<a href='#'><img id='yushow' src="+path+"></a>"
+         img = "<div style='float:left;width:30%'><img id='yushow' src="+path+"></div>"
         var has = $(".shopimglist").html();
         var newhtml = has + img
         $(".shopimglist").html(newhtml)
