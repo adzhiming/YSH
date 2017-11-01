@@ -4061,7 +4061,7 @@ function makeorder(){
 	    if($goods){
 	        foreach ($goods as $k=>$v){
 	            if($v['img']){
-	               $imgarr = explode(",", $v['img']);
+	               $imgarr =json_decode($v['img']);
 	               $goods[$k]['img'] = $imgarr[0];//获取第一张图
 	            }
 	        }
@@ -4089,8 +4089,8 @@ function makeorder(){
 	    if($goods){
 	        foreach ($goods as $k=>$v){
 	            if($v['img']){
-	                $imgarr = explode(",", $v['img']);
-	                $goods[$k]['img'] = $imgarr[0];//获取第一张图
+	               $imgarr =json_decode($v['img']);
+	               $goods[$k]['img'] = $imgarr[0];//获取第一张图
 	            }
 	        }
 	    }
@@ -4140,7 +4140,7 @@ function makeorder(){
 	        $descgoods = IFilter::act(IReq::get('descgoods'));
 	        
 	        
-	        $data["img"] = $img;
+	        $data["img"] = json_encode($img);
 	        $data["name"] = $name;
 	        $data["cost"] = $cost;
 	        $data["bagcost"] = $bagcost;
@@ -4169,13 +4169,7 @@ function makeorder(){
 	    $data['goodstype'] =$goodstype;
 	    if($goods){
 	        if($goods['img']){
-	            $imgarr = explode(",", $goods['img']);
-	            if($imgarr){
-	                foreach ($imgarr as $k=>$v){
-	                    $imglist[$k] = $v;
-	                }
-	            }
-               
+	           $imglist = json_decode($goods['img']);
             }
 	    }
 	    $data['imglist'] = $imglist;
@@ -4283,7 +4277,7 @@ function makeorder(){
 	    $descgoods = IFilter::act(IReq::get('descgoods'));
 	    
 	    $data["shopid"] = $shopid;
-	    $data["img"] = $img;
+	    $data["img"] = json_encode($img);
 	    $data["name"] = $name;
 	    $data["cost"] = $cost;
 	    $data["bagcost"] = $bagcost;

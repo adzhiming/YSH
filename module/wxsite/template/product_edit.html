@@ -56,7 +56,7 @@
 </style>
 
 
-<form class="fabu-form" method="post"  action="<{ofunc type=url link='/wxsite/product_edit'}>">
+<form class="fabu-form" method="post"  action="<{ofunc type=url link='/wxsite/product_edit'}>" onsubmit="return checksubmit()">
 
 <div class="blank-10"></div>
 <div class="container">
@@ -64,13 +64,16 @@
 <div class="x5" style="width:30%;">
 <div class="pic">
 
-<div class="btn-uploading" onclick="uploadBtn();" style="border:none;background:none;">
+<div class="btn-uploading"style="border:none;background:none;">
+<div class="shopimglist" style='height:100px;width:100%'>
 <{foreach from=$imglist key=mykey item=items}>
-<a href="#"><img id="yushow" src="<{$items}>"></a>
+<div style='float:left;width:30%' data-id='<{$mykey}>' class="delimg"><img id="yushow" src="<{$items}>"></div>
+<input type="hidden" name="img[]"  id="img_<{$mykey}>"  value="<{$items}>">
 <{/foreach}>	
-<span class="album" style="width:60px;">上传商品图</span> 
 </div>
-<input type="hidden" name="img" id="img" value="<{$goods['img']}>">
+<span class="album" style="width:60px;" onclick="uploadBtn();" >上传商品图</span> 
+</div>
+
 <input type="hidden" name="goodsid" id="goodsid" value="<{$goods['id']}>">
 <input type="file" name="file" style="display:none;" onchange="previewImg(this);" id="upload" accept="image/*">
 
@@ -212,12 +215,26 @@
 
 
 <script type="text/javascript">
+//删除图片
+$(".delimg").click(function(){
+	 if(confirm("是否删除该图片")){
+		 var id  = $(this).data("id")
+		 $("#img_"+id).remove();
+		 $(this).remove();
+	 }
+})
+
 function uploadBtn(){
     $("#upload").click();
 }
 
 //图片预览
 function previewImg(imgFile){
+	var imglen = $(".shopimglist img").length;
+	if(imglen >=5){
+		layer.msg("最多只能上传5张图");
+		return false;
+	}
     //console.log(imgFile);//这里打印出是整个input标签
     var extension = imgFile.value.substring(imgFile.value.lastIndexOf("."),imgFile.value.length);//扩展名
     extension = extension.toLowerCase();//把文件扩展名转换为小写
@@ -232,13 +249,18 @@ function previewImg(imgFile){
         }else{//火狐，谷歌
             path = window.URL.createObjectURL(imgFile.files[0]);
         }
-        $("#yushow").attr("src",path);//设置预览地址
+        img = "<div style='float:left;width:30%'><img id='yushow' src="+path+"></div>"
+        var has = $(".shopimglist").html();
+        var newhtml = has + img
+        $(".shopimglist").html(newhtml)
+       // $("#yushow").attr("src",path);//设置预览地址
         uploadImg(imgFile);
     }
 }
 
 //开始上传
 function uploadImg(imgFile){
+	var imglen = $(".shopimglist img").length;
     //获取图片文件
     var file = imgFile.files[0];//文件对象
     var name = file.name;//图片名
@@ -262,6 +284,10 @@ function uploadImg(imgFile){
             	
                 if(ret.file!=''){ 
                 	$("#img").val(ret.img)
+                	var imgvalue =  "<input type='hidden' name='img[]'  id='img_"+imglen+"'  value="+ret.img+">"
+        var has = $(".shopimglist").html();
+        var newhtml = has + imgvalue
+        $(".shopimglist").html(newhtml)
                 	layer.msg("上传成功");
                 }else{  
                     alert('upload fail');  
@@ -288,6 +314,41 @@ function deleteImg(){
                 }
           }
     });
+}
+
+function checksubmit(){
+	$img = $('#img').val();
+	if($img ==''){
+		 Tmsg('请选择上传图片');
+		return false;
+	}
+	$name = $('#name').val();
+	if($name ==''){
+		Tmsg('请填写商品名称');
+		return false;
+	}
+	$cost = $('#cost').val();
+	if($cost ==''){
+		Tmsg('请填写商品单价');
+		return false;
+	}
+	$bagcost = $('#bagcost').val();
+	if($bagcost ==''){
+		Tmsg('请填写商品打包费');
+		return false;
+	}
+	$daycount = $('#daycount').val();
+	if($daycount ==''){
+		Tmsg('请填写商品库存');
+		return false;
+	}
+	
+	$typeid = $('#typeid').val();
+	if($typeid ==''){
+		Tmsg('请选择商品类型');
+		return false;
+	}
+	return true;
 }
 </script>
 </body>
