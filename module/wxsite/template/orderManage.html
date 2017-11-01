@@ -9,14 +9,25 @@
 <link rel="stylesheet"  href="<{$siteurl}>/templates/<{$tempdir}>/public/wxsite/css/shopmanage/index.css">
 <link rel="stylesheet"  href="<{$siteurl}>/templates/<{$tempdir}>/public/wxsite/css/shopmanage/store.css">  
 <link rel="stylesheet"  href="<{$siteurl}>/templates/<{$tempdir}>/public/wxsite/css/shopmanage/layer.css"  id="layui_layer_skinlayercss">  
-
-
+	
+	<link href="<{$siteurl}>/templates/<{$tempdir}>/public/wxsite/css/shopmanage/mobiscroll.core-2.5.2.css" rel="stylesheet" type="text/css" />
+	<link href="<{$siteurl}>/templates/<{$tempdir}>/public/wxsite/css/shopmanage/mobiscroll.android-ics-2.5.2.css" rel="stylesheet" type="text/css" />
+	
   <script src="<{$siteurl}>/templates/<{$tempdir}>/public/wxsite/js/shopmanage/jquery.js"></script>    
  <script src="<{$siteurl}>/templates/<{$tempdir}>/public/wxsite/js/shopmanage/base.js"></script>
   <script src="<{$siteurl}>/templates/<{$tempdir}>/public/wxsite/js/shopmanage/layer.js"></script> 
    <script src="<{$siteurl}>/templates/<{$tempdir}>/public/wxsite/js/shopmanage/roll.js"></script>
  <script src="<{$siteurl}>/templates/<{$tempdir}>/public/wxsite/js/shopmanage/public.js"></script>
-<script src="<{$siteurl}>/templates/<{$tempdir}>/public/wxsite/js/shopmanage/dingwei.js"></script>  
+<script src="<{$siteurl}>/templates/<{$tempdir}>/public/wxsite/js/shopmanage/dingwei.js"></script> 
+
+<script src="<{$siteurl}>/templates/<{$tempdir}>/public/wxsite/js/shopmanage/mobiscroll.core-2.5.2.js" type="text/javascript"></script>
+	<script src="<{$siteurl}>/templates/<{$tempdir}>/public/wxsite/js/shopmanage/mobiscroll.core-2.5.2-zh.js" type="text/javascript"></script>
+
+	<script src="<{$siteurl}>/templates/<{$tempdir}>/public/wxsite/js/shopmanage/mobiscroll.datetime-2.5.1.js" type="text/javascript"></script>
+	<script src="<{$siteurl}>/templates/<{$tempdir}>/public/wxsite/js/shopmanage/mobiscroll.datetime-2.5.1-zh.js" type="text/javascript"></script>
+
+	
+     
 <script>
             function bd_encrypt(gg_lat, gg_lon)   // 百度地图测距偏差 问题修复
             {
@@ -35,6 +46,45 @@
                 bd_encrypt(position.coords.latitude, position.coords.longitude);
             });
 </script>
+
+    <style type="text/css">
+
+        input, select {
+            width: 100%;
+            padding: 5px;
+            margin: 5px 0;
+            border: 1px solid #aaa;
+            box-sizing: border-box;
+            border-radius: 5px;
+            -moz-box-sizing: border-box;
+            -webkit-box-sizing: border-box;
+            -webkit-border-radius: 5px;
+        }
+        .header {
+            border: 1px solid #333;
+            background: #111;
+            color: white;
+            font-weight: bold;
+            text-shadow: 0 -1px 1px black;
+            background-image: linear-gradient(#3C3C3C,#111);
+            background-image: -webkit-gradient(linear,left top,left bottom,from(#3C3C3C),to(#111));
+            background-image: -moz-linear-gradient(#3C3C3C,#111);
+        }
+        .header h1 {
+            text-align: center;
+            font-size: 16px;
+            margin: .6em 0;
+            padding: 0;
+            text-overflow: ellipsis;
+            overflow: hidden;
+            white-space: nowrap;
+        }
+        .content {
+            padding: 15px;
+            background: #fff;
+        }
+       
+    </style>
 </head>
 
 <body>
@@ -125,11 +175,11 @@ body {padding: 20px 0;}
 
 <div class="sh_search_more_time mb10">
 <div class="fl left">
-<input type="text" placeholder="开始时间" onBlur="if (!value) { value = defaultValue; this.style.color = '#999' }" onClick="if (value == defaultValue) { value = ''; this.style.color = '#000' }" name="bg_date" value="" onfocus="WdatePicker({dateFmt: 'yyyy-MM-dd HH:mm:ss'});">
+<input type="text" name="appDate" id="appDateTime">
 </div>
 
 <div class="fr right">
-<input type="text" placeholder="结束时间"  onBlur="if (!value) { value = defaultValue; this.style.color = '#999' }" onClick="if (value == defaultValue) { value = ''; this.style.color = '#000' }" name="end_date" value="" onfocus="WdatePicker({dateFmt: 'yyyy-MM-dd HH:mm:ss'});">
+<input type="text" name="appDate" id="appDateTime2" />
 </div>
 
 <div class="clear"></div>
@@ -295,8 +345,31 @@ body {padding: 20px 0;}
 <div class="blank-20"></div>
 <div class="container login-open">
 <h5 style="text-align:center">
-<div class="paging"><span>2 条记录 1/1 页</span></div>
+<div class="paging"><ul><{$pagecontent}></ul></div>
+<!-- <div class="paging"><span>2 条记录 1/1 页</span></div> -->
 <!--分页代码不要忘记加-->
 </h5>
 </div>
+<script type="text/javascript">
+$(function () {
+    var currYear = (new Date()).getFullYear();    
+    var opt={};
+    opt.date = {preset : 'date'};
+    //opt.datetime = { preset : 'datetime', minDate: new Date(2012,3,10,9,22), maxDate: new Date(2014,7,30,15,44), stepMinute: 5  };
+    opt.datetime = {preset : 'datetime'};
+    opt.time = {preset : 'time'};
+    opt.default = {
+        theme: 'android-ics light', //皮肤样式
+        display: 'modal', //显示方式 
+        mode: 'scroller', //日期选择模式
+        lang:'zh',
+        startYear:currYear - 10, //开始年份
+        endYear:currYear + 10 //结束年份
+    };
+
+      var optDateTime = $.extend(opt['date'], opt['default']) 
+      var optTime = $.extend(opt['time'], opt['default']);
+    $("#appDateTime").mobiscroll(optDateTime);
+})  
+</script>
 </body>

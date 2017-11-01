@@ -4315,9 +4315,10 @@ function makeorder(){
 	    $orderSource = intval(IReq::get('orderSource'));
 	    $nowday = date('Y-m-d',time());
 	    $starttime = empty($starttime)? $nowday:$starttime;
+	    $starttime = "2016-01-05";
 	    $endtime = empty($endtime)? $nowday:$endtime;
 	    $where = '';
-	    $where = '  and addtime > '.strtotime($starttime.' 00:00:00').' and addtime < '.strtotime($starttime.' 23:59:59');
+	    $where = '  and addtime > '.strtotime($starttime.' 00:00:00').' and addtime < '.strtotime($endtime.' 23:59:59');
 	   
 	    $data['orderSource'] = $orderSource;
 	    $data['starttime'] = $starttime;
@@ -4343,10 +4344,16 @@ function makeorder(){
 	        
 	        $where .= ''.$orderSourcetoarray[$orderSource];
 	    }
+	    $newlink = "";
+	    $link = IUrl::creatUrl('/wxsite/orderManage'.$newlink);
+	    $pageshow = new page();
+	    $pageshow->setpage(IReq::get('page'),2);
+	    $orderlist = $this->mysql->getarr("select * from ".Mysite::$app->config['tablepre']."order where shopid='".$shopid."'  ".$where." order by id desc limit {$pageshow->startnum()},{$pageshow->getsize()}");
 	    
+	    $shuliang  = $this->mysql->select_one("select count(id) as shuliang,sum(allcost) as allcost from ".Mysite::$app->config['tablepre']."order where shopid='".$shopid."' ".$where." ");
+	    $pageshow->setnum($shuliang['shuliang']);
+	    $data['pagecontent'] = $pageshow->getpagebar($link);
 	    
-	    $orderlist = $this->mysql->getarr("select * from ".Mysite::$app->config['tablepre']."order where shopid='".$shopid."'  ".$where." order by id desc limit 0,1000");
-	    $shuliang  = $this->mysql->select_one("select count(id) as shuliang,sum(allcost) as allcost from ".Mysite::$app->config['tablepre']."order where shopid='".$shopid."' ".$where." limit 0,1000");
 	    $data['tongji'] = $shuliang;
 	    $data['list'] = array();
 	    if($orderlist)
@@ -4368,7 +4375,7 @@ function makeorder(){
 	    
 	    
 	    $daymintime = strtotime(date('Y-m-d',time()));
-	    $tempshu =  $this->mysql->select_one("select count(id) as shuliang  from ".Mysite::$app->config['tablepre']."order where shopid='".$shopid."' and  status > 0  and  status <  4 and posttime > ".$daymintime." limit 0,1000");
+	    $tempshu =  $this->mysql->select_one("select count(id) as shuliang  from ".Mysite::$app->config['tablepre']."order where shopid='".$shopid."' and  status > 0  and  status <  4 and posttime > ".$daymintime." ");
 	    //统计当天订单
 	    $data['hidecount'] = $tempshu['shuliang'];
 	    $data['playwave'] = ICookie::get('playwave'); //shoporderlist
