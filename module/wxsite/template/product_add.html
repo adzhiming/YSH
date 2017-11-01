@@ -69,7 +69,7 @@
 <div class="shopimglist" style='height:100px;width:100%'></div>	
 <span class="album" style="width:60px;">上传商品图</span> 
 </div>
-<input type="hidden" name="img" id="img" value="">
+<div class="imgvalues"></div>
 <input type="file" name="file" style="display:none;" onchange="previewImg(this);" id="upload" accept="image/*">
 
 </div>
@@ -252,6 +252,11 @@ function uploadBtn(){
 
 //图片预览
 function previewImg(imgFile){
+	var imglen = $(".shopimglist img").length;
+	if(imglen >=5){
+		layer.msg("最多只能上传5张图");
+		return false;
+	}
     //console.log(imgFile);//这里打印出是整个input标签
     var img =""
     var extension = imgFile.value.substring(imgFile.value.lastIndexOf("."),imgFile.value.length);//扩展名
@@ -297,16 +302,20 @@ function uploadImg(imgFile){
             var url ="?ctrl=other&action=ajaxuploadimg&imgtype=addgoods&datatype=json"
             
             $.post(url, {file: e.target.result},function(ret){  
-            	
+            	var imglist =''
                 if(ret.file!=''){ 
-                	var imgval = $("#img").val()
+                	/* var imgval = $("#img").val()
                 	if(imgval ==''){
                 		$("#img").val(ret.img)
                 	}
                 	else{
                 		imgval = imgval+","+ret.img
                 		$("#img").val(imgval)
-                	}
+                	} */
+                	var has  =$(".imgvalues").html();
+                	imglist = "<input type='hidden' name='img[]'   value="+ret.img+">"
+                	var newhtml = has + imglist
+                	$(".imgvalues").html(newhtml);
                 	layer.msg("上传成功");
                 }else{  
                     alert('upload fail');  
