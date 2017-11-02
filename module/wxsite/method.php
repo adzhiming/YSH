@@ -4338,14 +4338,24 @@ function makeorder(){
 	        '8'=>' and status > 0 and status < 4  and ( paytype = 1 or  paystatus=1) and is_reback = 3 '
 	        
 	    );
-	    
-	    
+	    if(!empty($orderSource)){
+	    	$newlink .= "&orderSource={$orderSource}";
+	    }
+	    if(!empty($order_sn)){
+	    	$newlink .= "&order_sn={$order_sn}";
+	    }
+	    if(!empty($starttime)){
+	    	$newlink .= "&startTime={$starttime}";
+	    }
+	    if(!empty($endtime)){
+	    	$newlink .= "&endTime={$endtime}";
+	    }
 	    
 	    if(isset($orderSourcetoarray[$orderSource])){
 	        
 	        $where .= ''.$orderSourcetoarray[$orderSource];
 	    }
-	    $newlink = "";
+	    
 	    $link = IUrl::creatUrl('/wxsite/orderManage'.$newlink);
 	    $pageshow = new page();
 	    $pageshow->setpage(IReq::get('page'),2);
