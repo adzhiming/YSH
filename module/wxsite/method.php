@@ -7048,7 +7048,7 @@ function getdycxshops($type){  // 获取对应促销类型的商家
 				return $list;
 }
 		
-/* 商家入住流程 */
+/* 商家入住系统流程 */
 function shopSettled(){
 	$urllink = IUrl::creatUrl('wxsite/login');
 	if($this->member['uid'] == 0)  $this->message('',$urllink); 
@@ -7074,7 +7074,7 @@ function shopSettled(){
 			}
 		 
 		if($type != 1  && $memberinfo['shopid'] > 0  )	{ 
-			//if(!empty($data['shopinfo'])){
+			////if(!empty($data['shopinfo'])){
 				$link = IUrl::creatUrl('wxsite/shangjiaresult/shopid/'.$memberinfo['shopid']);
 				$this->message('',$link);
 			//}
@@ -7082,6 +7082,41 @@ function shopSettled(){
 		#	print_r($data['shopinfo']);
 			Mysite::$app->setdata($data);
 }
+/* 个人入住系统流程 */
+function shopSettledP(){
+    $urllink = IUrl::creatUrl('wxsite/login');
+    if($this->member['uid'] == 0)  $this->message('',$urllink);
+    $type =    intval(IReq::get('type'));
+    $catparent = $this->mysql->getarr("select * from ".Mysite::$app->config['tablepre']."shoptype  where  type='checkbox' order by cattype asc limit 0,100");
+    $catlist = array();
+    foreach($catparent as $key=>$value){
+        $tempcat   = $this->mysql->getarr("select * from ".Mysite::$app->config['tablepre']."shoptype  where parent_id = '".$value['id']."'  limit 0,100");
+        foreach($tempcat as $k=>$v){
+            $catlist[] = $v;
+        }
+    }
+    $data['catarr'] = array('0'=>'外卖','1'=>'超市');
+    $data['catlist'] = $catlist;
+    
+    $uid =    $this->member['uid'];
+    
+    if($uid > 0){
+        $memberinfo = $this->mysql->select_one("select * from ".Mysite::$app->config['tablepre']."member  where uid = '".$uid."' ");
+        $data['shopinfo'] =	$this->mysql->select_one("select id,is_pass from ".Mysite::$app->config['tablepre']."shop  where id = '".$memberinfo['shopid']."' ");
+    }else{
+        $data['shopinfo'] = array();
+    }
+    
+    if($type != 1  && $memberinfo['shopid'] > 0  )	{
+        //if(!empty($data['shopinfo'])){
+        $link = IUrl::creatUrl('wxsite/shangjiaresult/shopid/'.$memberinfo['shopid']);
+        $this->message('',$link);
+        //}
+    }
+    #	print_r($data['shopinfo']);
+    Mysite::$app->setdata($data);
+}
+
 function sjapplyrz(){  
     $province	 =    IFilter::act(IReq::get('province'));
     $city	 =    IFilter::act(IReq::get('city'));
@@ -7119,7 +7154,6 @@ function sjapplyrz(){
 	$data['shoplicense'] = $shoplicense;
 	$this->success($data);
 	 
-	
 }	
 	function shangjiaapply(){  
 	

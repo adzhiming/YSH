@@ -3,6 +3,33 @@
  <style type="text/css">
      .hide{display:none;}
      .mesefillinfo img{vertical-align:middle;float:left;margin:0 5px;}
+
+#shangjia_tab{
+    display: block;
+    width: 100%;
+    height: 2.2rem;
+    background-color: #fff;
+    border-bottom: .11rem #dedede solid;
+    position: fixed;
+    z-index: 999;
+    top: 2.5rem;
+}
+#shangjia_tab li {
+    display: block;
+	line-height: 36px;
+    float: left;
+}
+#shangjia_tab li a.on {
+    border-bottom: .22rem solid #ff6e6e;
+    margin-top: -0rem;
+}
+#shangjia_tab li a {
+    display: block;
+    text-align: center;
+    line-height: 2.2rem;
+    height: 2.2rem;
+    color: #999;
+}
  </style>
  <{/block}>
  <{block name=extendjs}>
@@ -38,8 +65,12 @@ document.addEventListener('DOMContentLoaded', function () { setTimeout(loaded, 2
 </div>
 <{/block}>
 <{block name=sitetitle}>商家入驻<{/block}>
- <{block name=blockcontent}>   
- <div id="wrapper" style="top:40px;">
+ <{block name=blockcontent}> 
+ <ul id="shangjia_tab">
+<li style="width:50%;"><a href="/index.php?ctrl=wxsite&action=shopSettled" class="on">商家入驻</a></li>
+<li style="width:50%;"><a href="/index.php?ctrl=wxsite&action=shopSettledP">个人入驻</a></li>
+</ul>  
+ <div id="wrapper" style="top:79px;">
 	<div id="scroller">
  
 	
@@ -85,7 +116,28 @@ document.addEventListener('DOMContentLoaded', function () { setTimeout(loaded, 2
                       </select>	</li>
      <li class='market'>
 						    
-	 </li>                 
+	 </li>
+	 <li style="line-height: 50px;">
+         <span style="float:left;">正面身份证：</span>
+         <img src="" width=50px height=50px id="imgshow" class="hide"/>
+         <form id="form1" name="form1" method="post"  enctype="multipart/form-data" target="ifr-headpic-upload" onsubmit="return checkImagetype('1');">
+
+                 <input name="head" type="file" id="imgFile" style="width:70px;" name="imgFile" onchange="$('#input1').val($(this).val())"  class="curbtn">
+                 <input id="submitImg" type="button" value="上传" class="ss_sc curbtn" style="border:1px solid #ccc;background-color:white;height:22px;width:40px;" >
+
+         </form>
+          <input type="hidden"  id="shoplicense"/>
+     </li>
+     <li style="line-height: 50px;">
+         <span style="float:left;">背面身份证：</span>
+         <img src="" width=50px height=50px id="imgshow" class="hide"/>
+         <form id="form1" name="form1" method="post"  enctype="multipart/form-data" target="ifr-headpic-upload" onsubmit="return checkImagetype('1');">
+                 <input name="head" type="file" id="imgFile" style="width:70px;" name="imgFile" onchange="$('#input1').val($(this).val())"  class="curbtn">
+                 <input id="submitImg" type="button" value="上传" class="ss_sc curbtn" style="border:1px solid #ccc;background-color:white;height:22px;width:40px;" >
+
+         </form>
+          <input type="hidden"  id="shoplicense"/>
+     </li>                 
      <li style="line-height: 50px;">
          <span style="float:left;">营业执照：</span>
          <img src="" width=50px height=50px id="imgshow" class="hide"/>
@@ -95,10 +147,6 @@ document.addEventListener('DOMContentLoaded', function () { setTimeout(loaded, 2
                  <input id="submitImg" type="button" value="上传" class="ss_sc curbtn" style="border:1px solid #ccc;background-color:white;height:22px;width:40px;" >
 
          </form>
-         <!--<div class="subfile">
-         <input  onclick="uploads();" name="imgFile" style="width:50px;height:50px;opacity:0;vertical-align:middle;"/>
-         </div>-->
-
           <input type="hidden"  id="shoplicense"/>
      </li>
  </ul>
@@ -183,7 +231,6 @@ document.addEventListener('DOMContentLoaded', function () { setTimeout(loaded, 2
                  data:{'shopphone':$("#shopphone").val(),'shopname':$("#shopname").val(),'province':$('#province').val(),'city':$('#city').val(),'county':$('#county').val(),'market_id':$('#market_id').val(),'shopaddress':$('#shopaddress').val(),'shoptype':$('#shoptype').val(),'shoplicense':$('#shoplicense').val()},
                  success:function(content) { 
                  	if(content.error ==  false){
-					
                  		var jurl =  siteurl+'/index.php?ctrl=wxsite&action=shangjiaapply&shopphone='+content.msg.shopphone+'&shoplicense='+content.msg.shoplicense+'&shopname='+content.msg.shopname+'&shopaddress='+content.msg.shopaddress+'&shoptype='+content.msg.shoptype+'&province='+content.msg.province+'&city='+content.msg.city+'&county='+content.msg.county+'&market_id='+content.msg.market_id ;
                         window.location.href= 	 jurl
 							
