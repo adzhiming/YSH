@@ -162,7 +162,7 @@ body {padding: 20px 0;}
 		$(".sh_search_more_pull li").click(function(){
 				$(".sh_search_more_int .center input").val($(this).html());
 				v = $(this).attr('v');
-				$('#st').val(v);
+				$('#orderSource').val(v);
 		});
 	});
 </script> 
@@ -170,16 +170,16 @@ body {padding: 20px 0;}
 	
 
 <div class="xiaoqu-search1">
-<form method="get" action="#">
+<form method="post"  >
 <div class="sh_search_more">
 
 <div class="sh_search_more_time mb10">
 <div class="fl left">
-<input type="text" name="appDate" id="appDateTime">
+<input type="text" name="startTime" id="startTime"  value="<{$starttime}>">
 </div>
 
 <div class="fr right">
-<input type="text" name="appDate" id="appDateTime2" />
+<input type="text" name="endTime" id="endTime"  value="<{$endtime}>"/>
 </div>
 
 <div class="clear"></div>
@@ -188,15 +188,22 @@ body {padding: 20px 0;}
 <div class="sh_search_more_int">
 
 <div class="fl left">
-<input type="text" placeholder="订单编号" name="keyword" value="" >
+<input type="text" placeholder="订单编号" name="order_sn" value="<{$order_sn}>" >
 </div>
 
 <div class="fl center">
-<input type="text" value="状态"> <input value="" name="st" id="st" type="hidden" />
+<input type="text" value="状态"> <input value="<{$orderSource}>" name="orderSource" id="orderSource" type="hidden" />
 <div class="sh_search_more_pull" style="display:none;">
 <ul>
-<li v="0">等待付款</li>
-<li v="8">已完成</li>
+<li v="0">全部订单</li>
+<li v="1">网站订单</li>
+<li v="2"> 电话订单</li>
+<li v="3">待确认订单</li>
+<li v="4">待发货订单</li>
+<li v="5">已发货订单</li>
+<li v="6">退款待处理</li>
+<li v="7">已退款</li>
+<li v="8">已拒绝退款订单</li>
 </ul>
 </div>
 </div>
@@ -363,13 +370,14 @@ $(function () {
         display: 'modal', //显示方式 
         mode: 'scroller', //日期选择模式
         lang:'zh',
-        startYear:currYear - 10, //开始年份
+        startYear:currYear, //开始年份
         endYear:currYear + 10 //结束年份
     };
 
       var optDateTime = $.extend(opt['date'], opt['default']) 
       var optTime = $.extend(opt['time'], opt['default']);
-    $("#appDateTime").mobiscroll(optDateTime);
+    $("#startTime").mobiscroll(optDateTime);
+    $("#endTime").mobiscroll(optDateTime);
 })  
 </script>
 </body>

@@ -4305,17 +4305,24 @@ function makeorder(){
 	    $this->checkshoplogin();
 	    $shopid = ICookie::get('adminshopid');
 	    if(empty($shopid)) $this->message('emptycookshop');
-	    $starttime = trim(IFilter::act(IReq::get('starttime')));
-	    $orderSource = intval(IReq::get('orderSource'));
+	    $starttime = trim(IFilter::act(IReq::get('startTime')));
+	    $endtime = trim(IFilter::act(IReq::get('endTime')));
+	    $orderSource = intval(IFilter::act(IReq::get('orderSource')));
+	    $order_sn = intval(IFilter::act(IReq::get('order_sn')));
+	    $snowday = date("Y-m-d",strtotime("-7 day"));
 	    $nowday = date('Y-m-d',time());
-	    $starttime = empty($starttime)? $nowday:$starttime;
-	    $starttime = "2016-01-05";
+	    $starttime = empty($starttime)? $snowday:$starttime;
 	    $endtime = empty($endtime)? $nowday:$endtime;
+	    
 	    $where = '';
 	    $where = '  and addtime > '.strtotime($starttime.' 00:00:00').' and addtime < '.strtotime($endtime.' 23:59:59');
-	   
+	    if(!empty($order_sn)){
+	    	$where .= " and dno ='{$order_sn}'";
+	    }
+	    $data['order_sn'] = empty($order_sn)?'':$order_sn;
 	    $data['orderSource'] = $orderSource;
 	    $data['starttime'] = $starttime;
+	    $data['endtime'] = $endtime;
 	    $this->setstatus();
 	    //获取订单的方式是所有 有效订单  status > 0 and < 4 and (paytype == 'outpay' or paytype='open_acout or (paystatus=1)  //
 	    
@@ -4343,7 +4350,7 @@ function makeorder(){
 	    $pageshow = new page();
 	    $pageshow->setpage(IReq::get('page'),2);
 	    $orderlist = $this->mysql->getarr("select * from ".Mysite::$app->config['tablepre']."order where shopid='".$shopid."'  ".$where." order by id desc limit {$pageshow->startnum()},{$pageshow->getsize()}");
-	    
+	  //  echo "select * from ".Mysite::$app->config['tablepre']."order where shopid='".$shopid."'  ".$where." order by id desc limit {$pageshow->startnum()},{$pageshow->getsize()}";
 	    $shuliang  = $this->mysql->select_one("select count(id) as shuliang,sum(allcost) as allcost from ".Mysite::$app->config['tablepre']."order where shopid='".$shopid."' ".$where." ");
 	    $pageshow->setnum($shuliang['shuliang']);
 	    $data['pagecontent'] = $pageshow->getpagebar($link);
