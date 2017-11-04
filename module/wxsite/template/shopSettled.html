@@ -220,7 +220,7 @@ document.addEventListener('DOMContentLoaded', function () { setTimeout(loaded, 2
     	 console.log($('#zmimgshow').val());
 		  $('#loading').show();
 		url = siteurl+'/index.php?ctrl=wxsite&action=sjapplyrz&datatype=json&random=@random@';
-     	  url = url.replace('@random@', 1+Math.round(Math.random()*1000));
+     	url = url.replace('@random@', 1+Math.round(Math.random()*1000));
         $.ajax({         //script定义
                  url: url.replace('@random@', 1+Math.round(Math.random()*1000)),
                  dataType: "json",
@@ -228,9 +228,12 @@ document.addEventListener('DOMContentLoaded', function () { setTimeout(loaded, 2
                  data:{'shopphone':$("#shopphone").val(),'shopname':$("#shopname").val(),'province':$('#province').val(),'city':$('#city').val(),'county':$('#county').val(),'market_id':$('#market_id').val(),'shopaddress':$('#shopaddress').val(),'shoptype':$('#shoptype').val(),'zmimg':$('#zmimgshow')[0].src,'fmimg':$('#fmimgshow')[0].src,'shoplicense':$('#zmimgshow')[0].src,'ruzhutype':1},
                  success:function(content) { 
                  	 if(content.error ==  false){
-                 		Tmsg("申请成功");
-                 		var jurl =  siteurl+'/index.php?ctrl=wxsite&action=index';
-                 		window.location.href= 	 jurl
+                 		Tmsg('提交成功，请等待管理员审核');
+						$('.closegb').live("click", function() {   
+							 $('.popup').slideToggle('slow',function(){$('#mask').remove();$('.popup').remove();}); 
+							 window.location.href=  siteurl+'/index.php?ctrl=wxsite&action=shangjiaresult&shopid='+content.msg ;
+							 
+						});
                  	}else{
                  		Tmsg(content.msg);
                  	}
