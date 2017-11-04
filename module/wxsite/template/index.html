@@ -203,16 +203,16 @@ function newrenderReverse(datas){
 				   async:true,
 				   url: ajaxurl,
 				   data: {},
-				  dataType: 'html',success: function(content) { 
-						$('#loadindecContent').html(content);  
+				  dataType: 'html',success: function(content) {
+						$('#loadindecContent').html(content); 
 						if(typeof html5_config == 'undefined'){
 							newTmsg('获取失败');
 						}else{  
 							if(html5_config.bodyscller == true){
 								 setTimeout(function(){  
 									$('#wrapper').show();    
-									 addfresh();  
-								 },500);
+									addfresh();  
+								 },500); 
 							} 
 						}
 						

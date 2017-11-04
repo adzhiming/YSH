@@ -124,7 +124,7 @@ document.addEventListener('DOMContentLoaded', function () { setTimeout(loaded, 2
 		 <div class="alropeCon">
 			<div class="alropeTit">
 				<div class="alropeTitL">
-					<span>选择地区</span>
+					<span>选择地区</span><span>广东省</span>
 				</div>
 			</div>
 			<div class="alropeBox">
@@ -242,6 +242,7 @@ function choiceaddress(lat,lng,address,adcode){
 	}
 	
 function getSubAreaInfo(id,level){
+	console.log($(this).html())
 	if(id !='' && level <3){
 		 $.ajax({
 	           type: 'GET', 

@@ -378,6 +378,7 @@ function freshpage(){//刷新函数
 	var content = htmlback(siteurl+'/index.php?ctrl=wxsite&action=indexmarketlistdata',{'page':page});
   	if(content.flag == false){
  		 var getmoreContent =  $.trim(content.content);  
+ 		 
    		   if( getmoreContent == ''  ){ 
 				$('#shoplist').html("<center style='height:50px;;line-height:50px;font-size:13px;color:#a9a9a9;'>附近暂未覆盖商家，敬请期待...</center>");
 		   }else{

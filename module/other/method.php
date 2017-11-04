@@ -75,6 +75,10 @@ class method   extends baseclass
 		  	  	    $this->mysql->update(Mysite::$app->config['tablepre'].'shop',$data,"id='".$shopid."'");
 		  	    }
 		  	  }
+		  	  elseif($type == 'openshop'){
+		  	  	 $this->success($filepath.$file[0]['saveName']);
+		  	  }
+		  	 
 		      $this->success($filepath.$file[0]['saveName']);
 		  }
 	 }

@@ -117,38 +117,29 @@ document.addEventListener('DOMContentLoaded', function () { setTimeout(loaded, 2
      <li class='market'>
 						    
 	 </li>
+	 <form id="form1" name="form1" method="post"  enctype="multipart/form-data" target="ifr-headpic-upload" onsubmit="return checkImagetype('1');">
 	 <li style="line-height: 50px;">
          <span style="float:left;">正面身份证：</span>
-         <img src="" width=50px height=50px id="imgshow" class="hide"/>
-         <form id="form1" name="form1" method="post"  enctype="multipart/form-data" target="ifr-headpic-upload" onsubmit="return checkImagetype('1');">
-
-                 <input name="head" type="file" id="imgFile" style="width:70px;" name="imgFile" onchange="$('#input1').val($(this).val())"  class="curbtn">
-                 <input id="submitImg" type="button" value="上传" class="ss_sc curbtn" style="border:1px solid #ccc;background-color:white;height:22px;width:40px;" >
-
-         </form>
-          <input type="hidden"  id="shoplicense"/>
+         <img src="" width=50px height=50px  id="zmimgshow"   class="hide"/>
+                 <input name="head" type="file" id="zmimgFile" style="width:70px;" name="imgFile" onchange="$('#input1').val($(this).val())"  class="curbtn">
+                 <input id="zmSubmitImg" type="button" value="上传" class="ss_sc curbtn" style="border:1px solid #ccc;background-color:white;height:22px;width:40px;" >
      </li>
      <li style="line-height: 50px;">
          <span style="float:left;">背面身份证：</span>
-         <img src="" width=50px height=50px id="imgshow" class="hide"/>
-         <form id="form1" name="form1" method="post"  enctype="multipart/form-data" target="ifr-headpic-upload" onsubmit="return checkImagetype('1');">
-                 <input name="head" type="file" id="imgFile" style="width:70px;" name="imgFile" onchange="$('#input1').val($(this).val())"  class="curbtn">
-                 <input id="submitImg" type="button" value="上传" class="ss_sc curbtn" style="border:1px solid #ccc;background-color:white;height:22px;width:40px;" >
-
-         </form>
-          <input type="hidden"  id="shoplicense"/>
+         <img src="" width=50px height=50px id="fmimgshow" class="hide"/>
+                 <input name="head" type="file" id="fmimgFile" style="width:70px;" name="imgFile" onchange="$('#input1').val($(this).val())"  class="curbtn">
+                 <input id="fmSubmitImg" type="button" value="上传" class="ss_sc curbtn" style="border:1px solid #ccc;background-color:white;height:22px;width:40px;" >
      </li>                 
      <li style="line-height: 50px;">
          <span style="float:left;">营业执照：</span>
          <img src="" width=50px height=50px id="imgshow" class="hide"/>
-         <form id="form1" name="form1" method="post"  enctype="multipart/form-data" target="ifr-headpic-upload" onsubmit="return checkImagetype('1');">
 
                  <input name="head" type="file" id="imgFile" style="width:70px;" name="imgFile" onchange="$('#input1').val($(this).val())"  class="curbtn">
                  <input id="submitImg" type="button" value="上传" class="ss_sc curbtn" style="border:1px solid #ccc;background-color:white;height:22px;width:40px;" >
 
-         </form>
           <input type="hidden"  id="shoplicense"/>
      </li>
+     </form>
  </ul>
 </div>
 
@@ -167,10 +158,16 @@ document.addEventListener('DOMContentLoaded', function () { setTimeout(loaded, 2
 </div>
 
 <script>
-    $('#submitImg').click(function(){
-        ajaxFileUpload();
+    $('#zmSubmitImg').click(function(){
+        ajaxFileUpload("zmimgFile","#zmimgshow");
     });
-    function ajaxFileUpload()
+    $('#fmSubmitImg').click(function(){
+        ajaxFileUpload("fmimgFile","#fmimgshow");
+    });
+    $('#submitImg').click(function(){
+        ajaxFileUpload("imgFile","#imgshow");
+    });
+    function ajaxFileUpload(upid,imgid)
     {
         $("#loading")
                 .ajaxStart(function(){
@@ -183,9 +180,9 @@ document.addEventListener('DOMContentLoaded', function () { setTimeout(loaded, 2
         $.ajaxFileUpload
         (
                 {
-                    url:'<{ofunc type=url link="/other/userupload/type/shoplogo/datatype/json"}>',
+                    url:'<{ofunc type=url link="/other/userupload/type/openshop/datatype/json"}>',
                     secureuri:false,
-                    fileElementId:'imgFile',
+                    fileElementId:upid,
                     dataType: 'json',
                     data:{name:'logan', id:'id'},
                     success: function (data, status)
@@ -194,9 +191,8 @@ document.addEventListener('DOMContentLoaded', function () { setTimeout(loaded, 2
                         {
                             if(data.error == false)
                             {
-                                $('#shoplicense').val(data.msg);
-                                $('#imgshow').attr('src',data.msg);
-                                $('#imgshow').show();
+                                $(imgid).attr('src',data.msg);
+                                $(imgid).show();
                             }else
                             {
                                 alert(data.msg);
@@ -221,6 +217,7 @@ document.addEventListener('DOMContentLoaded', function () { setTimeout(loaded, 2
     	 if ( $("#market_id").length > 0 ) { 
     		 market_id = $("#market_id").val(); 
     		} 
+    	 console.log($('#zmimgshow').val());
 		  $('#loading').show();
 		url = siteurl+'/index.php?ctrl=wxsite&action=sjapplyrz&datatype=json&random=@random@';
      	  url = url.replace('@random@', 1+Math.round(Math.random()*1000));
@@ -228,12 +225,12 @@ document.addEventListener('DOMContentLoaded', function () { setTimeout(loaded, 2
                  url: url.replace('@random@', 1+Math.round(Math.random()*1000)),
                  dataType: "json",
                  async:true,
-                 data:{'shopphone':$("#shopphone").val(),'shopname':$("#shopname").val(),'province':$('#province').val(),'city':$('#city').val(),'county':$('#county').val(),'market_id':$('#market_id').val(),'shopaddress':$('#shopaddress').val(),'shoptype':$('#shoptype').val(),'shoplicense':$('#shoplicense').val()},
+                 data:{'shopphone':$("#shopphone").val(),'shopname':$("#shopname").val(),'province':$('#province').val(),'city':$('#city').val(),'county':$('#county').val(),'market_id':$('#market_id').val(),'shopaddress':$('#shopaddress').val(),'shoptype':$('#shoptype').val(),'zmimg':$('#zmimgshow')[0].src,'fmimg':$('#fmimgshow')[0].src,'shoplicense':$('#zmimgshow')[0].src,'ruzhutype':1},
                  success:function(content) { 
-                 	if(content.error ==  false){
-                 		var jurl =  siteurl+'/index.php?ctrl=wxsite&action=shangjiaapply&shopphone='+content.msg.shopphone+'&shoplicense='+content.msg.shoplicense+'&shopname='+content.msg.shopname+'&shopaddress='+content.msg.shopaddress+'&shoptype='+content.msg.shoptype+'&province='+content.msg.province+'&city='+content.msg.city+'&county='+content.msg.county+'&market_id='+content.msg.market_id ;
-                        window.location.href= 	 jurl
-							
+                 	 if(content.error ==  false){
+                 		Tmsg("申请成功");
+                 		var jurl =  siteurl+'/index.php?ctrl=wxsite&action=index';
+                 		window.location.href= 	 jurl
                  	}else{
                  		Tmsg(content.msg);
                  	}

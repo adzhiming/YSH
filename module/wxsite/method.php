@@ -157,7 +157,7 @@ class method   extends wxbaseclass
 		 $data['lat'] = $lat;
 		 $data['lng'] = $lng; 
 		 $data['addressname'] = $addressname;
-		
+
 		$ztylist =   $this->mysql->getarr("select* from ".Mysite::$app->config['tablepre']."specialpage where is_show=1  order by orderid  asc");
 		$data['ztylist'] = $ztylist;
 		Mysite::$app->setdata($data);  
@@ -165,7 +165,6 @@ class method   extends wxbaseclass
 	  
 	 
 	 function loadindexcontent(){ 
-		
  		$platpssetinfo = $this->mysql->select_one("select cityid,wxkefu_open,wxkefu_ewm,wxkefu_phone from ".Mysite::$app->config['tablepre']."platpsset where   cityid='".$this->CITY_ID."'   ");
   		$data['platpssetinfo'] = $platpssetinfo;
  		$moretypelist = $this->mysql->getarr("select* from ".Mysite::$app->config['tablepre']."appadv where type=2 and (   cityid='".$this->CITY_ID."'  or  cityid = 0 ) order by orderid  asc");
@@ -185,7 +184,6 @@ class method   extends wxbaseclass
 		 $where = empty($where)?'   and  SQRT((`lat` -'.$lat.') * (`lat` -'.$lat.' ) + (`lng` -'.$lng.' ) * (`lng` -'.$lng.' )) < (`pradiusa`*0.01094-0.01094) ': $where.' and SQRT((`lat` -'.$lat.') * (`lat` -'.$lat.' ) + (`lng` -'.$lng.' ) * (`lng` -'.$lng.' )) < (`pradiusa`*0.01094-0.01094) ';
 		 $where = Mysite::$app->config['plateshopid'] > 0? $where.' and  id != '.Mysite::$app->config['plateshopid'] .' ':$where; 
 		 $fyshoplist =   $this->mysql->getarr("select id,shopname,shoplogo,shoptype from ".Mysite::$app->config['tablepre']."shop where is_pass = 1  and is_open = 1 and isforyou = 1 and endtime > ".time()."  ".$where."   limit  6 ");		
-		 
 		 #print_r($fyshoplist);
 		 $data['fyshoplist'] = $fyshoplist;
 		 if(empty($addressname)){
@@ -1177,7 +1175,6 @@ class method   extends wxbaseclass
 	 
 	 function indexmarketlistdata(){// 首页获取附近市场
 	     $typelx = IFilter::act(IReq::get('typelx'));
-	     
 	     if(!empty($typelx)){
 	         if($typelx == 'wm'){
 	             ICookie::set('shopshowtype','waimai',2592000);
@@ -1211,14 +1208,13 @@ class method   extends wxbaseclass
 	     $lat = trim($lat);
 	     $lng = empty($lng)?0:$lng;
 	     $lat =empty($lat)?0:$lat;
-	     
+
 	     /*获取市场列表*/
 	     $pageinfo = new page();
 	     $pageinfo->setpage(intval(IReq::get('page'))); 
 	     $tempdd = array();
 	     $templist = array();
 	     $tempdd[] =   $this->mysql->getarr("select * from ".Mysite::$app->config['tablepre']."market where is_deleted = 0    ".$where."    order by id limit ".$pageinfo->startnum().", ".$pageinfo->getsize()."  ");
-	     
 	     foreach ($tempdd[0] as $k=>$list){
 	         
 	         $mi = $this->GetDistance($lat,$lng, $list['lat'],$list['lng'], 1);
@@ -7072,12 +7068,12 @@ function shopSettled(){
 			}else{
 				$data['shopinfo'] = array();
 			}
-		 
+		echo $memberinfo['shopid'];
 		if($type != 1  && $memberinfo['shopid'] > 0  )	{ 
-			////if(!empty($data['shopinfo'])){
+			if(!empty($data['shopinfo'])){
 				$link = IUrl::creatUrl('wxsite/shangjiaresult/shopid/'.$memberinfo['shopid']);
 				$this->message('',$link);
-			//}
+			}
 		}
 		#	print_r($data['shopinfo']);
 			Mysite::$app->setdata($data);
@@ -7118,16 +7114,22 @@ function shopSettledP(){
 }
 
 function sjapplyrz(){  
+	$urllink = IUrl::creatUrl('wxsite/login');
+	if($this->member['uid'] == 0)  $this->message('',$urllink);
     $province	 =    IFilter::act(IReq::get('province'));
     $city	 =    IFilter::act(IReq::get('city'));
     $county	 =    IFilter::act(IReq::get('county'));
     $market_id	 =    IFilter::act(IReq::get('market_id'));
+    $ruzhutype = IFilter::act(IReq::get('ruzhutype')); //入驻类型 0 个人 1 企业
     
 	$shopphone	 =    IFilter::act(IReq::get('shopphone'));
 	$shopname    =    IFilter::act(IReq::get('shopname'));
 	$shopaddress =    IFilter::act(IReq::get('shopaddress'));
+	$zmimg =    IFilter::act(IReq::get('zmimg'));
+	$fmimg =    IFilter::act(IReq::get('fmimg'));
 	$shoplicense =    IFilter::act(IReq::get('shoplicense'));
-	$shoptype =    IReq::get('shoptype');
+	
+	$shoptype =    0;
 	if(empty($province)) $this->message("请选择省份");
 	if(empty($city)) $this->message("请选择城市");
 	if(empty($county)) $this->message("请选择县/区");
@@ -7140,19 +7142,32 @@ function sjapplyrz(){
 	$checkshopname = $this->mysql->select_one("select * from ".Mysite::$app->config['tablepre']."shop  where shopname = '".$shopname."' ");
 	if(!empty($checkshopname)) $this->message("店铺名字已存在"); 
 	if(empty($shopaddress)) $this->message("请填写店铺地址");
+	if(empty($zmimg)) $this->message("请上传身份证正面照");
+	if(empty($fmimg)) $this->message("请上传身份证反面照");
 	if(empty($shoplicense)) $this->message("请上传营业执照");
 	
+	$data['uid'] = $this->member['uid'];
+	$data['psservicepoint']  = 5;
+	$data['psservicepointcount']  = 5; 
+	$data['goodattrdefault']  ="斤";
+	$data['wxhui_ewmurl']  ="";
+	$data['ruzhutype']  = $ruzhutype;
 	$data['market_id'] = $market_id;
 	$data['province'] = $province;
 	$data['city'] = $city;
 	$data['county'] = $county;
 	$data['admin_id'] = $county;
-	$data['shopphone'] = $shopphone;
+	$data['phone'] = $shopphone;
 	$data['shopname'] = $shopname;
-	$data['shopaddress'] = $shopaddress;
+	$data['address'] = $shopaddress;
 	$data['shoptype'] = $shoptype;
+	$data['zmimg'] = $zmimg;
+	$data['fmimg'] = $fmimg;
+	$data['qiyeimg'] = $shoplicense;
 	$data['shoplicense'] = $shoplicense;
-	$this->success($data);
+	$rs = $this->mysql->insert(Mysite::$app->config['tablepre'].'shop',$data);  
+	$shopid = $this->mysql->insertid();
+	$this->success('success');
 	 
 }	
 	function shangjiaapply(){  
