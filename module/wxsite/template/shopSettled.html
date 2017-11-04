@@ -114,7 +114,7 @@ document.addEventListener('DOMContentLoaded', function () { setTimeout(loaded, 2
 													<{/foreach}>
 							
                       </select>	</li>
-     <li class='market'>
+     <li class='market' style="display:none">
 						    
 	 </li>
 	 <form id="form1" name="form1" method="post"  enctype="multipart/form-data" target="ifr-headpic-upload" onsubmit="return checkImagetype('1');">
@@ -229,11 +229,7 @@ document.addEventListener('DOMContentLoaded', function () { setTimeout(loaded, 2
                  success:function(content) { 
                  	 if(content.error ==  false){
                  		Tmsg('提交成功，请等待管理员审核');
-						$('.closegb').live("click", function() {   
-							 $('.popup').slideToggle('slow',function(){$('#mask').remove();$('.popup').remove();}); 
 							 window.location.href=  siteurl+'/index.php?ctrl=wxsite&action=shangjiaresult&shopid='+content.msg ;
-							 
-						});
                  	}else{
                  		Tmsg(content.msg);
                  	}
@@ -251,17 +247,37 @@ document.addEventListener('DOMContentLoaded', function () { setTimeout(loaded, 2
   
     
     $(document).ready(function(){  
-   	  var markettype = $("#shoptype").find("option:selected").attr("data-markettype");
-   	    getMarketList(markettype)
+   	  var markettype = $("#shoptype").find("option:selected").attr("data-markettype"); 
+   	  var county = $("#county").find("option:selected").val();
+   	  if(county != "0"){
+   		 getMarketList(county,markettype)
+   	  }
    	  
       $('#shoptype').change(function(){   
    	  var markettype = $("#shoptype").find("option:selected").attr("data-markettype");
-   	     getMarketList(markettype)
+   	  var county = $("#county").find("option:selected").val();
+   	  console.log(county)
+	   	  if(county != "0"){
+	  		 getMarketList(county,markettype)
+	  	  }
+	   	  else{
+	   		Tmsg('请先选中地区');
+	   	  }
       }) 
       
-     
+      $('#county').change(function(){   
+   	  var markettype = $("#shoptype").find("option:selected").attr("data-markettype");
+   	  var county = $("#county").find("option:selected").val();
+	   	  if(county != "0"){
+	  		 getMarketList(county,markettype)
+	  	  }
+	   	  else{
+	   		Tmsg('请先选中地区');
+	   	  }
+      })
+      
    })
-    function getMarketList(markettype){
+    function getMarketList(county,markettype){
     	url = siteurl+'/index.php?ctrl=wxsite&action=getMarketbyTypeid&datatype=json&random=@random@';
     	url = url.replace('@random@', 1+Math.round(Math.random()*1000));
     	$('.market').html('')
@@ -269,7 +285,7 @@ document.addEventListener('DOMContentLoaded', function () { setTimeout(loaded, 2
                url: url.replace('@random@', 1+Math.round(Math.random()*1000)),
                dataType: "json",
                async:true,
-               data:{'markettype':markettype},
+               data:{'countyid':county,'markettype':markettype},
                success:function(data) { 
             	   if(data.code){
             		   var marketlist = data.data
@@ -279,8 +295,12 @@ document.addEventListener('DOMContentLoaded', function () { setTimeout(loaded, 2
             			   html =html +"<option value="+marketlist[i]['id']+">"+marketlist[i]['name']+"</option>"
             		   }
             		   html =html +"</select>";
+            		   $('.market').css('display','block');
+                	   $('.market').html(html)
             	   }
-            	   $('.market').html(html)
+            	   else{
+            		   $('.market').css('display','none');
+            	   }
                }
          })  
     }

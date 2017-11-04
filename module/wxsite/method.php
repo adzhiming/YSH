@@ -8004,9 +8004,10 @@ function gzwx(){
     
     //根据市场类型获取市场信息
     function getMarketbyTypeid(){
+        $countyid = IReq::get('countyid');
         $typeid = IReq::get('markettype');
         if($typeid){
-            $marketlist= $this->mysql->getarr("select * from ".Mysite::$app->config['tablepre']."market where typeid=".$typeid."  ");
+            $marketlist= $this->mysql->getarr("select * from ".Mysite::$app->config['tablepre']."market where typeid=".$typeid." and county ='{$countyid}'");
             if($marketlist){
                 $data = array();
                 $data['code'] = 1;
