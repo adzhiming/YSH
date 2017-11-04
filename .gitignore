@@ -7,3 +7,4 @@
 *.html
 class/areaadminbaseclass.php
 *.php
+module/shop/method.php
