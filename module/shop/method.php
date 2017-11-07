@@ -695,7 +695,7 @@ class method   extends baseclass
 			  $this->message('member_nologin',$link);
 			 
 			}
-		 	 $maphone = IFilter::act(IReq::get('maphone'));  
+		 $maphone = IFilter::act(IReq::get('maphone'));  
 	     $shopname = IFilter::act(IReq::get('shopname')); 
 	     $address = IFilter::act(IReq::get('address'));  
 	     $shoptype =  IFilter::act(IReq::get('shoptype'));

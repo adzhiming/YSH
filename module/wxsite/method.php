@@ -7068,7 +7068,7 @@ function shopSettled(){
 			}else{
 				$data['shopinfo'] = array();
 			}
-		echo $memberinfo['shopid'];
+	
 		if($type != 1  && $memberinfo['shopid'] > 0  )	{ 
 			if(!empty($data['shopinfo'])){
 				$link = IUrl::creatUrl('wxsite/shangjiaresult/shopid/'.$memberinfo['shopid']);
@@ -7128,8 +7128,11 @@ function sjapplyrz(){
 	$zmimg =    IFilter::act(IReq::get('zmimg'));
 	$fmimg =    IFilter::act(IReq::get('fmimg'));
 	$shoplicense =    IFilter::act(IReq::get('shoplicense'));
+	$shoptype =  IReq::get('shoptype') ;
+	$temparray = explode('_',$shoptype);
 	
-	$shoptype =    0;
+	
+	
 	if(empty($province)) $this->message("请选择省份");
 	if(empty($city)) $this->message("请选择城市");
 	if(empty($county)) $this->message("请选择县/区");
@@ -7144,8 +7147,11 @@ function sjapplyrz(){
 	if(empty($shopaddress)) $this->message("请填写店铺地址");
 	if(empty($zmimg)) $this->message("请上传身份证正面照");
 	if(empty($fmimg)) $this->message("请上传身份证反面照");
-	if(empty($shoplicense)) $this->message("请上传营业执照");
-	
+	if($ruzhutype ==1){
+	  if(empty($shoplicense)) $this->message("请上传营业执照");
+	}
+	$data['shoptype']  = $temparray[0];   // 店铺大类型 0为外卖 1为超市
+	$attrid =  $temparray[1];
 	$data['uid'] = $this->member['uid'];
 	$data['psservicepoint']  = 5;
 	$data['psservicepointcount']  = 5; 
@@ -7165,9 +7171,29 @@ function sjapplyrz(){
 	$data['fmimg'] = $fmimg;
 	$data['qiyeimg'] = $shoplicense;
 	$data['shoplicense'] = $shoplicense;
-	$rs = $this->mysql->insert(Mysite::$app->config['tablepre'].'shop',$data);  
+	
+	
+	$checkshoptype =  $this->mysql->select_one("select * from ".Mysite::$app->config['tablepre']."shoptype where id= '{$attrid}' ");
+	if(empty($checkshoptype))  $this->message("获取店铺分类失败");
+	
+	
+	$this->mysql->insert(Mysite::$app->config['tablepre'].'shop',$data);
+	
 	$shopid = $this->mysql->insertid();
-	$this->success('success');
+	
+	$attrdata['shopid'] = $shopid;
+	$attrdata['cattype'] = $checkshoptype['cattype'];
+	$attrdata['firstattr'] = $checkshoptype['parent_id'];
+	$attrdata['attrid'] = $checkshoptype['id'];
+	$attrdata['value'] = $checkshoptype['name'];
+	
+	$this->mysql->insert(Mysite::$app->config['tablepre'].'shopattr',$attrdata);
+	
+	
+	
+	$this->mysql->update(Mysite::$app->config['tablepre'].'member',array('shopid'=>$shopid),"uid='".$this->member['uid']."'");
+	
+	$this->success($shopid);
 	 
 }	
 	function shangjiaapply(){  
@@ -7978,9 +8004,10 @@ function gzwx(){
     
     //根据市场类型获取市场信息
     function getMarketbyTypeid(){
+        $countyid = IReq::get('countyid');
         $typeid = IReq::get('markettype');
         if($typeid){
-            $marketlist= $this->mysql->getarr("select * from ".Mysite::$app->config['tablepre']."market where typeid=".$typeid."  ");
+            $marketlist= $this->mysql->getarr("select * from ".Mysite::$app->config['tablepre']."market where typeid=".$typeid." and county ='{$countyid}'");
             if($marketlist){
                 $data = array();
                 $data['code'] = 1;
