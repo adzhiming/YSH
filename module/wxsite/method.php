@@ -4394,6 +4394,21 @@ function makeorder(){
 	    $shopid = ICookie::get('adminshopid');
 	    if(empty($shopid)) $this->message('emptycookshop');
 	    //var_dump($this->member);
+	    $today = date("Y-m-d",time());
+	    $todaywhere = "and suretime between '{$today} 00:00' and '{$today} 23:59'";
+	    $yestoday = date("Y-m-d",strtotime("-1 day"));
+	    $yestodaywhere = "and suretime between '{$yestoday} 00:00' and '{$yestoday} 23:59'";
+	    //今日收入
+	    $todayrs = $this->mysql->select_one("select sum(allcost) totalcost from ".Mysite::$app->config['tablepre']."order where shopid='".$shopid."' and is_acceptorder = 1  and  status > 0  and  status <  4 {$todaywhere}");
+	    //昨日收入
+	    $yestodayrs =$this->mysql->select_one("select sum(allcost) totalcost from ".Mysite::$app->config['tablepre']."order where shopid='".$shopid."' and is_acceptorder = 1  and  status > 0  and  status <  4 {$yestodaywhere}");
+	    //待收货
+	    $dshrs =$this->mysql->select_one("select sum(allcost) totalcost from ".Mysite::$app->config['tablepre']."order where shopid='".$shopid."' and is_acceptorder = 0  and  status=2   and paystatus =1");
+	    
+	    $data['todaycost'] = empty($todayrs['totalcost'])?"0.00":$todayrs['totalcost'];
+	    $data['yestodaycost'] =  empty($yestodayrs['totalcost'])?"0.00":$yestodayrs['totalcost'];
+	    $data['dshcost'] = empty($dshrs['totalcost'])?"0.00":$dshrs['totalcost'];
+	    
 	    $data['username'] = $this->member['username'];
 	    $data['shopcost'] = $this->member['shopcost'];
 	    $data['totalmomey'] = $this->member['totalmomey'];

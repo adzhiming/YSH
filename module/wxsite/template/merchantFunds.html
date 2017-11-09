@@ -10,6 +10,8 @@
 <link rel="stylesheet"  href="<{$siteurl}>/templates/<{$tempdir}>/public/wxsite/css/shopmanage/store.css">  
 <link rel="stylesheet"  href="<{$siteurl}>/templates/<{$tempdir}>/public/wxsite/css/shopmanage/layer.css"  id="layui_layer_skinlayercss">  
 
+<link href="<{$siteurl}>/templates/<{$tempdir}>/public/wxsite/css/shopmanage/mobiscroll.core-2.5.2.css" rel="stylesheet" type="text/css" />
+<link href="<{$siteurl}>/templates/<{$tempdir}>/public/wxsite/css/shopmanage/mobiscroll.android-ics-2.5.2.css" rel="stylesheet" type="text/css" />
 
   <script src="<{$siteurl}>/templates/<{$tempdir}>/public/wxsite/js/shopmanage/jquery.js"></script>    
  <script src="<{$siteurl}>/templates/<{$tempdir}>/public/wxsite/js/shopmanage/base.js"></script>
@@ -17,6 +19,11 @@
    <script src="<{$siteurl}>/templates/<{$tempdir}>/public/wxsite/js/shopmanage/roll.js"></script>
  <script src="<{$siteurl}>/templates/<{$tempdir}>/public/wxsite/js/shopmanage/public.js"></script>
 <script src="<{$siteurl}>/templates/<{$tempdir}>/public/wxsite/js/shopmanage/dingwei.js"></script>  
+
+<script src="<{$siteurl}>/templates/<{$tempdir}>/public/wxsite/js/shopmanage/mobiscroll.core-2.5.2.js" type="text/javascript"></script>
+<script src="<{$siteurl}>/templates/<{$tempdir}>/public/wxsite/js/shopmanage/mobiscroll.core-2.5.2-zh.js" type="text/javascript"></script>
+<script src="<{$siteurl}>/templates/<{$tempdir}>/public/wxsite/js/shopmanage/mobiscroll.datetime-2.5.1.js" type="text/javascript"></script>
+<script src="<{$siteurl}>/templates/<{$tempdir}>/public/wxsite/js/shopmanage/mobiscroll.datetime-2.5.1-zh.js" type="text/javascript"></script>
 <script>
             function bd_encrypt(gg_lat, gg_lon)   // 百度地图测距偏差 问题修复
             {
@@ -78,28 +85,28 @@
 <div class="blank-10 bg"></div>
 <div class="panel-list">
 <ul>
-<li><a>您总收入：7894.8元</a></li>
+<li><a>您总收入：<{$shopcost}>元</a></li>
 </ul>
 </div>
 
 <div class="blank-10 bg"></div>
 <div class="panel-list">
 <ul>
-<li><a>当前余额：<{$cost}>元</a></li>
+<li><a>当前余额：<{$totalmomey}>元</a></li>
 </ul>
 </div>
 
 <div class="blank-10 bg"></div>
 <div class="panel-list">
 <ul>
-<li><a>今日总收入：0元，昨日总收入：0元。</a></li>
+<li><a>今日总收入：<{$todaycost}>元，昨日总收入：<{$yestodaycost}>元。</a></li>
 </ul>
 </div>
 
 <div class="blank-10 bg"></div>
 <div class="panel-list">
 <ul>
-<li><a>订单待确认收货：0元。</a></li>
+<li><a>订单待确认收货：<{$dshcost}>元。</a></li>
 </ul>
 </div>
 <div class="blank-10 bg"></div>
