@@ -4354,7 +4354,7 @@ function makeorder(){
 	    
 	    $link = IUrl::creatUrl('/wxsite/orderManage'.$newlink);
 	    $pageshow = new page();
-	    $pageshow->setpage(IReq::get('page'),2);
+	    $pageshow->setpage(IReq::get('page'),10);
 	    $orderlist = $this->mysql->getarr("select * from ".Mysite::$app->config['tablepre']."order where shopid='".$shopid."'  ".$where." order by id desc limit {$pageshow->startnum()},{$pageshow->getsize()}");
 	  //  echo "select * from ".Mysite::$app->config['tablepre']."order where shopid='".$shopid."'  ".$where." order by id desc limit {$pageshow->startnum()},{$pageshow->getsize()}";
 	    $shuliang  = $this->mysql->select_one("select count(id) as shuliang,sum(allcost) as allcost from ".Mysite::$app->config['tablepre']."order where shopid='".$shopid."' ".$where." ");
@@ -4395,9 +4395,9 @@ function makeorder(){
 	    if(empty($shopid)) $this->message('emptycookshop');
 	    //var_dump($this->member);
 	    $today = date("Y-m-d",time());
-	    $todaywhere = "and suretime between '{$today} 00:00' and '{$today} 23:59'";
+	    $todaywhere = "and suretime between ".strtotime($today.' 00:00')." and ".strtotime($today . '23:59')."";
 	    $yestoday = date("Y-m-d",strtotime("-1 day"));
-	    $yestodaywhere = "and suretime between '{$yestoday} 00:00' and '{$yestoday} 23:59'";
+	    $yestodaywhere = "and suretime between ".strtotime($yestoday.' 00:00')." and ".strtotime($yestoday . '23:59')."";
 	    //今日收入
 	    $todayrs = $this->mysql->select_one("select sum(allcost) totalcost from ".Mysite::$app->config['tablepre']."order where shopid='".$shopid."' and is_acceptorder = 1  and  status > 0  and  status <  4 {$todaywhere}");
 	    //昨日收入
@@ -4419,15 +4419,40 @@ function makeorder(){
 	    $this->checkshoplogin();
 	    $shopid = ICookie::get('adminshopid');
 	    if(empty($shopid)) $this->message('emptycookshop'); 
-	    $bg_date =trim(IFilter::act(IReq::get('bg_date')));
-	    $end_date =trim(IFilter::act(IReq::get('end_date')));
-	    $data['count'] = $this->mysql->counts("select * from ".Mysite::$app->config['tablepre']."order where   shopid = ".$shopid." and paystatus = 1 and is_acceptorder = 1 order by id desc ");
-	    $rs = $this->mysql->getarr("select * from ".Mysite::$app->config['tablepre']."order where   shopid = ".$shopid." and paystatus = 1 and is_acceptorder = 1 order by id desc ");
+	    $starttime = trim(IFilter::act(IReq::get('startTime')));
+	    $endtime = trim(IFilter::act(IReq::get('endTime')));
+	    $snowday = date("Y-m-d",strtotime("-7 day"));
+	    $nowday = date('Y-m-d',time());
+	    $starttime = empty($starttime)? $snowday:$starttime;
+	    $endtime = empty($endtime)? $nowday:$endtime;
+	     
+	    if(!empty($starttime)){
+	    	$newlink .= "&startTime={$starttime}";
+	    }
+	    if(!empty($endtime)){
+	    	$newlink .= "&endTime={$endtime}";
+	    }
+	    
+	    $link = IUrl::creatUrl('/wxsite/merchantFundslog'.$newlink);
+	    $pageshow = new page();
+	    $pageshow->setpage(IReq::get('page'),10);
+	    $where = '';
+	    $where = '  and suretime > '.strtotime($starttime.' 00:00:00').' and suretime < '.strtotime($endtime.' 23:59:59');
+	    
+	    $data['count'] = $this->mysql->counts("select * from ".Mysite::$app->config['tablepre']."order where   shopid = ".$shopid." and paystatus = 1 and is_acceptorder = 1 {$where} order by id desc ");
+	    $pageshow->setnum($data['count']);
+	    $data['pagecontent'] = $pageshow->getpagebar($link);
+	     
+	    $data['tongji'] = $data['count'];
+	    
+	    $rs = $this->mysql->getarr("select * from ".Mysite::$app->config['tablepre']."order where   shopid = ".$shopid." and paystatus = 1 and is_acceptorder = 1 {$where} order by id desc limit {$pageshow->startnum()},{$pageshow->getsize()}");
 	    if($rs){
 	        foreach ($rs as $k=>$v){
 	            $rs[$k]['addtime'] = date("Y-m-d H:i:s",$v['addtime']);
 	        }
 	    }
+	    $data['starttime'] = $starttime;
+	    $data['endtime'] = $endtime;
 	    $data['orderlist'] = $rs;
 	    Mysite::$app->setdata($data);
 	}
