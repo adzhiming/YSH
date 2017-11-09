@@ -4461,8 +4461,69 @@ function makeorder(){
 	    $this->checkshoplogin();
 	    $shopid = ICookie::get('adminshopid');
 	    if(empty($shopid)) $this->message('emptycookshop');
-	    $data['order'] = '';
-	    Mysite::$app->setdata($data);
+	    	  $pageshow = new page();
+	      $pageshow->setpage(IReq::get('page'),10); 
+		  $shopname = trim(IFilter::act(IReq::get('shopname'))); //店铺名称
+		  $status = IReq::get('status'); //状态
+		  $starttime = IFilter::act(IReq::get('starttime')); //开始时间 
+		  $endtime =  IFilter::act(IReq::get('endtime')); //结束时间
+         $newlink = '';
+		 if(empty($status)){
+		 $where = " where type = 0   " ;
+		 }else{
+		  $where = " where type = 0 ";//仅获取提现记录
+		  }
+		  if(!empty($shopname)){
+			  $info = $this->mysql->select_one(" select *  from ".Mysite::$app->config['tablepre']."shop where shopname='".$shopname."'  ");
+		      if(!empty($info)) $where.=" and shopuid = ".$info['uid']." ";
+              $newlink .= '/shopname/'.$shopname;
+		  }
+		  if(!empty($status)){
+              $where.=" and status = ".$status." ";
+              $newlink .= '/status/'.$status;
+			  $data['status'] = $status;
+          }
+		  if(!empty($starttime)){
+              $where.=" and addtime > ".strtotime($starttime)." ";
+              $newlink .= '/starttime/'.$starttime.'/endtime/'.$endtime;
+          }
+		  if(!empty($endtime)){
+              $where.=" and addtime < ".strtotime($endtime)." ";
+              $newlink .= '/endtime/'.$endtime;
+          }
+		   
+
+         $data['outlink'] =IUrl::creatUrl('adminpage/order/module/outshoptx/outtype/query'.$newlink);
+         $data['outlinkch'] =IUrl::creatUrl('adminpage/order/module/outshoptx'.$newlink);
+	      $txlist =   $this->mysql->getarr("select *  from ".Mysite::$app->config['tablepre']."shoptx  ".$where."  order by addtime desc   limit ".$pageshow->startnum().", ".$pageshow->getsize().""); 
+	      $shuliang  = $this->mysql->counts("select *  from ".Mysite::$app->config['tablepre']."shoptx  ".$where."  order by id asc  ");
+	      $pageshow->setnum($shuliang);
+	      $data['pagecontent'] = $pageshow->getpagebar();
+		  $tempdata = array();
+		  $typearray = array(0=>'提现申请',1=>'账号充值',2=>'取消提现');
+		  $statusarray = array(0=>'空',1=>'申请',2=>'处理成功',3=>'已取消');
+		  if(is_array($txlist)){
+			  foreach($txlist as $key=>$value){
+				   $info = $this->mysql->select_one(" select *  from ".Mysite::$app->config['tablepre']."shop where uid=".$value['shopuid']." ");
+				   $value['shopname'] = isset($info['shopname'])?$info['shopname']:'未定义';
+				   
+				   $memberinfo =$this->mysql->select_one(" select *  from ".Mysite::$app->config['tablepre']."member where uid=".$value['shopuid']." ");
+				   if(empty($memberinfo)){
+					   $value['backacount'] ='';
+				   }else{
+					   $value['backacount'] = $memberinfo['backacount']; 
+				   } 
+				//  $value['name'] = isset($typearray[$value['type']])?$typearray[$value['type']]:'未定义';
+				  $value['statusname'] = isset($statusarray[$value['status']])?$statusarray[$value['status']]:'未定义';
+				  $value['adddate'] = date('Y-m-d H:i:s',$value['addtime']);
+				  $tempdata[] = $value;
+			  }
+		  }
+		  $data['txlist'] = $tempdata;
+		  $data['shopname'] = $shopname;
+		  $data['starttime'] = $starttime;
+		  $data['endtime'] = $endtime;
+		  Mysite::$app->setdata($data);
 	}
 	//商家资金申请提现
 	function withdraw_apply(){
