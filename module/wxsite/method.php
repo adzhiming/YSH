@@ -3971,7 +3971,7 @@ function makeorder(){
 	    $this->checkwxuser();
 	    $link = IUrl::creatUrl('wxsite/shoplist');
 	    if($this->member['uid'] == 0)  $this->message('',$link);
-	    $sql = "select a.*,b.cost,c.name shoptypename  from ".Mysite::$app->config['tablepre']."shop a 
+	    $sql = "select a.*,b.cost,(b.cost+b.shopcost) totalmomey,c.name shoptypename  from ".Mysite::$app->config['tablepre']."shop a 
                 left join ".Mysite::$app->config['tablepre']."member b on a.uid = b.uid
                 left join ".Mysite::$app->config['tablepre']."shoptype c on a.shoptype = c.id
                 where a.uid='".$this->member['uid']."' group by a.id limit 1";
@@ -4395,7 +4395,8 @@ function makeorder(){
 	    if(empty($shopid)) $this->message('emptycookshop');
 	    //var_dump($this->member);
 	    $data['username'] = $this->member['username'];
-	    $data['cost'] = $this->member['cost'];
+	    $data['shopcost'] = $this->member['shopcost'];
+	    $data['totalmomey'] = $this->member['totalmomey'];
 	    Mysite::$app->setdata($data);
 	}
 	//商家资金日志
