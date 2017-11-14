@@ -124,7 +124,7 @@ class method   extends areaadminbaseclass
 			}
 			$data['catarr'] = array('0'=>'外卖','1'=>'超市');
 			$data['catlist'] = $catlist;  
-			$data['appadvlist'] =  $this->mysql->getarr("select * from ".Mysite::$app->config['tablepre']."appadv where cityid = '".$this->admin['cityid']."'  order by orderid asc   limit 0,100");
+			$data['appadvlist'] =  $this->mysql->getarr("select * from ".Mysite::$app->config['tablepre']."appadv where countyid = '".$this->admin['countyid']."'  order by orderid asc   limit 0,100");
 			
 			
           	Mysite::$app->setdata($data); 
@@ -968,7 +968,7 @@ class method   extends areaadminbaseclass
         if(empty($name)) $this->message('未录入名称');
         if(empty($appposition))$this->message('未设置展示类型');
 		
-		$citywhere = "  and cityid = '".$this->admin['cityid']."'  ";
+		$citywhere = "  and countyid = '".$this->admin['countyid']."'  ";
 
         if( $cattypeid != 'lifehelp' && $cattypeid != 'shophui'){
             $checkinfo = $this->mysql->select_one("select * from ".Mysite::$app->config['tablepre']."shoptype  where  id='".$cattypeid."' order by cattype asc limit 0,100");
@@ -1006,8 +1006,8 @@ class method   extends areaadminbaseclass
             }
 
         } 
-		
         $data['cityid'] = $this->admin['cityid'];
+        $data['countyid'] = $this->admin['countyid'];
         $data['orderid'] = $orderid;
         $data['name'] = $name;
         $data['type'] = $appposition;

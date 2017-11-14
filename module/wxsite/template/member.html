@@ -51,7 +51,7 @@
     <!-----------------------账户信息----------------------->
     <div class="peceInfoCon">
         <ul>
-            <li onclick="dolink('<{ofunc type=url link="/wxsite/memcard"}>');"><{if !empty($member['uid']) || $WeChatType == 1}><span style="color:#fe5858;font-size:16px;font-weight:bold;"><{$member['cost']|default:'0'}></span> <{else}><i class="icon icon_ye"></i> <{/if}><span>账号余额</span></li>
+            <li onclick="dolink('<{ofunc type=url link="/wxsite/memcard"}>');"><{if !empty($member['uid']) || $WeChatType == 1}><span style="color:#fe5858;font-size:16px;font-weight:bold;"><{$member['totalmomey']|default:'0'}></span> <{else}><i class="icon icon_ye"></i> <{/if}><span>账号余额</span></li>
             <li onclick="dolink('<{ofunc type=url link="/wxsite/juan"}>');"><{if !empty($member['uid']) || $WeChatType == 1}><span style="color:#ff9500;font-size:16px;font-weight:bold;"><{$juanshu|default:'0'}></span><{else}> <i class="icon icon_yhq"></i><{/if}><span>优惠券</span></li>
             <li onclick="dolink('<{ofunc type=url link="/wxsite/gift"}>');"><{if !empty($member['uid']) || $WeChatType == 1}><span style="color:#5e5cdf;font-size:16px;font-weight:bold;"><{$member['score']|default:'0'}></span><{else}> <i class="icon icon_jf"></i><{/if}><span>积分</span></li>
         </ul>

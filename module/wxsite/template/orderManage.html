@@ -18,13 +18,13 @@
   <script src="<{$siteurl}>/templates/<{$tempdir}>/public/wxsite/js/shopmanage/layer.js"></script> 
    <script src="<{$siteurl}>/templates/<{$tempdir}>/public/wxsite/js/shopmanage/roll.js"></script>
  <script src="<{$siteurl}>/templates/<{$tempdir}>/public/wxsite/js/shopmanage/public.js"></script>
-<script src="<{$siteurl}>/templates/<{$tempdir}>/public/wxsite/js/shopmanage/dingwei.js"></script> 
+<script src="<{$siteurl}>/templates/<{$tempdir}>/public/wxsite/js/shopmanage/dingwei.js"></script>
+
 
 <script src="<{$siteurl}>/templates/<{$tempdir}>/public/wxsite/js/shopmanage/mobiscroll.core-2.5.2.js" type="text/javascript"></script>
-	<script src="<{$siteurl}>/templates/<{$tempdir}>/public/wxsite/js/shopmanage/mobiscroll.core-2.5.2-zh.js" type="text/javascript"></script>
-
-	<script src="<{$siteurl}>/templates/<{$tempdir}>/public/wxsite/js/shopmanage/mobiscroll.datetime-2.5.1.js" type="text/javascript"></script>
-	<script src="<{$siteurl}>/templates/<{$tempdir}>/public/wxsite/js/shopmanage/mobiscroll.datetime-2.5.1-zh.js" type="text/javascript"></script>
+<script src="<{$siteurl}>/templates/<{$tempdir}>/public/wxsite/js/shopmanage/mobiscroll.core-2.5.2-zh.js" type="text/javascript"></script>
+<script src="<{$siteurl}>/templates/<{$tempdir}>/public/wxsite/js/shopmanage/mobiscroll.datetime-2.5.1.js" type="text/javascript"></script>
+<script src="<{$siteurl}>/templates/<{$tempdir}>/public/wxsite/js/shopmanage/mobiscroll.datetime-2.5.1-zh.js" type="text/javascript"></script>
 
 	
      
@@ -45,6 +45,30 @@
             navigator.geolocation.getCurrentPosition(function (position) {
                 bd_encrypt(position.coords.latitude, position.coords.longitude);
             });
+            
+            function myajax(url,info)
+            {
+            	$.ajax({
+                   type: 'POST',
+                   async:false,
+                   url: url.replace('@random@', 1+Math.round(Math.random()*1000)),
+                   data: info,
+                  dataType: 'json',success: function(content) { 
+                  	if(content.error == true)
+                  	{
+                  		alert(content.msg);
+                  	}else if(content.error == false)
+                  	{
+                  		location.reload();  
+                  	}else{
+                  	  alert(content);
+                  	} 
+            		  },
+                  error: function(content) { 
+                  	alert('传送数据失败');
+            	   }
+               });  
+            }
 </script>
 
     <style type="text/css">
@@ -268,73 +292,48 @@ body {padding: 20px 0;}
 <dl>
 <p class="text-right padding-top x12">
 <a class="button button-small bg-dot">
-                      <{if $items['is_goshop'] == 1}>
-							<{if $items['is_make'] < 2 }>					
-									<{if $items['status'] == 1 }>
-											等待用户到店消费
-										<{elseif $items['status'] == 0  }>
-											等待处理	
-										<{elseif $items['status'] == 2 || $items['status'] ==3 }>
-											已完成，用户已消费
-										<{elseif $items['status'] == 4  }>
-											商家已取消订单
-										<{elseif $items['status'] ==5 }>
-											管理员已取消订单
-										<{/if}>
-									<{else}>
-								
-								商家已取消订单
-
+          	
+          	 <{if $items['status'] == 1}>
+							 <{if $items['is_goshop'] != 1}>
+									   <{if $items['is_make'] == 0}>
+				                                <{if empty($items['drawbacklog']) }>
+												    <span onclick="unmakeorder(<{$items['id']}>);" class="curbtn">不制作</span> 
+											        <span  onclick="makeorder(<{$items['id']}>);" class="curbtn">制作订单</span>
+									            <{/if}>
+									   <{elseif $items['is_make'] == 1}>
+												 <{if $items['is_goshop'] != 1}>
+													<span onclick="sendorder(<{$items['id']}>);" class="curbtn">配送发货</span> 
+												<{else}>
+													 <span class="curbtn" onclick="wancheng(<{$items['id']}>);"  >完成订单</span> 
+												<{/if}>
+									   <{elseif $items['is_make'] == 2}>
+										   订单取消制作
+									   <{/if}>
+							<{else}>
+									<{if $items['is_make'] < 2}>
+								       <span onclick="unyudingorder(<{$items['id']}>);" class="curbtn">取消订单</span> 
+								       <span class="curbtn" onclick="wancheng(<{$items['id']}>);"  >完成订单</span> 
+									<{elseif $items['is_make'] == 2}>
+										   已取消此预定订单
+								    <{/if}>
 							<{/if}>
-					
-			 <{else}>
-					<{if $items['is_reback'] == 0 }>
-						<{if $items['paytype'] == 1 }>
-						      <{if $items['status'] == 0}>
-							     待平台审核-<{$buyerstatus[$items['status']]}>
-							  <{elseif $items['status'] == 1}> 
-								<{if $items['is_make'] == 0}>
-								   待确认制作 
-							   <{elseif $items['is_make'] == 1}>
-								 <{$buyerstatus[$items['status']]}>
-								<{else}>
-								   取消制作-<{$buyerstatus[$items['status']]}>
-								<{/if}>	
-							  <{elseif $items['status'] == 2}>
-							    已发货待用户确认  
-							  <{elseif $items['status'] == 3}>
-							    已完成 
-							  <{else}>
-							  订单取消 
-							  <{/if}>
-						<{else}> 
-						   
-						   <{if $items['status'] == 0}>
-							     待平台审核-<{$buyerstatus[$items['status']]}>
-							  <{elseif $items['status'] == 1}> 
-								<{if $items['is_make'] == 0}>
-								   待确认制作 
-							   <{elseif $items['is_make'] == 1}>
-								 <{$buyerstatus[$items['status']]}>
-								<{else}>
-								   商家已取消制作
-								<{/if}>	
-							  <{elseif $items['status'] == 2}>
-							    已发货待用户确认  
-							  <{elseif $items['status'] == 3}>
-							    已完成 
-							  <{else}>
-							  订单取消 
-							  <{/if}>
+       		 <{/if}>
+       		 <{if $items['status'] == 2}>
+            	   <span class="curbtn" onclick="wancheng(<{$items['id']}>);"  >完成订单</span> 
+             <{/if}>
+             <{if $items['psuid'] > 0}>	
+				   <{if $items['status'] > 0 && $items['status'] < 3}>
+            	      <span onclick="pickorder(<{$items['id']}>);" class="curbtn">通知取单</span> 
+				   <{/if}>
+			<{/if}>
 
-						<{/if}>
-					<{else}>
-						
-							<{if $items['is_reback'] == 1 }>已申请退款等待平台处理<{/if}>
-							<{if $items['is_reback'] == 2 }>已退款<{/if}>
-						
-					<{/if}>
-          	<{/if}></a>        
+			<{if !empty($items['drawbacklog'])}>
+				<span style="padding: 4px 8px; position:relative;top:-6px;background: #EC7501;curosr:text;"class="curbtn" >
+					<{if $items['is_reback'] == 1 }>已申请退款等待平台处理<{/if}>
+					<{if $items['is_reback'] == 2 }>管理员已退款给用户<{/if}>
+				</span>
+			<{/if}>
+          	</a>        
 <!--配送逻辑代码开始-->
 <!--配送逻辑代码结束-->
 </p>
@@ -378,6 +377,34 @@ $(function () {
       var optTime = $.extend(opt['time'], opt['default']);
     $("#startTime").mobiscroll(optDateTime);
     $("#endTime").mobiscroll(optDateTime);
-})  
+}) 
+
+function wancheng(orderid){
+		if(confirm('订单操作确认完成该订单吗？')){
+		        myajax('<{ofunc type=url link="/shopcenter/shopcontrol/controlname/wancheng/datatype/json"}>',{'orderid':orderid});
+		  }
+	}
+	 function unmakeorder(orderid){
+	 	
+	 	  if(confirm('订单已审核通过，取消不制作吗？')){
+		       myajax('<{ofunc type=url link="/shopcenter/shopcontrol/controlname/unmakeorder/datatype/json"}>',{'orderid':orderid});
+		  }
+	 	
+	 }
+	 
+	  function unyudingorder(orderid){
+	 	
+	 	  if(confirm('订单已审核通过，取消此预定订单吗？')){
+		       myajax('<{ofunc type=url link="/shopcenter/shopcontrol/controlname/unmakeorder/datatype/json"}>',{'orderid':orderid});
+		  }
+	 	
+	 }
+	 
+	 function sendorder(orderid)
+	{
+		if(confirm('订单已审核通过，确认发货吗？')){
+		   myajax('<{ofunc type=url link="/shopcenter/shopcontrol/controlname/sendorder/datatype/json"}>',{'orderid':orderid});
+		}
+	}
 </script>
 </body>

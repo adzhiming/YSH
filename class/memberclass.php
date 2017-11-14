@@ -404,7 +404,7 @@ if($userinfo['username'] == $apiinfo['openid']){
 	       $userinfo['gradename'] = '未定义'; 
 	    }
 	    
-	   
+	    $userinfo['totalmomey'] = $userinfo['cost'] + $userinfo['shopcost'];
 	    
 	    
 	    

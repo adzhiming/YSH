@@ -58,7 +58,7 @@ $(function(){
 <div  class="swiper-wrapper" >
 <div class="swiper-slide"> 
 <!-- <div id="uprefuBox"><p class="refuImg"><img  src="/upload/images/wmrloading.gif"  ></p><p class="refuFang flipup" >下拉刷新...</p></div> -->
-<{load_data assign="advlist" table="adv"    fileds="*"  limit="5" where="advtype='weixinlb' and  module='<{$sitetemp}>'  and cityid='<{$CITY_ID}>'  " }> 
+<{load_data assign="advlist" table="adv"    fileds="*"  limit="5" where="advtype='weixinlb' and  module='<{$sitetemp}>'  and countyid='<{$COUNTY_ID}>'  " }> 
 <{if !empty($advlist['list']) }>
 
   <div class="device"> 
@@ -100,7 +100,7 @@ $(function(){
 
  
 <!-- 通知 -->
-<{load_data assign="notice" table="information"  type="one"  fileds="*"  limit="1" where="type=1 and ( cityid = '<{$CITY_ID}>' or cityid = 0  )  "  orderby="orderid asc"  }> 
+<{load_data assign="notice" table="information"  type="one"  fileds="*"  limit="1" where="type=1 and ( countyid = '<{$COUNTY_ID}>' or cityid = 0  )  "  orderby="orderid asc"  }> 
 <{if !empty($notice) }>
 <div class="ordisprompt" style="background:#fff;display:none;" >
  <ul>
