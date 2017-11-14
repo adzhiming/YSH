@@ -27,7 +27,6 @@ class method   extends wxbaseclass
 	 	     if(empty($checkinfo)){
 	 	          	$link = IUrl::creatUrl('wxsite/choice');
 	    	            $this->message('',$link); 
-	 	   
 	 	     }
 	 	     $checkinfo2 =  $this->mysql->select_one("select id,name,parent_id from ".Mysite::$app->config['tablepre']."area where parent_id=".$id."  "); 
 	 	     if(empty($checkinfo2)){
@@ -158,6 +157,7 @@ class method   extends wxbaseclass
 		 $data['lng'] = $lng; 
 		 $data['addressname'] = $addressname;
 
+		 //专题页
 		$ztylist =   $this->mysql->getarr("select* from ".Mysite::$app->config['tablepre']."specialpage where is_show=1  order by orderid  asc");
 		$data['ztylist'] = $ztylist;
 		Mysite::$app->setdata($data);  
@@ -167,10 +167,10 @@ class method   extends wxbaseclass
 	 function loadindexcontent(){ 
  		$platpssetinfo = $this->mysql->select_one("select cityid,wxkefu_open,wxkefu_ewm,wxkefu_phone from ".Mysite::$app->config['tablepre']."platpsset where   cityid='".$this->CITY_ID."'   ");
   		$data['platpssetinfo'] = $platpssetinfo;
- 		$moretypelist = $this->mysql->getarr("select* from ".Mysite::$app->config['tablepre']."appadv where type=2 and (   cityid='".$this->CITY_ID."'  or  cityid = 0 ) order by orderid  asc");
-		$moduleshow =   $this->mysql->getarr("select* from ".Mysite::$app->config['tablepre']."appmudel where FIND_IN_SET( name , 'collect,newuser,gift') and is_display=1  order by orderid  asc  limit 3 ");
+ 		$moretypelist = $this->mysql->getarr("select * from ".Mysite::$app->config['tablepre']."appadv where type=2 and (   countyid='".$this->COUNTY_ID."'  ) order by orderid  asc");
+		$moduleshow =   $this->mysql->getarr("select * from ".Mysite::$app->config['tablepre']."appmudel where FIND_IN_SET( name , 'collect,newuser,gift') and is_display=1  order by orderid  asc  limit 3 ");
 		$data['moduleshow']  = $moduleshow;
-		$fourmoduleshow =   $this->mysql->getarr("select* from ".Mysite::$app->config['tablepre']."appmudel where FIND_IN_SET( name , 'waimai,diancai,market,paotui') and is_display=1  order by orderid  asc  limit 4 ");
+		$fourmoduleshow =   $this->mysql->getarr("select * from ".Mysite::$app->config['tablepre']."appmudel where FIND_IN_SET( name , 'waimai,diancai,market,paotui') and is_display=1  order by orderid  asc  limit 4 ");
 		$data['fourmoduleshow']  = $fourmoduleshow;
 		$data['moretypelist']  = $moretypelist;
 		
@@ -4421,7 +4421,7 @@ function makeorder(){
 	    if(empty($shopid)) $this->message('emptycookshop'); 
 	    $starttime = trim(IFilter::act(IReq::get('startTime')));
 	    $endtime = trim(IFilter::act(IReq::get('endTime')));
-	    $snowday = date("Y-m-d",strtotime("-7 day"));
+	    $snowday = date("Y-m-d",strtotime("-7 day"));									
 	    $nowday = date('Y-m-d',time());
 	    $starttime = empty($starttime)? $snowday:$starttime;
 	    $endtime = empty($endtime)? $nowday:$endtime;

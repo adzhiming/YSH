@@ -134,7 +134,7 @@ class method   extends areaadminbaseclass
 	   	$data['ruleintro'] = IReq::get('ruleintro');
 		
 		 $data['cityid']	= $this->admin['cityid'];
-		 
+		 $data['countyid']	= $this->admin['countyid'];
 		 if(empty($id)){
 			 $linkurl = IUrl::creatUrl('areaadminpage/other/module/specialpage');
 		 }else{
