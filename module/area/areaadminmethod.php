@@ -28,7 +28,6 @@ class method   extends areaadminbaseclass
 	 function savepsset(){
 		 
 		 $cityid = $this->admin['cityid'];
-		 $countyid = $this->admin['countyid'];
  	     $locationradius =  intval(IFilter::act(IReq::get('locationradius'))); 
   	 	 
 		 if($savearray['locationradius'] > 30){
@@ -50,12 +49,11 @@ class method   extends areaadminbaseclass
 		$savearray['ptpsbkey']  = trim(IFilter::act(IReq::get('ptpsbkey'))); 
 		$savearray['ptpsbcode']  = trim(IFilter::act(IReq::get('ptpsbcode')));  
 			
-		 $platpssetinfo = $this->mysql->getarr("select * from ".Mysite::$app->config['tablepre']."platpsset   where cityid = '".$cityid."' and countyid ='".$countyid."' ");
+		 $platpssetinfo = $this->mysql->getarr("select * from ".Mysite::$app->config['tablepre']."platpsset   where cityid = '".$cityid."'  ");
  		 if( !empty($platpssetinfo) ){
-			 $this->mysql->update(Mysite::$app->config['tablepre'].'platpsset',$savearray,"cityid='".$cityid."' and countyid ='".$countyid."' ");	 
+			 $this->mysql->update(Mysite::$app->config['tablepre'].'platpsset',$savearray,"cityid='".$cityid."'");	 
 		 }else{
 			 $savearray['cityid'] = $cityid;
-			 $savearray['countyid'] = $countyid;
 			  $this->mysql->insert(Mysite::$app->config['tablepre'].'platpsset',$savearray);  
 		 } 
 	    $this->success('success');

@@ -27,6 +27,7 @@ class method   extends wxbaseclass
 	 	     if(empty($checkinfo)){
 	 	          	$link = IUrl::creatUrl('wxsite/choice');
 	    	            $this->message('',$link); 
+	 	   
 	 	     }
 	 	     $checkinfo2 =  $this->mysql->select_one("select id,name,parent_id from ".Mysite::$app->config['tablepre']."area where parent_id=".$id."  "); 
 	 	     if(empty($checkinfo2)){
@@ -157,7 +158,6 @@ class method   extends wxbaseclass
 		 $data['lng'] = $lng; 
 		 $data['addressname'] = $addressname;
 
-		 //专题页
 		$ztylist =   $this->mysql->getarr("select* from ".Mysite::$app->config['tablepre']."specialpage where is_show=1  order by orderid  asc");
 		$data['ztylist'] = $ztylist;
 		Mysite::$app->setdata($data);  
@@ -167,10 +167,10 @@ class method   extends wxbaseclass
 	 function loadindexcontent(){ 
  		$platpssetinfo = $this->mysql->select_one("select cityid,wxkefu_open,wxkefu_ewm,wxkefu_phone from ".Mysite::$app->config['tablepre']."platpsset where   cityid='".$this->CITY_ID."'   ");
   		$data['platpssetinfo'] = $platpssetinfo;
- 		$moretypelist = $this->mysql->getarr("select * from ".Mysite::$app->config['tablepre']."appadv where type=2 and (   countyid='".$this->COUNTY_ID."'  ) order by orderid  asc");
-		$moduleshow =   $this->mysql->getarr("select * from ".Mysite::$app->config['tablepre']."appmudel where FIND_IN_SET( name , 'collect,newuser,gift') and is_display=1  order by orderid  asc  limit 3 ");
+ 		$moretypelist = $this->mysql->getarr("select* from ".Mysite::$app->config['tablepre']."appadv where type=2 and (   cityid='".$this->CITY_ID."'  or  cityid = 0 ) order by orderid  asc");
+		$moduleshow =   $this->mysql->getarr("select* from ".Mysite::$app->config['tablepre']."appmudel where FIND_IN_SET( name , 'collect,newuser,gift') and is_display=1  order by orderid  asc  limit 3 ");
 		$data['moduleshow']  = $moduleshow;
-		$fourmoduleshow =   $this->mysql->getarr("select * from ".Mysite::$app->config['tablepre']."appmudel where FIND_IN_SET( name , 'waimai,diancai,market,paotui') and is_display=1  order by orderid  asc  limit 4 ");
+		$fourmoduleshow =   $this->mysql->getarr("select* from ".Mysite::$app->config['tablepre']."appmudel where FIND_IN_SET( name , 'waimai,diancai,market,paotui') and is_display=1  order by orderid  asc  limit 4 ");
 		$data['fourmoduleshow']  = $fourmoduleshow;
 		$data['moretypelist']  = $moretypelist;
 		
@@ -3971,7 +3971,7 @@ function makeorder(){
 	    $this->checkwxuser();
 	    $link = IUrl::creatUrl('wxsite/shoplist');
 	    if($this->member['uid'] == 0)  $this->message('',$link);
-	    $sql = "select a.*,b.cost,(b.cost+b.shopcost) totalmomey,c.name shoptypename  from ".Mysite::$app->config['tablepre']."shop a 
+	    $sql = "select a.*,b.cost,c.name shoptypename  from ".Mysite::$app->config['tablepre']."shop a 
                 left join ".Mysite::$app->config['tablepre']."member b on a.uid = b.uid
                 left join ".Mysite::$app->config['tablepre']."shoptype c on a.shoptype = c.id
                 where a.uid='".$this->member['uid']."' group by a.id limit 1";
@@ -4354,7 +4354,7 @@ function makeorder(){
 	    
 	    $link = IUrl::creatUrl('/wxsite/orderManage'.$newlink);
 	    $pageshow = new page();
-	    $pageshow->setpage(IReq::get('page'),10);
+	    $pageshow->setpage(IReq::get('page'),2);
 	    $orderlist = $this->mysql->getarr("select * from ".Mysite::$app->config['tablepre']."order where shopid='".$shopid."'  ".$where." order by id desc limit {$pageshow->startnum()},{$pageshow->getsize()}");
 	  //  echo "select * from ".Mysite::$app->config['tablepre']."order where shopid='".$shopid."'  ".$where." order by id desc limit {$pageshow->startnum()},{$pageshow->getsize()}";
 	    $shuliang  = $this->mysql->select_one("select count(id) as shuliang,sum(allcost) as allcost from ".Mysite::$app->config['tablepre']."order where shopid='".$shopid."' ".$where." ");
@@ -4394,24 +4394,8 @@ function makeorder(){
 	    $shopid = ICookie::get('adminshopid');
 	    if(empty($shopid)) $this->message('emptycookshop');
 	    //var_dump($this->member);
-	    $today = date("Y-m-d",time());
-	    $todaywhere = "and suretime between ".strtotime($today.' 00:00')." and ".strtotime($today . '23:59')."";
-	    $yestoday = date("Y-m-d",strtotime("-1 day"));
-	    $yestodaywhere = "and suretime between ".strtotime($yestoday.' 00:00')." and ".strtotime($yestoday . '23:59')."";
-	    //今日收入
-	    $todayrs = $this->mysql->select_one("select sum(allcost) totalcost from ".Mysite::$app->config['tablepre']."order where shopid='".$shopid."' and is_acceptorder = 1  and  status > 0  and  status <  4 {$todaywhere}");
-	    //昨日收入
-	    $yestodayrs =$this->mysql->select_one("select sum(allcost) totalcost from ".Mysite::$app->config['tablepre']."order where shopid='".$shopid."' and is_acceptorder = 1  and  status > 0  and  status <  4 {$yestodaywhere}");
-	    //待收货
-	    $dshrs =$this->mysql->select_one("select sum(allcost) totalcost from ".Mysite::$app->config['tablepre']."order where shopid='".$shopid."' and is_acceptorder = 0  and  status=2   and paystatus =1");
-	    
-	    $data['todaycost'] = empty($todayrs['totalcost'])?"0.00":$todayrs['totalcost'];
-	    $data['yestodaycost'] =  empty($yestodayrs['totalcost'])?"0.00":$yestodayrs['totalcost'];
-	    $data['dshcost'] = empty($dshrs['totalcost'])?"0.00":$dshrs['totalcost'];
-	    
 	    $data['username'] = $this->member['username'];
-	    $data['shopcost'] = $this->member['shopcost'];
-	    $data['totalmomey'] = $this->member['totalmomey'];
+	    $data['cost'] = $this->member['cost'];
 	    Mysite::$app->setdata($data);
 	}
 	//商家资金日志
@@ -4419,40 +4403,15 @@ function makeorder(){
 	    $this->checkshoplogin();
 	    $shopid = ICookie::get('adminshopid');
 	    if(empty($shopid)) $this->message('emptycookshop'); 
-	    $starttime = trim(IFilter::act(IReq::get('startTime')));
-	    $endtime = trim(IFilter::act(IReq::get('endTime')));
-	    $snowday = date("Y-m-d",strtotime("-7 day"));									
-	    $nowday = date('Y-m-d',time());
-	    $starttime = empty($starttime)? $snowday:$starttime;
-	    $endtime = empty($endtime)? $nowday:$endtime;
-	     
-	    if(!empty($starttime)){
-	    	$newlink .= "&startTime={$starttime}";
-	    }
-	    if(!empty($endtime)){
-	    	$newlink .= "&endTime={$endtime}";
-	    }
-	    
-	    $link = IUrl::creatUrl('/wxsite/merchantFundslog'.$newlink);
-	    $pageshow = new page();
-	    $pageshow->setpage(IReq::get('page'),10);
-	    $where = '';
-	    $where = '  and suretime > '.strtotime($starttime.' 00:00:00').' and suretime < '.strtotime($endtime.' 23:59:59');
-	    
-	    $data['count'] = $this->mysql->counts("select * from ".Mysite::$app->config['tablepre']."order where   shopid = ".$shopid." and paystatus = 1 and is_acceptorder = 1 {$where} order by id desc ");
-	    $pageshow->setnum($data['count']);
-	    $data['pagecontent'] = $pageshow->getpagebar($link);
-	     
-	    $data['tongji'] = $data['count'];
-	    
-	    $rs = $this->mysql->getarr("select * from ".Mysite::$app->config['tablepre']."order where   shopid = ".$shopid." and paystatus = 1 and is_acceptorder = 1 {$where} order by id desc limit {$pageshow->startnum()},{$pageshow->getsize()}");
+	    $bg_date =trim(IFilter::act(IReq::get('bg_date')));
+	    $end_date =trim(IFilter::act(IReq::get('end_date')));
+	    $data['count'] = $this->mysql->counts("select * from ".Mysite::$app->config['tablepre']."order where   shopid = ".$shopid." and paystatus = 1 and is_acceptorder = 1 order by id desc ");
+	    $rs = $this->mysql->getarr("select * from ".Mysite::$app->config['tablepre']."order where   shopid = ".$shopid." and paystatus = 1 and is_acceptorder = 1 order by id desc ");
 	    if($rs){
 	        foreach ($rs as $k=>$v){
 	            $rs[$k]['addtime'] = date("Y-m-d H:i:s",$v['addtime']);
 	        }
 	    }
-	    $data['starttime'] = $starttime;
-	    $data['endtime'] = $endtime;
 	    $data['orderlist'] = $rs;
 	    Mysite::$app->setdata($data);
 	}
@@ -4461,69 +4420,8 @@ function makeorder(){
 	    $this->checkshoplogin();
 	    $shopid = ICookie::get('adminshopid');
 	    if(empty($shopid)) $this->message('emptycookshop');
-	    	  $pageshow = new page();
-	      $pageshow->setpage(IReq::get('page'),10); 
-		  $shopname = trim(IFilter::act(IReq::get('shopname'))); //店铺名称
-		  $status = IReq::get('status'); //状态
-		  $starttime = IFilter::act(IReq::get('starttime')); //开始时间 
-		  $endtime =  IFilter::act(IReq::get('endtime')); //结束时间
-         $newlink = '';
-		 if(empty($status)){
-		 $where = " where type = 0   " ;
-		 }else{
-		  $where = " where type = 0 ";//仅获取提现记录
-		  }
-		  if(!empty($shopname)){
-			  $info = $this->mysql->select_one(" select *  from ".Mysite::$app->config['tablepre']."shop where shopname='".$shopname."'  ");
-		      if(!empty($info)) $where.=" and shopuid = ".$info['uid']." ";
-              $newlink .= '/shopname/'.$shopname;
-		  }
-		  if(!empty($status)){
-              $where.=" and status = ".$status." ";
-              $newlink .= '/status/'.$status;
-			  $data['status'] = $status;
-          }
-		  if(!empty($starttime)){
-              $where.=" and addtime > ".strtotime($starttime)." ";
-              $newlink .= '/starttime/'.$starttime.'/endtime/'.$endtime;
-          }
-		  if(!empty($endtime)){
-              $where.=" and addtime < ".strtotime($endtime)." ";
-              $newlink .= '/endtime/'.$endtime;
-          }
-		   
-
-         $data['outlink'] =IUrl::creatUrl('adminpage/order/module/outshoptx/outtype/query'.$newlink);
-         $data['outlinkch'] =IUrl::creatUrl('adminpage/order/module/outshoptx'.$newlink);
-	      $txlist =   $this->mysql->getarr("select *  from ".Mysite::$app->config['tablepre']."shoptx  ".$where."  order by addtime desc   limit ".$pageshow->startnum().", ".$pageshow->getsize().""); 
-	      $shuliang  = $this->mysql->counts("select *  from ".Mysite::$app->config['tablepre']."shoptx  ".$where."  order by id asc  ");
-	      $pageshow->setnum($shuliang);
-	      $data['pagecontent'] = $pageshow->getpagebar();
-		  $tempdata = array();
-		  $typearray = array(0=>'提现申请',1=>'账号充值',2=>'取消提现');
-		  $statusarray = array(0=>'空',1=>'申请',2=>'处理成功',3=>'已取消');
-		  if(is_array($txlist)){
-			  foreach($txlist as $key=>$value){
-				   $info = $this->mysql->select_one(" select *  from ".Mysite::$app->config['tablepre']."shop where uid=".$value['shopuid']." ");
-				   $value['shopname'] = isset($info['shopname'])?$info['shopname']:'未定义';
-				   
-				   $memberinfo =$this->mysql->select_one(" select *  from ".Mysite::$app->config['tablepre']."member where uid=".$value['shopuid']." ");
-				   if(empty($memberinfo)){
-					   $value['backacount'] ='';
-				   }else{
-					   $value['backacount'] = $memberinfo['backacount']; 
-				   } 
-				//  $value['name'] = isset($typearray[$value['type']])?$typearray[$value['type']]:'未定义';
-				  $value['statusname'] = isset($statusarray[$value['status']])?$statusarray[$value['status']]:'未定义';
-				  $value['adddate'] = date('Y-m-d H:i:s',$value['addtime']);
-				  $tempdata[] = $value;
-			  }
-		  }
-		  $data['txlist'] = $tempdata;
-		  $data['shopname'] = $shopname;
-		  $data['starttime'] = $starttime;
-		  $data['endtime'] = $endtime;
-		  Mysite::$app->setdata($data);
+	    $data['order'] = '';
+	    Mysite::$app->setdata($data);
 	}
 	//商家资金申请提现
 	function withdraw_apply(){
