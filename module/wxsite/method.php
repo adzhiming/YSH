@@ -27,6 +27,7 @@ class method   extends wxbaseclass
 	 	     if(empty($checkinfo)){
 	 	          	$link = IUrl::creatUrl('wxsite/choice');
 	    	            $this->message('',$link); 
+	 	   
 	 	     }
 	 	     $checkinfo2 =  $this->mysql->select_one("select id,name,parent_id from ".Mysite::$app->config['tablepre']."area where parent_id=".$id."  "); 
 	 	     if(empty($checkinfo2)){
@@ -166,7 +167,6 @@ class method   extends wxbaseclass
 		 $data['lng'] = $lng; 
 		 $data['addressname'] = $addressname;
 
-		 //专题页
 		$ztylist =   $this->mysql->getarr("select* from ".Mysite::$app->config['tablepre']."specialpage where is_show=1  order by orderid  asc");
 		$data['ztylist'] = $ztylist;
 		Mysite::$app->setdata($data);  
@@ -179,7 +179,7 @@ class method   extends wxbaseclass
  		$moretypelist = $this->mysql->getarr("select * from ".Mysite::$app->config['tablepre']."appadv where type=2 and (   countyid='".$this->COUNTY_ID."'  ) order by orderid  asc");
 		$moduleshow =   $this->mysql->getarr("select * from ".Mysite::$app->config['tablepre']."appmudel where FIND_IN_SET( name , 'collect,newuser,gift') and is_display=1  order by orderid  asc  limit 3 ");
 		$data['moduleshow']  = $moduleshow;
-		$fourmoduleshow =   $this->mysql->getarr("select * from ".Mysite::$app->config['tablepre']."appmudel where FIND_IN_SET( name , 'waimai,diancai,market,paotui') and is_display=1  order by orderid  asc  limit 4 ");
+		$fourmoduleshow =   $this->mysql->getarr("select* from ".Mysite::$app->config['tablepre']."appmudel where FIND_IN_SET( name , 'waimai,diancai,market,paotui') and is_display=1  order by orderid  asc  limit 4 ");
 		$data['fourmoduleshow']  = $fourmoduleshow;
 		$data['moretypelist']  = $moretypelist;
 		 $lng = ICookie::get('lng');
@@ -3978,7 +3978,7 @@ function makeorder(){
 	    $this->checkwxuser();
 	    $link = IUrl::creatUrl('wxsite/shoplist');
 	    if($this->member['uid'] == 0)  $this->message('',$link);
-	    $sql = "select a.*,b.cost,(b.cost+b.shopcost) totalmomey,c.name shoptypename  from ".Mysite::$app->config['tablepre']."shop a 
+	    $sql =  "select a.*,b.cost,(b.cost+b.shopcost) totalmomey,c.name shoptypename  from ".Mysite::$app->config['tablepre']."shop a 
                 left join ".Mysite::$app->config['tablepre']."member b on a.uid = b.uid
                 left join ".Mysite::$app->config['tablepre']."shoptype c on a.shoptype = c.id
                 where a.uid='".$this->member['uid']."' group by a.id limit 1";
@@ -4400,9 +4400,10 @@ function makeorder(){
 	    $this->checkshoplogin();
 	    $shopid = ICookie::get('adminshopid');
 	    if(empty($shopid)) $this->message('emptycookshop');
+
 	    //var_dump($this->member);
 	    $today = date("Y-m-d",time());
-	    $todaywhere = "and suretime between ".strtotime($today.' 00:00')." and ".strtotime($today . '23:59')."";
+	    $todaywhere = "and suretime betwee ".strtotime($today.' 00:00')." and ".strtotime($today . '23:59')."";
 	    $yestoday = date("Y-m-d",strtotime("-1 day"));
 	    $yestodaywhere = "and suretime between ".strtotime($yestoday.' 00:00')." and ".strtotime($yestoday . '23:59')."";
 	    //今日收入
@@ -4415,10 +4416,12 @@ function makeorder(){
 	    $data['todaycost'] = empty($todayrs['totalcost'])?"0.00":$todayrs['totalcost'];
 	    $data['yestodaycost'] =  empty($yestodayrs['totalcost'])?"0.00":$yestodayrs['totalcost'];
 	    $data['dshcost'] = empty($dshrs['totalcost'])?"0.00":$dshrs['totalcost'];
-	    
+	     
 	    $data['username'] = $this->member['username'];
 	    $data['shopcost'] = $this->member['shopcost'];
 	    $data['totalmomey'] = $this->member['totalmomey'];
+	    $data['username'] = $this->member['username'];
+	    $data['cost'] = $this->member['cost'];
 	    Mysite::$app->setdata($data);
 	}
 	//商家资金日志
@@ -4428,7 +4431,7 @@ function makeorder(){
 	    if(empty($shopid)) $this->message('emptycookshop'); 
 	    $starttime = trim(IFilter::act(IReq::get('startTime')));
 	    $endtime = trim(IFilter::act(IReq::get('endTime')));
-	    $snowday = date("Y-m-d",strtotime("-7 day"));									
+	    $snowday = date("Y-m-d",strtotime("-7 day"));
 	    $nowday = date('Y-m-d',time());
 	    $starttime = empty($starttime)? $snowday:$starttime;
 	    $endtime = empty($endtime)? $nowday:$endtime;
@@ -4463,6 +4466,7 @@ function makeorder(){
 	    $data['orderlist'] = $rs;
 	    Mysite::$app->setdata($data);
 	}
+
 	//商家资金提现日志
 	function withdraw_log(){
 	    $this->checkshoplogin();
@@ -4532,6 +4536,7 @@ function makeorder(){
 		  $data['endtime'] = $endtime;
 		  Mysite::$app->setdata($data);
 	}
+
 	//商家资金申请提现
 	function withdraw_apply(){
 	    $this->checkshoplogin();
