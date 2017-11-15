@@ -1692,7 +1692,7 @@ function saveset(){   //保存后台跑腿信息 到配置文件中
 		 $newdata['unlinecost'] = $shoptj['allcost'];
 		 $yjbl =   $shopinfo['yjin']< 1?Mysite::$app->config['yjin']:$shopinfo['yjin'];
 		 $newdata['yjb'] = empty($yjbl)?0:$yjbl; // 15.00
-		$yjcost =  ($shoptj['allcost']+$line['allcost']-$shoptj['shopps']-$line['shopps']-$shoptj['bagcost']-$line['bagcost'])*$yjbl*0.01;
+		$yjcost =  ($shoptj['allcost']-1+$line['allcost']-$shoptj['shopps']-$line['shopps']-$shoptj['bagcost']-$line['bagcost'])*$yjbl*0.01;
 		  $newdata['acountcost'] =  0;
 		 if($sendtype == 0){//平台配送 
 			  $newdata['acountcost'] = $line['allcost']+$shoptj['allcost']-$yjcost-$shoptj['shopps']-$line['shopps'];//  线上金额-佣金比例+线下金额-线上配送费=平台配送金额 
