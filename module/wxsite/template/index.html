@@ -51,11 +51,11 @@ var CITY_ID = '<{$CITY_ID|default:0}>';
 var COUNTY_ID = '<{$COUNTY_ID|default:0}>';
 var is_loading = false; 
 var html5_config = {'showheader':true,'showfooter':true,'bodyscller':true,'Canfresh':false,'CanloadMore':true,'titilename':'外卖频道'};  
-$(function(){    
+$(function(){ 
  	  <{if !empty($lng) && !empty($lat) &&  !empty($addressname)  }>
 		$('#showareainfo').text(addressname);
  		loadindexcontent();
-   <{else}>   
+   <{else}>  
 		if(https == ''){
 			getLocation(); 
 		}else{
@@ -188,7 +188,6 @@ function newrenderReverse(datas){
   
   function loadindexcontent(){
 		$("#locationing").hide();  
-		 
 		if( CITY_ID <= 0 ){ 
 			  var winHeight = $(window).height()-40-33-46-40;
  			  var allHeight = 115+25+50+38;

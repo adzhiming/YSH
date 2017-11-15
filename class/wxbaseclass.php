@@ -31,6 +31,14 @@ class wxbaseclass
 	 	     $data['admininfo'] = $this->admin;   
  	 	     $logintype = ICookie::get('logintype');  
  	 	    
+                     $provinceId = 0;
+ 	 	     $PROVINCE_ID = ICookie::get('PROVINCE_ID');
+ 	 	     if( !empty($CITY_ID) ){
+ 	 	         $PROVINCE_IDArr = explode('_',$PROVINCE_ID);
+ 	 	         $provinceId = $PROVINCE_IDArr[2];
+ 	 	     }
+ 	 	     
+ 	 	     $this->PROVINCE_ID = $provinceId;
 			$cityId = 0;
 			$CITY_ID = ICookie::get('CITY_ID');
 			if( !empty($CITY_ID) ){
@@ -57,6 +65,12 @@ class wxbaseclass
 					$this->message('',$link);
 				}
 			} */
+                        $PROVINCE_NAME = ICookie::get('PROVINCE_NAME');
+			if( !empty($PROVINCE_NAME) ){
+			    $PROVINCE_NameArr = explode('_',$PROVINCE_NAME);
+			    $PROVINCE_NAME = $PROVINCE_NameArr[2];
+			}
+			$this->PROVINCE_NAME = $PROVINCE_NAME;
 			
 			$CITY_NAME = ICookie::get('CITY_NAME');
 			if( !empty($CITY_NAME) ){

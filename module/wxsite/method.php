@@ -82,6 +82,8 @@ class method   extends wxbaseclass
 			ICookie::clear('lng');
 			ICookie::clear('mapname');
 			ICookie::clear('addressname');
+                        ICookie::clear('PROVINCE_ID');
+			ICookie::clear('PROVINCE_NAME');
 			ICookie::clear('CITY_ID');
 			ICookie::clear('CITY_NAME');
 			ICookie::clear('COUNTY_ID');
@@ -110,7 +112,8 @@ class method   extends wxbaseclass
 					$pid = $areacodeone['pid'];
 					$areainfocity =  $this->mysql->select_one("select * from ".Mysite::$app->config['tablepre']."area where  id=".$pid."  "); 
    					$areainfocounty =  $this->mysql->select_one("select * from ".Mysite::$app->config['tablepre']."area where  id=".$adcodeid."  "); 
-   					
+   					$areainfoprovince =  $this->mysql->select_one("select * from ".Mysite::$app->config['tablepre']."area where  id=".$areainfocity['parent_id']."  ");
+   					//var_dump($areainfoprovince);
    					if( !empty($areainfocity) ){
    					    $city_id = "CITY_ID_".$areainfocity['id'];
    					    $city_name = "CITY_NAME_".$areainfocity['name'];
@@ -123,6 +126,12 @@ class method   extends wxbaseclass
  					    $city_name = "COUNTY_NAME_".$areainfocounty['name'];
  					    ICookie::set('COUNTY_ID',$city_id);
  					    ICookie::set('COUNTY_NAME',$city_name);
+                                        }
+ 					if( !empty($areainfoprovince) ){
+ 					    $province_id = "PROVINCE_ID_".$areainfoprovince['id'];
+ 					    $province_name = "PROVINCE_NAME_".$areainfoprovince['name'];
+ 					    ICookie::set('PROVINCE_ID',$province_id);
+ 					    ICookie::set('PROVINCE_NAME',$province_name);
  					}
  					$areainfocity['countyid'] = $areainfocounty['id'];
  					$areainfocity['countyname'] = $areainfocounty['name'];
@@ -165,15 +174,14 @@ class method   extends wxbaseclass
 	  
 	 
 	 function loadindexcontent(){ 
- 		$platpssetinfo = $this->mysql->select_one("select cityid,wxkefu_open,wxkefu_ewm,wxkefu_phone from ".Mysite::$app->config['tablepre']."platpsset where   cityid='".$this->CITY_ID."'   ");
-  		$data['platpssetinfo'] = $platpssetinfo;
+ 		$platpssetinfo = $this->mysql->select_one("select cityid,countyid,wxkefu_open,wxkefu_ewm,wxkefu_phone from ".Mysite::$app->config['tablepre']."platpsset where   countyid='".$this->COUNTY_ID."'  ");
+ 		$data['platpssetinfo'] = $platpssetinfo;
  		$moretypelist = $this->mysql->getarr("select * from ".Mysite::$app->config['tablepre']."appadv where type=2 and (   countyid='".$this->COUNTY_ID."'  ) order by orderid  asc");
 		$moduleshow =   $this->mysql->getarr("select * from ".Mysite::$app->config['tablepre']."appmudel where FIND_IN_SET( name , 'collect,newuser,gift') and is_display=1  order by orderid  asc  limit 3 ");
 		$data['moduleshow']  = $moduleshow;
 		$fourmoduleshow =   $this->mysql->getarr("select * from ".Mysite::$app->config['tablepre']."appmudel where FIND_IN_SET( name , 'waimai,diancai,market,paotui') and is_display=1  order by orderid  asc  limit 4 ");
 		$data['fourmoduleshow']  = $fourmoduleshow;
 		$data['moretypelist']  = $moretypelist;
-		
 		 $lng = ICookie::get('lng');
          $lat = ICookie::get('lat');
          $addressname = ICookie::get('addressname');
@@ -192,7 +200,6 @@ class method   extends wxbaseclass
 		 $data['lat'] = $lat;
 		 $data['lng'] = $lng; 
 		 $data['addressname'] = $addressname;
-		
 		$ztylist =   $this->mysql->getarr("select* from ".Mysite::$app->config['tablepre']."specialpage where is_show=1  and (   cityid='".$this->CITY_ID."'  or  cityid = 0 )   order by orderid  asc");
 		$data['ztylist'] = $ztylist;
 		Mysite::$app->setdata($data);  
