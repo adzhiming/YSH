@@ -33,6 +33,7 @@ document.addEventListener('DOMContentLoaded', function () { setTimeout(loaded, 2
 		<div class="swiadd">
 			<span id="cityname"><{if !empty($CITY_NAME) }><{$CITY_NAME|default:$cityname}><{else}><{$cityname}><{/if}></span>
 			<input type="hidden" value="<{$CITY_ID|default:$default_cityid}>" name="cityId" />
+			<input type="hidden" value="<{if !empty($CITY_NAME) }><{$CITY_NAME|default:$cityname}><{else}><{$cityname}><{/if}>" id="searchcityname" />
 			<i class="fa fa-angle-down"></i>
 		</div>
 	</div>
@@ -132,7 +133,7 @@ document.addEventListener('DOMContentLoaded', function () { setTimeout(loaded, 2
 					<{load_data assign="arealist" table="area"   fileds="*"   limit="1000" orderby="  id asc" where=" id > 0 and parent_id =1 "}> 
  					<{if !empty($arealist['list']) }>
 						<{foreach from=$arealist['list'] item=items }>
-							<li cityid='<{$items['id']}>' onclick = "getSubAreaInfo('<{$items['id']}>','<{$items['area_type']}>')" <{if $CITY_ID == $items['id'] }> class="curaA" <{/if}> ><{$items['name']}></li>
+							<li cityid='<{$items['id']}>' onclick = "getSubAreaInfo('<{$items['id']}>','<{$items['area_type']}>',this)" <{if $CITY_ID == $items['id'] }> class="curaA" <{/if}> ><{$items['name']}></li>
 						<{/foreach}>
 					<{/if}>
 				</ul>
@@ -241,7 +242,7 @@ function choiceaddress(lat,lng,address,adcode){
 		
 	}
 	
-function getSubAreaInfo(id,level){
+function getSubAreaInfo(id,level,obj){
 	if(id !='' && level <4){
 		 $.ajax({
 	           type: 'GET', 
@@ -253,7 +254,7 @@ function getSubAreaInfo(id,level){
 	            	    var list = content.msg
 	            	    html = ""
 	            	    for(var i=0;i<list.length;i++){
-	            	    	html = html +"<li cityid='"+list[i]['id']+"' onclick = getSubAreaInfo("+list[i]['id']+","+list[i]['area_type']+")>"+list[i]['name']+"</li>"
+	            	    	html = html +"<li cityid='"+list[i]['id']+"' onclick = getSubAreaInfo("+list[i]['id']+","+list[i]['area_type']+",this)>"+list[i]['name']+"</li>"
 	            	    }
 	            	    $('.arealist').html(html)
 	            	    $('#selectCityList').show();
@@ -269,9 +270,25 @@ function getSubAreaInfo(id,level){
 					newTmsg('提交数据失败');
 		        }
 	       });
+		 if(level = 3){
+			 $("#searchcityname").val($(obj).text())
+		 }
+		 
 	}
 	else{
-		$('#selectCityList ul li').bind('click',function(){
+		$('#selectCityList ul li').removeClass('curaA');
+		$(obj).addClass('curaA');
+		$('#selectCityList').hide();
+		$('#cityname').text($(obj).text());
+		var cityid = $(obj).attr('cityid');
+		$('input[name="cityId"]').val(cityid);
+		
+		var searchval  = $("#wmrSearchKeywords").val();
+	 	if( searchval != '' && searchval != undefined ){
+			func_searchinputAdr();
+		}
+		
+		/* $('#selectCityList ul li').bind('click',function(){
 			$('#selectCityList ul li').removeClass('curaA');
 			$(this).addClass('curaA');
 			$('#selectCityList').hide();
@@ -284,7 +301,7 @@ function getSubAreaInfo(id,level){
 				func_searchinputAdr();
 			}
 
-		});  
+		}); */  
 	}
 }	
 	
@@ -319,7 +336,8 @@ $("#wmrSearchKeywords").bind('click',function(){
 }); 
 function func_searchinputAdr(){
 	var searchval  = $("#wmrSearchKeywords").val();
-								var cityname  = $("#cityname").text();
+								var cityname  = $("#searchcityname").val();
+								console.log(cityname)
 								if( searchval != '' && searchval != undefined ){
 									var addresslist = '<{$map_comment_link}>restapi.amap.com/v3/place/text?&keywords='+searchval+'&city='+cityname+'&output=json&offset=20&page=1&key=<{$map_webservice_key}>&extensions=all&callback=showaddresslist';						 
 									$.getScript(addresslist); 
