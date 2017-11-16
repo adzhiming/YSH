@@ -1008,6 +1008,7 @@ class method   extends areaadminbaseclass
         } 
 		
         $data['cityid'] = $this->admin['cityid'];
+        $data['countyid'] = $this->admin['countyid'];
         $data['orderid'] = $orderid;
         $data['name'] = $name;
         $data['type'] = $appposition;
