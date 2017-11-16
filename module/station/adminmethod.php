@@ -173,10 +173,10 @@ limitalert();
 				$this->mysql->delete(Mysite::$app->config['tablepre'] . 'rule', "cityid = '$cityid'");
 			}
 			   if(empty($username)) $this->message('member_emptyname'); 
-			   
+			  
  		   if(empty($uid))
 		   {
-		     
+		      
 		   	  if(empty($password)) $this->message('member_emptypwd'); 
 		   	  $testinfo = $this->mysql->select_one("select * from ".Mysite::$app->config['tablepre']."admin where username='".$username."' ");  
 		   	  if(!empty($testinfo)) $this->message('member_repeatname'); 
@@ -241,7 +241,7 @@ limitalert();
 		   	  if(!empty($password)){ 
 		   	     $arr['password'] = md5($password); 
 		   	  }
-			  
+		   	 
 			  if(empty($stationname)){
 				   $this->message('分站名称不能为空');
 			   }
@@ -263,6 +263,12 @@ limitalert();
 			  }
 			  
 			  $updataarr = array();
+			  if(!empty($cityid)){
+			      $updataarr['cityid'] = $cityid;
+			  }
+			  if(!empty($countyid)){
+			      $updataarr['countyid'] = $countyid;
+			  }
  			  $updataarr['stationname'] = $stationname;
 			  $updataarr['stationusername'] = $stationusername;
 			  $updataarr['stationphone'] = $stationphone;
@@ -272,7 +278,6 @@ limitalert();
 			  $updataarr['stationis_open'] = $stationis_open;
 			  $updataarr['is_selfsitecx'] = $is_selfsitecx;
 			  $this->mysql->update(Mysite::$app->config['tablepre'].'stationadmininfo',$updataarr,"uid='".$uid."'");  
-			  
 			  
 		   }
 		   $this->success('success');

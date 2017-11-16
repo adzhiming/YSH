@@ -34,33 +34,14 @@
                       <td class="left">分站联系电话</td>
                       <td><input type="text" name="stationphone" id="stationphone" value="<{$stationinfo['stationphone']|default:''}>" class="skey" style="width:250px;"></td>
                     </tr>
-					<{if !empty($stationinfo)}>
-						<tr onmouseover="this.bgColor='#F5F5F5';" onmouseout="this.bgColor='ffffff';" bgcolor="ffffff">
-						  <td class="left" valign="top">所属市区</td>
-						  <td>  
-							<{load_data assign="cityinfo" table="area" type="one" where="id='<{$stationinfo['cityid']}>'" fileds="name" }>  
-							<{load_data assign="countyinfo" table="area" type="one" where="id='<{$stationinfo['countyid']}>'" fileds="name" }> 
-							<span style="margin-left:10px;"><{$cityinfo['name']}>/<{$countyinfo['name']}></span>
-						  </td>
-						</tr>
-					<{else}>
-					<!-- <tr onmouseover="this.bgColor='#F5F5F5';" onmouseout="this.bgColor='ffffff';" bgcolor="ffffff">
-                      <td class="left" valign="top">选择城市</td>
-                      <td>  
-                      <select name="cityid">
- 							<{foreach from=$citylist key=myid  item=items}>  
-							   <option value="<{$items['adcode']}>" <{if $stationinfo['cityid'] == $items['adcode']}>selected<{/if}>><{$items['name']}></option>
-							<{/foreach}> 
-                      </select>
-                      	</td>
-                    </tr> -->
+					
                     <tr onmouseover="this.bgColor='#F5F5F5';" onmouseout="this.bgColor='ffffff';" bgcolor="ffffff">
                       <td class="left">所属城市</td>
                         <td>
                          <select name="provinceid" id="provinceid">
                       	       <option value="0">请选择所属省</option>
                       	       <{foreach from=$citylist key=myid  item=items}>  
-							        <option value="<{$items['adcode']}>" <{if $stationinfo['cityid'] == $items['adcode']}>selected<{/if}>><{$items['name']}></option>
+							        <option value="<{$items['id']}>" <{if $stationinfo['cityid'] == $items['id']}>selected<{/if}>><{$items['name']}></option>
 							   <{/foreach}> 	
                          </select>
                          <select name="cityid" id="cityid">
@@ -71,7 +52,7 @@
                          </select>
                       	</td>
                     </tr> 
-					<{/if}>
+					
 					
 					 
 					 <tr onmouseover="this.bgColor='#F5F5F5';" onmouseout="this.bgColor='ffffff';" bgcolor="ffffff">
@@ -148,7 +129,7 @@ $(document).ready(function(e){
 //填充省的方法，如何在表里查询 出省的代号例如：北京0001、天津0001,中国下面所有省都是0001开头的
 function FillSheng()
 {
-  var pid = "100000";
+  var pid = "1";
   $.ajax({
     async:false,
     url: '<{ofunc type=url link="/adminpage/area/module/getareainfo/datatype/json"}>',
@@ -163,7 +144,7 @@ function FillSheng()
       //把行的数组遍历下用for循环...length长度
       for(var i=0;i<areainfo.length;i++)
       {
-        str += "<option value='"+areainfo[i]['id']+"' data-id='"+areainfo[i]['id']+"'>"+areainfo[i]['shortname']+"</option>";
+        str += "<option value='"+areainfo[i]['id']+"' data-id='"+areainfo[i]['id']+"'>"+areainfo[i]['name']+"</option>";
          
         $("#provinceid").html(str);
       }
@@ -188,7 +169,7 @@ function FillShi()
      //把行的数组遍历下用for循环...length长度
      for(var i=0;i<areainfo.length;i++)
      {
-       str += "<option value='"+areainfo[i]['id']+"' data-id='"+areainfo[i]['id']+"'>"+areainfo[i]['shortname']+"</option>";
+       str += "<option value='"+areainfo[i]['id']+"' data-id='"+areainfo[i]['id']+"'>"+areainfo[i]['name']+"</option>";
         
        $("#cityid").html(str);
      }
@@ -214,7 +195,7 @@ function FillQu()
         //把行的数组遍历下用for循环...length长度
         for(var i=0;i<areainfo.length;i++)
         {
-          str += "<option value='"+areainfo[i]['id']+"' data-id='"+areainfo[i]['id']+"'>"+areainfo[i]['shortname']+"</option>";
+          str += "<option value='"+areainfo[i]['id']+"' data-id='"+areainfo[i]['id']+"'>"+areainfo[i]['name']+"</option>";
            
           $("#countyid").html(str);
         }

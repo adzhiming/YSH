@@ -113,7 +113,7 @@ class method   extends areaadminbaseclass
     }
 	
 	 function cateset(){ 
-			 
+	     
  			$catparent = $this->mysql->getarr("select * from ".Mysite::$app->config['tablepre']."shoptype  where  type='checkbox' order by cattype asc limit 0,100");
 			$catlist = array();
 			foreach($catparent as $key=>$value){
