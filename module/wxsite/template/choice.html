@@ -129,10 +129,10 @@ document.addEventListener('DOMContentLoaded', function () { setTimeout(loaded, 2
 			</div>
 			<div class="alropeBox">
 				<ul class="arealist">
-					<{load_data assign="arealist" table="area"   fileds="*"   limit="1000" orderby="  id asc" where=" id > 0 and level =1 "}> 
+					<{load_data assign="arealist" table="area"   fileds="*"   limit="1000" orderby="  id asc" where=" id > 0 and parent_id =1 "}> 
  					<{if !empty($arealist['list']) }>
 						<{foreach from=$arealist['list'] item=items }>
-							<li cityid='<{$items['id']}>' onclick = "getSubAreaInfo('<{$items['id']}>','<{$items['level']}>')" <{if $CITY_ID == $items['id'] }> class="curaA" <{/if}> ><{$items['name']}></li>
+							<li cityid='<{$items['id']}>' onclick = "getSubAreaInfo('<{$items['id']}>','<{$items['area_type']}>')" <{if $CITY_ID == $items['id'] }> class="curaA" <{/if}> ><{$items['name']}></li>
 						<{/foreach}>
 					<{/if}>
 				</ul>
@@ -242,8 +242,7 @@ function choiceaddress(lat,lng,address,adcode){
 	}
 	
 function getSubAreaInfo(id,level){
-	console.log($(this).html())
-	if(id !='' && level <3){
+	if(id !='' && level <4){
 		 $.ajax({
 	           type: 'GET', 
 	           url: '<{ofunc type=url link="/wxsite/getSubAreaInfo/datatype/json"}>',
@@ -254,7 +253,7 @@ function getSubAreaInfo(id,level){
 	            	    var list = content.msg
 	            	    html = ""
 	            	    for(var i=0;i<list.length;i++){
-	            	    	html = html +"<li cityid='"+list[i]['id']+"' onclick = getSubAreaInfo("+list[i]['id']+","+list[i]['level']+")>"+list[i]['name']+"</li>"
+	            	    	html = html +"<li cityid='"+list[i]['id']+"' onclick = getSubAreaInfo("+list[i]['id']+","+list[i]['area_type']+")>"+list[i]['name']+"</li>"
 	            	    }
 	            	    $('.arealist').html(html)
 	            	    $('#selectCityList').show();
