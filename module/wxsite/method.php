@@ -107,10 +107,10 @@ class method   extends wxbaseclass
 			$data['areainfoone'] = array();
 			
 			if( !empty($adcode) ){
-				$areacodeone =  $this->mysql->select_one("select * from ".Mysite::$app->config['tablepre']."areacode where id=".$adcode."  "); 
+				$areacodeone =  $this->mysql->select_one("select * from ".Mysite::$app->config['tablepre']."area where id=".$adcode."  "); 
 				if( !empty($areacodeone) ){
 					$adcodeid = $areacodeone['id'];
-					$pid = $areacodeone['pid'];
+					$pid = $areacodeone['parent_id'];
 					$areainfocity =  $this->mysql->select_one("select * from ".Mysite::$app->config['tablepre']."area where  id=".$pid."  "); 
    					$areainfocounty =  $this->mysql->select_one("select * from ".Mysite::$app->config['tablepre']."area where  id=".$adcodeid."  "); 
    					$areainfoprovince =  $this->mysql->select_one("select * from ".Mysite::$app->config['tablepre']."area where  id=".$areainfocity['parent_id']."  ");
@@ -156,7 +156,6 @@ class method   extends wxbaseclass
 		 $lng = ICookie::get('lng');
          $lat = ICookie::get('lat');
          $addressname = ICookie::get('addressname');
-		 
 		 $lat = empty($lat)?0:$lat;
 		 $lng = empty($lng)?0:$lng;
 		 
@@ -188,7 +187,8 @@ class method   extends wxbaseclass
 		
 		 $lat = empty($lat)?0:$lat;
 		 $lng = empty($lng)?0:$lng;
-		 $where = "  and city=".$this->CITY_ID."  and admin_id = ".$this->COUNTY_ID." ";  
+		 $where = "  and city=".$this->CITY_ID."  and county = ".$this->COUNTY_ID." ";
+		
 		 $where = empty($where)?'   and  SQRT((`lat` -'.$lat.') * (`lat` -'.$lat.' ) + (`lng` -'.$lng.' ) * (`lng` -'.$lng.' )) < (`pradiusa`*0.01094-0.01094) ': $where.' and SQRT((`lat` -'.$lat.') * (`lat` -'.$lat.' ) + (`lng` -'.$lng.' ) * (`lng` -'.$lng.' )) < (`pradiusa`*0.01094-0.01094) ';
 		 $where = Mysite::$app->config['plateshopid'] > 0? $where.' and  id != '.Mysite::$app->config['plateshopid'] .' ':$where; 
 		 $fyshoplist =   $this->mysql->getarr("select id,shopname,shoplogo,shoptype from ".Mysite::$app->config['tablepre']."shop where is_pass = 1  and is_open = 1 and isforyou = 1 and endtime > ".time()."  ".$where."   limit  6 ");		

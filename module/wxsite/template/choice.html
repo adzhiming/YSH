@@ -32,7 +32,7 @@ document.addEventListener('DOMContentLoaded', function () { setTimeout(loaded, 2
 	<div class="swiaddL" id="selectCity" >
 		<div class="swiadd">
 			<span id="cityname"><{if !empty($CITY_NAME) }><{$CITY_NAME|default:$cityname}><{else}><{$cityname}><{/if}></span>
-			<input type="hidden" value="<{$CITY_ID|default:$default_cityid}>" name="cityId" />
+			<input type="hidden" value="" name="cityId"  />
 			<input type="hidden" value="<{if !empty($CITY_NAME) }><{$CITY_NAME|default:$cityname}><{else}><{$cityname}><{/if}>" id="searchcityname" />
 			<i class="fa fa-angle-down"></i>
 		</div>
@@ -185,7 +185,11 @@ function bqzhi(){
 			lat = $(this).attr('lat');
 			lng = $(this).attr('lng');
 			address = $(this).attr('address'); 
-			adcode = $(this).attr('adcode'); 
+			adcode  = $('input[name="cityId"]').val();
+			console.log(adcode)
+			if(adcode ==''){
+				adcode = $(this).attr('adcode'); 
+			}
 			choiceaddress(lat,lng,address,adcode);
  		}
 	}) 

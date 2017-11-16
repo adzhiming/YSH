@@ -269,6 +269,7 @@ limitalert();
 			  if(!empty($countyid)){
 			      $updataarr['countyid'] = $countyid;
 			  }
+			  $updataarr['uid'] = $uid;
  			  $updataarr['stationname'] = $stationname;
 			  $updataarr['stationusername'] = $stationusername;
 			  $updataarr['stationphone'] = $stationphone;
