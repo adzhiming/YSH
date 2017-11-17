@@ -31,7 +31,7 @@ class wxbaseclass
 	 	     $data['admininfo'] = $this->admin;   
  	 	     $logintype = ICookie::get('logintype');  
  	 	    
-                     $provinceId = 0;
+             $provinceId = 0;
  	 	     $PROVINCE_ID = ICookie::get('PROVINCE_ID');
  	 	     if( !empty($CITY_ID) ){
  	 	         $PROVINCE_IDArr = explode('_',$PROVINCE_ID);
@@ -65,7 +65,7 @@ class wxbaseclass
 					$this->message('',$link);
 				}
 			} */
-                        $PROVINCE_NAME = ICookie::get('PROVINCE_NAME');
+            $PROVINCE_NAME = ICookie::get('PROVINCE_NAME');
 			if( !empty($PROVINCE_NAME) ){
 			    $PROVINCE_NameArr = explode('_',$PROVINCE_NAME);
 			    $PROVINCE_NAME = $PROVINCE_NameArr[2];

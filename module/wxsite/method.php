@@ -83,7 +83,7 @@ class method   extends wxbaseclass
 			ICookie::clear('lng');
 			ICookie::clear('mapname');
 			ICookie::clear('addressname');
-                        ICookie::clear('PROVINCE_ID');
+            ICookie::clear('PROVINCE_ID');
 			ICookie::clear('PROVINCE_NAME');
 			ICookie::clear('CITY_ID');
 			ICookie::clear('CITY_NAME');
@@ -123,11 +123,11 @@ class method   extends wxbaseclass
 						
  					}
  					if( !empty($areainfocounty) ){
- 					    $city_id = "COUNTY_ID_".$areainfocounty['id'];
- 					    $city_name = "COUNTY_NAME_".$areainfocounty['name'];
- 					    ICookie::set('COUNTY_ID',$city_id);
- 					    ICookie::set('COUNTY_NAME',$city_name);
-                                        }
+ 					    $county_id = "COUNTY_ID_".$areainfocounty['id'];
+ 					    $county_name = "COUNTY_NAME_".$areainfocounty['name'];
+ 					    ICookie::set('COUNTY_ID',$county_id);
+ 					    ICookie::set('COUNTY_NAME',$county_name);
+                      }
  					if( !empty($areainfoprovince) ){
  					    $province_id = "PROVINCE_ID_".$areainfoprovince['id'];
  					    $province_name = "PROVINCE_NAME_".$areainfoprovince['name'];
@@ -188,7 +188,6 @@ class method   extends wxbaseclass
 		 $lat = empty($lat)?0:$lat;
 		 $lng = empty($lng)?0:$lng;
 		 $where = "  and city=".$this->CITY_ID."  and county = ".$this->COUNTY_ID." ";
-		
 		 $where = empty($where)?'   and  SQRT((`lat` -'.$lat.') * (`lat` -'.$lat.' ) + (`lng` -'.$lng.' ) * (`lng` -'.$lng.' )) < (`pradiusa`*0.01094-0.01094) ': $where.' and SQRT((`lat` -'.$lat.') * (`lat` -'.$lat.' ) + (`lng` -'.$lng.' ) * (`lng` -'.$lng.' )) < (`pradiusa`*0.01094-0.01094) ';
 		 $where = Mysite::$app->config['plateshopid'] > 0? $where.' and  id != '.Mysite::$app->config['plateshopid'] .' ':$where; 
 		 $fyshoplist =   $this->mysql->getarr("select id,shopname,shoplogo,shoptype from ".Mysite::$app->config['tablepre']."shop where is_pass = 1  and is_open = 1 and isforyou = 1 and endtime > ".time()."  ".$where."   limit  6 ");		
