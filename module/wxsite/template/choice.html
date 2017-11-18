@@ -189,6 +189,7 @@ function bqzhi(){
 			if(adcode ==''){
 				adcode = $(this).attr('adcode'); 
 			}
+			
 			choiceaddress(lat,lng,address,adcode);
  		}
 	}) 
@@ -200,8 +201,14 @@ function bqzhi(){
  });
 function func_getadcode(datas){ 
 	if(datas.status == 1   && datas.info == 'OK' ) {
-		//var adcode = datas.regeocode.addressComponent.adcode;
-		var adcode  = $('input[name="county_id"]').val();
+		var adcode = datas.regeocode.addressComponent.adcode;
+		//对城市下直接就是镇的处理，比如东莞
+		if(adcode =='441900'){
+			var towncode = datas.regeocode.addressComponent.towncode;	
+			//取前面9位 441900110
+			adcode = towncode.substr(0,9)
+		}
+		//var adcode  = $('input[name="county_id"]').val();
  		choiceaddress(lat,lng,address,adcode);
 	}
 }  
@@ -250,7 +257,7 @@ function choiceaddress(lat,lng,address,adcode){
 					 adrlistcookie.push(temparr);
   					 var adrlistcookieList = adrlistcookie.join('#');
  					 $.cookie("cook_adrlistcookie",adrlistcookieList,{path: "/", expiress: 365*10});
-					 window.location.href=  siteurl+'/index.php?ctrl=wxsite&action=index' ;
+					  window.location.href=  siteurl+'/index.php?ctrl=wxsite&action=index' ;
              }else{
              	  newTmsg(content.msg);
              }
@@ -388,7 +395,7 @@ function showaddresslist(data){
 						var lnglatarr = lnglat.split(',');
 						lng = lnglatarr[0];
 						lat = lnglatarr[1];
-						address = $(this).attr('address');
+						address = $(this).attr('address'); 
 						var getaddurl = '<{$map_comment_link}>restapi.amap.com/v3/geocode/regeo?output=json&location='+lng+','+lat+'&key=<{$map_webservice_key}>&radius=1000&extensions=all&callback=func_getadcode';
 						$.getScript(getaddurl);
 					}
