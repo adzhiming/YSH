@@ -69,6 +69,7 @@ class method   extends wxbaseclass
 				 } 
 			}
 		} 
+		 $data['COUNTY_ID'] = $this->COUNTY_ID;
  		 $data['cook_adrlistcookie'] = $newadrtemparr;
 		# print_r($data['cook_adrlistcookie']);
 		Mysite::$app->setdata($data);  
@@ -93,7 +94,6 @@ class method   extends wxbaseclass
 			$lat = IFilter::act(IReq::get('lat'));   
 			$lng = IFilter::act(IReq::get('lng')); 
 			$addressname = IFilter::act(IReq::get('addressname')); 
-			
 			/* $adcode = '410100';
 			$lat = 34.802461;
 			$lng = 113.597715;
@@ -105,14 +105,13 @@ class method   extends wxbaseclass
 			ICookie::set('mapname',$addressname); 
 			
 			$data['areainfoone'] = array();
-			
 			if( !empty($adcode) ){
 				$areacodeone =  $this->mysql->select_one("select * from ".Mysite::$app->config['tablepre']."area where id=".$adcode."  "); 
 				if( !empty($areacodeone) ){
 					$adcodeid = $areacodeone['id'];
 					$pid = $areacodeone['parent_id'];
+					$areainfocounty =  $this->mysql->select_one("select * from ".Mysite::$app->config['tablepre']."area where  id=".$adcodeid."  "); 
 					$areainfocity =  $this->mysql->select_one("select * from ".Mysite::$app->config['tablepre']."area where  id=".$pid."  "); 
-   					$areainfocounty =  $this->mysql->select_one("select * from ".Mysite::$app->config['tablepre']."area where  id=".$adcodeid."  "); 
    					$areainfoprovince =  $this->mysql->select_one("select * from ".Mysite::$app->config['tablepre']."area where  id=".$areainfocity['parent_id']."  ");
    					//var_dump($areainfoprovince);
    					if( !empty($areainfocity) ){
@@ -139,7 +138,7 @@ class method   extends wxbaseclass
  					$data['areainfoone']  = $areainfocity;
 				}
 			}
-		 
+			
 			$this->success($data);
 	}
 	function dwLocation(){  // 定位当前位置 

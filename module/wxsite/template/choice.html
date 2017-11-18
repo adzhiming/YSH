@@ -32,7 +32,7 @@ document.addEventListener('DOMContentLoaded', function () { setTimeout(loaded, 2
 	<div class="swiaddL" id="selectCity" >
 		<div class="swiadd">
 			<span id="cityname"><{if !empty($CITY_NAME) }><{$CITY_NAME|default:$cityname}><{else}><{$cityname}><{/if}></span>
-			<input type="hidden" value="" name="cityId"  />
+			<input type="hidden" value="<{$COUNTY_ID}>" name="county_id"  />
 			<input type="hidden" value="<{if !empty($CITY_NAME) }><{$CITY_NAME|default:$cityname}><{else}><{$cityname}><{/if}>" id="searchcityname" />
 			<i class="fa fa-angle-down"></i>
 		</div>
@@ -185,8 +185,7 @@ function bqzhi(){
 			lat = $(this).attr('lat');
 			lng = $(this).attr('lng');
 			address = $(this).attr('address'); 
-			adcode  = $('input[name="cityId"]').val();
-			console.log(adcode)
+			adcode  = $('input[name="county_id"]').val();
 			if(adcode ==''){
 				adcode = $(this).attr('adcode'); 
 			}
@@ -201,7 +200,8 @@ function bqzhi(){
  });
 function func_getadcode(datas){ 
 	if(datas.status == 1   && datas.info == 'OK' ) {
-		var adcode = datas.regeocode.addressComponent.adcode;
+		//var adcode = datas.regeocode.addressComponent.adcode;
+		var adcode  = $('input[name="county_id"]').val();
  		choiceaddress(lat,lng,address,adcode);
 	}
 }  
@@ -218,7 +218,23 @@ $('.toptitBox .adr_toptitL').bind("click", function() {
 			history.back();
 		}
     });
-function choiceaddress(lat,lng,address,adcode){  
+//删除cookie中指定变量函数    
+function delCookie($name){    
+     var myDate=new Date();    
+     myDate.setTime(-1000);//设置时间    
+     document.cookie=$name+"=''; expires="+myDate.toGMTString();                
+}          
+function choiceaddress(lat,lng,address,adcode){ 
+	delCookie('lat');
+	delCookie('lng');
+	delCookie('mapname');
+	delCookie('addressname');
+	delCookie('PROVINCE_ID');
+	delCookie('PROVINCE_NAME');
+	delCookie('CITY_ID');
+	delCookie('CITY_NAME');
+	delCookie('COUNTY_ID');
+	delCookie('COUNTY_NAME');
 	 $.ajax({
            type: 'GET', 
            url: '<{ofunc type=url link="/wxsite/saveloation/datatype/json"}>',
@@ -234,7 +250,7 @@ function choiceaddress(lat,lng,address,adcode){
 					 adrlistcookie.push(temparr);
   					 var adrlistcookieList = adrlistcookie.join('#');
  					 $.cookie("cook_adrlistcookie",adrlistcookieList,{path: "/", expiress: 365*10});
-					  window.location.href=  siteurl+'/index.php?ctrl=wxsite&action=index' ;
+					 window.location.href=  siteurl+'/index.php?ctrl=wxsite&action=index' ;
              }else{
              	  newTmsg(content.msg);
              }
@@ -285,7 +301,7 @@ function getSubAreaInfo(id,level,obj){
 		$('#selectCityList').hide();
 		$('#cityname').text($(obj).text());
 		var cityid = $(obj).attr('cityid');
-		$('input[name="cityId"]').val(cityid);
+		$('input[name="county_id"]').val(cityid);
 		
 		var searchval  = $("#wmrSearchKeywords").val();
 	 	if( searchval != '' && searchval != undefined ){
@@ -341,7 +357,6 @@ $("#wmrSearchKeywords").bind('click',function(){
 function func_searchinputAdr(){
 	var searchval  = $("#wmrSearchKeywords").val();
 								var cityname  = $("#searchcityname").val();
-								console.log(cityname)
 								if( searchval != '' && searchval != undefined ){
 									var addresslist = '<{$map_comment_link}>restapi.amap.com/v3/place/text?&keywords='+searchval+'&city='+cityname+'&output=json&offset=20&page=1&key=<{$map_webservice_key}>&extensions=all&callback=showaddresslist';						 
 									$.getScript(addresslist); 

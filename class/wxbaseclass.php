@@ -54,7 +54,7 @@ class wxbaseclass
 			    $COUNTY_IDArr = explode('_',$COUNTY_ID);
 			    $countyId = $COUNTY_IDArr[2];
 			}
-			
+			$this->COUNTY_ID = "";
 			$this->COUNTY_ID = $countyId;
 			
 		/* 	if(  $action == 'index' ||   $action == 'loadindexcontent' ||   $action == 'indexshoplistdata' ||   $action == 'saveloation' ||   
@@ -185,7 +185,6 @@ class wxbaseclass
 	 	     $data['moduleparent'] = $checkmodule['parent_id']; 
 	 	     $id = intval(IFilter::act(IReq::get('id'))); 
 	 	     $data['id'] = $id; 
-	 	   
 	 	     Mysite::$app->setdata($data);  
 	 	     
 	 } 
