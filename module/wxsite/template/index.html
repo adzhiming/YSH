@@ -102,6 +102,12 @@ function newrenderReverse(datas){
   	if(datas.status == 1   && datas.info == 'OK' ) {
 	    var lnglat = '';
 		var adcode = datas.regeocode.addressComponent.adcode;
+		//对城市下直接就是镇的处理，比如东莞
+		if(adcode =='441900'){
+			var towncode = datas.regeocode.addressComponent.towncode;	
+			//取前面9位 441900110
+			adcode = towncode.substr(0,9)
+		}
 		var aois = datas.regeocode.aois;
 		var pois = datas.regeocode.pois;
 		var roads = datas.regeocode.roads;

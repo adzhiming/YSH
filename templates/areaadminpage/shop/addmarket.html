@@ -26,6 +26,9 @@
 						<li><span style='width: 95px;'>市场名称：</span><input type="text" name="marketname" id="marketname"  value="<{$marketinfo['name']}>"></li>
 						<li><span style='width: 95px;'>负责人名称：</span><input type="text" name="fzren" id="fzren" value="<{$marketinfo['fzren']}>"></li>
 						<li><span style='width: 95px;'>负责人电话：</span><input type="text" name="phone" id="phone" value="<{$marketinfo['phone']}>"></li>
+						<li><span style='width: 95px;'>市场logo：</span><span style="cursor:pointer;" onclick="upload_gudings('gimg<{$marketinfo['id']}>');"><img src="<{$marketinfo['logo']}>" id="gimg<{$marketinfo['id']}>"   style="width:100px;height:100px;"></span>
+						<input type="hidden" id="market_logo" name="market_logo" value="<{$marketinfo['logo']}>">
+						</li>
 						<li><span style='width: 95px;'>市场类型：</span>
 							<select name="markettype">
  								<{foreach from=$catlist item=itv}>
@@ -66,6 +69,24 @@
 
  <div class="clear"></div>
 <script type="text/javascript">
+function upload_gudings(modulename){
+	  dialogs = art.dialog.open('<{ofunc type=url link="/areaadminpage/shop/module/uploadapp/obj/'+modulename+'/func/uploadgsucess"}>');
+	  dialogs.title('上传图片');
+}
+function uploadgsucess(flag,obj,linkurl){
+	if(flag == true){
+		alert(linkurl);
+		dialogs.close();
+		upload_gudings(obj);
+	}else{
+		dialogs.close(); 
+		//提交数据并返回显示 
+			$('#'+obj).attr('src',linkurl);
+		    $('#market_logo').val(linkurl)
+			$('#'+obj).show();
+		  $('#input_'+obj).val(linkurl); 
+	}
+}
 
 var ditulog;
 function biaoji(){

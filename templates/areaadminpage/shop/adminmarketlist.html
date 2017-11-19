@@ -39,6 +39,7 @@
 								</div>
 							</td>
 							<td width="190">市场名称</td>
+							<td width="190">图片</td>
 							<td width="190">市场类型</td>
 							<td width="104">负责人</td>
 							<td width="104">负责人电话</td>
@@ -57,6 +58,7 @@
 								</div>
 							</td>
 							<td><{$items['name']}></td>
+							<td><img src="<{$items['logo']}>" id="gimg<{$items['id']}>"   style="width:100px;height:100px;"></td>
 							<td><{$items['typename']}></td>
 							<td><{$items['fzren']}></td>
 							<td><{$items['phone']}></td>
@@ -85,6 +87,9 @@
  
  
 <script>
+
+
+
 	 	var dialogs ;
 	 function starttask(shopid,shopname)
 	 {

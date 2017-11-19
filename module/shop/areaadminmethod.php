@@ -225,6 +225,7 @@ class method   extends areaadminbaseclass
 	    if(empty($baidumapArr[0]) || empty($baidumapArr[1])){
 	        $this->message('地图坐标不能为空');
 	    }
+	    
 	    $optype = intval(IReq::get('optype'));
 	    $marketid =  intval(IReq::get('marketid'));
 	    $data['siteid'] = $this->admin['uid'];
@@ -234,6 +235,7 @@ class method   extends areaadminbaseclass
 	    $data['name'] = $marketname;
 	    $data['typeid'] = intval(IReq::get('markettype'));
 	    $data['fzren'] = IReq::get('fzren');
+	    $data['logo'] =  IReq::get('market_logo');
 	    $data['phone'] = IReq::get('phone');
 	    $data['desc'] = IReq::get('desc');
 	    $data['lng'] = $baidumapArr[0];
