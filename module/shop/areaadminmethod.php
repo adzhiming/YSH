@@ -154,7 +154,7 @@ class method   extends areaadminbaseclass
 			  if(empty($username)) $this->message('member_emptyname');
 				$testinfo = $this->mysql->select_one("select * from ".Mysite::$app->config['tablepre']."member where username='".$username."'  ");
 			  if(empty($testinfo)) $this->message('member_noexit');
-			  if($testinfo['admin_id'] != $this->admin['cityid']) $this->message('shop_noownadmin');
+			  if($testinfo['admin_id'] != $this->admin['countyid']) $this->message('shop_noownadmin');
 			  $shopinfo = $this->mysql->select_one("select * from ".Mysite::$app->config['tablepre']."usrlimit where  `group`='".$testinfo['group']."' and  name='editshop' ");
 			  if(empty($shopinfo)) $this->message('member_noownshop');
 			  $shopinfo = $this->mysql->select_one("select * from ".Mysite::$app->config['tablepre']."shop where  uid='".$testinfo['uid']."' ");
@@ -266,9 +266,13 @@ class method   extends areaadminbaseclass
 	
 	//根据市场类型获取市场信息
 	function getMarketbyTypeid(){
+	    $countyid =  $this->admin['countyid'];
+	    if(empty($countyid)){
+	        $this->message('countyid不能为空');
+	    }
 	    $typeid = IReq::get('markettype');
 	    if($typeid){
-	        $marketlist= $this->mysql->getarr("select * from ".Mysite::$app->config['tablepre']."market where typeid=".$typeid."  ");
+	        $marketlist= $this->mysql->getarr("select * from ".Mysite::$app->config['tablepre']."market where typeid=".$typeid." and county ='".$countyid."' ");
 	        if($marketlist){
 	            $data = array();
 	            $data['code'] = 1;

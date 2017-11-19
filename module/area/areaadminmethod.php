@@ -150,6 +150,33 @@ class method   extends areaadminbaseclass
 	 
 	 	 Mysite::$app->setdata($data);
 	 }
+	 function shoptypeset(){
+	     $shopid =  intval(IReq::get('shopid'));
+	     if(empty($shopid))
+	     {
+	         echo '店铺不存在';
+	         exit;
+	     }
+	     $shopinfo= $this->mysql->select_one("select * from ".Mysite::$app->config['tablepre']."shop where id=".$shopid."  ");
+	     if(empty($shopinfo))
+	     {
+	         echo '店铺不存在';
+	         exit;
+	     }
+	     
+	     $catparent = $this->mysql->getarr("select * from ".Mysite::$app->config['tablepre']."shoptype  where  type='checkbox' order by cattype asc limit 0,100");
+	     $catlist = array();
+	     foreach($catparent as $key=>$value){
+	         $tempcat   = $this->mysql->getarr("select * from ".Mysite::$app->config['tablepre']."shoptype  where parent_id = '".$value['id']."'  limit 0,100");
+	         foreach($tempcat as $k=>$v){
+	             $catlist[] = $v;
+	         }
+	     }
+	     $data['catarr'] = array('0'=>'外卖','1'=>'超市');
+	     $data['catlist'] = $catlist; 
+	     $data['shopinfo'] = $shopinfo;
+	     Mysite::$app->setdata($data);
+	 }
 	 function setps(){
 	     $shopid =  intval(IReq::get('shopid'));
 	 	  if(empty($shopid))
@@ -206,6 +233,34 @@ class method   extends areaadminbaseclass
 	 	 }
 	 	 $data['choiceid']  = $temp; 
 	   Mysite::$app->setdata($data);
+	}
+	function saveshoptypeset(){
+	    $shopid =  intval(IReq::get('shopid'));
+	    if(empty($shopid)){
+	        echo "<script>parent.uploaderror('店铺ID不存在');</script>";
+	        exit;
+	    }
+	    $shopinfo= $this->mysql->select_one("select * from ".Mysite::$app->config['tablepre']."shop where id=".$shopid."  ");
+	    if(empty($shopinfo)){
+	        echo "<script>parent.uploaderror('店铺不存在');</script>";
+	        exit;
+	    }
+	   /*  $tempinfo = array();
+	    if(empty($shopinfo['shoptype'])){
+	        $tempinfo = 	$this->mysql->select_one("select * from ".Mysite::$app->config['tablepre']."shopfast where shopid=".$shopid."  ");
+	    }else{
+	        $tempinfo = 	$this->mysql->select_one("select * from ".Mysite::$app->config['tablepre']."shopmarket where shopid=".$shopid."  ");
+	    }
+	    if(empty($tempinfo)){
+	        echo "<script>parent.uploaderror('店铺数据不存在');</script>";
+	        exit;
+	    } */
+	    $data = array();
+	    $data['shoptype'] = intval(IReq::get('shoptype'));
+	    $data['market_id'] =  intval(IReq::get('market_id'));
+	    $this->mysql->update(Mysite::$app->config['tablepre'].'shop',$data,"id='".$shopid."'");
+	     echo "<script>parent.uploadsucess('更新成功');</script>";
+	    exit;
 	}
 	function savesetps(){
 		$shopid =  intval(IReq::get('shopid'));
@@ -475,6 +530,6 @@ class method   extends areaadminbaseclass
 		}
 	}
 	
-	
+
 }
 ?>

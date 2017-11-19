@@ -90,7 +90,7 @@ function uploadgsucess(flag,obj,linkurl){
 
 var ditulog;
 function biaoji(){
-    	mydialog = art.dialog.open(siteurl+'/index.php?ctrl=area&action=marketbaidumap',{height:'550px',width:'850px'},false);
+    	mydialog = art.dialog.open(siteurl+"/index.php?ctrl=area&action=marketbaidumap&id=<{$marketinfo['id']}>",{height:'550px',width:'850px'},false);
     	//http://www.hanwoba.com/index.php?ctrl=admin&action=baidumap&id=2#
 	 	 mydialog.title('设置标记高德地图位置'); 
   }

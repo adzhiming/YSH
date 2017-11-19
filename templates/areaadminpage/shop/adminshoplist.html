@@ -73,7 +73,7 @@
 							<a class="manMargL" onclick="setyjin('<{$items['id']}>','<{$items['shopname']}>','<{$items['yjin']}>','<{$yjin}>','<{$userinfo['backacount']|default:''}>');" href="#">设置</a></td>
  							<td><input  name="pxinput" data="<{$items['id']}>" value="<{$items['sort']}>"  type="text" value="1" class="managShopInp"></td>
 							<td><a href="#" onclick="doshow('<{$items['id']}>','<{intval(($items['endtime']-time())/86400)}>');"> <{if $items['endtime'] > 0}>    <{intval(($items['endtime']-time())/86400)}>    <{else}>设置 <{/if}></a></td>
-							<td><a onclick="psset('<{$items['id']}>','<{$items['shopname']}>');" href="javascript:;">店铺类型</a></td>
+							<td><a onclick="shoptypeset('<{$items['id']}>','<{$items['shopname']}>');" href="javascript:;">店铺类型</a></td>
 							<td><a onclick="psset('<{$items['id']}>','<{$items['shopname']}>');" href="javascript:;">配送设置</a></td>
 							<td><a class="getInto"  target="_blank" href="<{ofunc type=url link="/areaadminpage/shop/module/resetdefualt/shopid/<{$items['id']}>"}>">进入商家后台</a></td>
 						</tr>
@@ -253,6 +253,10 @@ function psset(shopid,shopname){
 	 dialogs = art.dialog.open(siteurl+'/index.php?ctrl=areaadminpage&action=area&module=setps&shopid='+shopid,{height:'450px',width:'600px'},false); 
 	 dialogs.title('配送设置');		
 } 
+function shoptypeset(shopid,shopname){
+	 dialogs = art.dialog.open(siteurl+'/index.php?ctrl=areaadminpage&action=area&module=shoptypeset&shopid='+shopid,{height:'200px',width:'600px'},false); 
+	 dialogs.title('配送设置');		
+}
 </script>
 <!--newmain 结束-->
 <{/block}>
