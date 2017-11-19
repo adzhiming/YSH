@@ -185,11 +185,11 @@ function bqzhi(){
 			lat = $(this).attr('lat');
 			lng = $(this).attr('lng');
 			address = $(this).attr('address'); 
-			adcode  = $('input[name="county_id"]').val();
+			/* adcode  = $('input[name="county_id"]').val();
 			if(adcode ==''){
 				adcode = $(this).attr('adcode'); 
-			}
-			
+			} */
+			adcode = $(this).attr('adcode');
 			choiceaddress(lat,lng,address,adcode);
  		}
 	}) 
@@ -200,6 +200,7 @@ function bqzhi(){
 	$.cookie('cook_adrlistcookie', null);
  });
 function func_getadcode(datas){ 
+	console.log(datas)
 	if(datas.status == 1   && datas.info == 'OK' ) {
 		var adcode = datas.regeocode.addressComponent.adcode;
 		//对城市下直接就是镇的处理，比如东莞
