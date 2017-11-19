@@ -1072,7 +1072,7 @@ class method   extends wxbaseclass
 	         $pageinfo->setpage(intval(IReq::get('page')));
 	         $where .= $qsjarray[$qsjid];
 	         $tempwhere = $shopshowtype == 'dingtai'?' and is_goshop =1 ':' and is_waimai =1 ';
-	         $where .= " and shoptype =  0  ";
+	         $where .= " and shoptype = '{$catid}' ";
 	         
 	         $where .= "  and county=".$this->COUNTY_ID."  and market_id = ".$marketid;
 	         
@@ -1080,7 +1080,7 @@ class method   extends wxbaseclass
 	         $teempd = array();
 	         #   $teempd[] = $this->mysql->getarr("select * from ".Mysite::$app->config['tablepre']."shopfast as a left join ".Mysite::$app->config['tablepre']."shop as b  on a.shopid = b.id  where  b.is_pass = 1 and b.is_recom = 1  ".$tempwhere." ".$where."    order by ".$orderarray[$order]." limit ".$pageinfo->startnum().", ".$pageinfo->getsize()."");
 	         //            	 and b.is_recom != 1
-	        // echo "select * from ".Mysite::$app->config['tablepre']."shopfast as a left join ".Mysite::$app->config['tablepre']."shop as b  on a.shopid = b.id  where  b.is_pass = 1  ".$tempwhere." ".$where."    order by ".$orderarray[$order]." limit ".$pageinfo->startnum().", ".$pageinfo->getsize()."";
+	          #echo "select * from ".Mysite::$app->config['tablepre']."shopfast as a left join ".Mysite::$app->config['tablepre']."shop as b  on a.shopid = b.id  where  b.is_pass = 1  ".$tempwhere." ".$where."    order by ".$orderarray[$order]." limit ".$pageinfo->startnum().", ".$pageinfo->getsize()."";
 	         $teempd[] = $this->mysql->getarr("select * from ".Mysite::$app->config['tablepre']."shopfast as a left join ".Mysite::$app->config['tablepre']."shop as b  on a.shopid = b.id  where  b.is_pass = 1  ".$tempwhere." ".$where."    order by ".$orderarray[$order]." limit ".$pageinfo->startnum().", ".$pageinfo->getsize()."");
 	         
 	         $nowhour = date('H:i:s',time());
