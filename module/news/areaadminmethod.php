@@ -23,7 +23,7 @@ class method   extends areaadminbaseclass
 		$data['type'] = 1; // type 1为网站通知 2为生活服务
 		$data['cityid']	= $this->admin['cityid'];
 		$data['countyid']	= $this->admin['countyid'];
-		$rs = $this->mysql->select_one("select * from ".Mysite::$app->config['tablepre']."information where id=".$id." and countyid = '{$countyid}' ");
+		$rs = $this->mysql->select_one("select * from ".Mysite::$app->config['tablepre']."information where id='".$id."' and countyid = '{$countyid}' ");
 	   	if(empty($rs['id']))
 	   	{
 	   		$link = IUrl::creatUrl('areaadminpage/news/module/addnotice');

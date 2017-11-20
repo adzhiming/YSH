@@ -7362,7 +7362,7 @@ function ajaxnoticelist(){
 	  $pageinfo = new page();
 	  $pageinfo->setpage(intval(IReq::get('page')),10);  
  
-	 $list = $this->mysql->getarr("select * from ".Mysite::$app->config['tablepre']."information where type=1  and (   cityid='".$this->CITY_ID."'  or  cityid = 0 ) order by orderid asc limit ".$pageinfo->startnum().", ".$pageinfo->getsize()."");   
+	 $list = $this->mysql->getarr("select * from ".Mysite::$app->config['tablepre']."information where type=1  and (   countyid='".$this->COUNTY_ID."' ) order by orderid asc limit ".$pageinfo->startnum().", ".$pageinfo->getsize()."");   
 	 $backdata = array();
 	foreach($list as $key=>$value){
 		$value['addtime'] = date("Y-m-d",$value['addtime']); 

@@ -773,11 +773,11 @@ class method   extends areaadminbaseclass
 	    if(!empty($data['phone'])){
 	        $where .= " and phone like '%".$data['phone']."%'";
 	    }
-	    $where .= "  and   siteid = '".$this->admin['uid']."' and is_deleted =0 and county ='".$this->admin['countyid']."'";
+	    $where .= "  and is_deleted =0 and county ='".$this->admin['countyid']."'";
 	    $marketinfo = $this->mysql->getarr("select a.*,b.name typename from ".Mysite::$app->config['tablepre']."market a
                left join ".Mysite::$app->config['tablepre']."shoptype b on a.typeid = b.id
                where 1=1 $where ");
-	   
+	    
 	    $data['marketlist'] = $marketinfo;
 	    Mysite::$app->setdata($data);
 	    
