@@ -18,6 +18,7 @@ class method   extends areaadminbaseclass
 		
 		$default_cityid = Mysite::$app->config['default_cityid'];
 		$data['cityid']	= $this->admin['cityid'];
+		$data['countyid']	= $this->admin['countyid'];
 		
 		$uid = IReq::get('uid');
 		if(empty($data['title'])) $this->message('adv_emptytitle');

@@ -81,7 +81,7 @@ class method   extends areaadminbaseclass
 	   	$data['describe'] = IReq::get('describe');
 		$data['type'] = 2; // type 1为网站通知 2为生活服务
 		$data['cityid']	= $this->admin['cityid'];
-		 
+		$data['countyid']	= $this->admin['countyid'];
 	   	if(empty($id))
 	   	{
 	   		$link = IUrl::creatUrl('areaadminpage/news/module/addlifeass');

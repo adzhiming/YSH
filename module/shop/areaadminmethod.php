@@ -1076,8 +1076,8 @@ function shopcateadv(){
 		}
 		$data['where'] = $where;
 	 $data['catarr'] = array('waimai'=>'外卖','market'=>'超市');
-	  $default_cityid = $this->admin['cityid'];
-	 	$moretypelist = $this->mysql->getarr("select* from ".Mysite::$app->config['tablepre']."appadv where type=2 and (   cityid='".$default_cityid."'  or  cityid = 0 ) and ( activity = 'waimai' or activity = 'market' ) order by orderid  asc");
+	 $default_countyid = $this->admin['countyid'];
+	  $moretypelist = $this->mysql->getarr("select* from ".Mysite::$app->config['tablepre']."appadv where type=2 and (   countyid='".$default_countyid."'   ) and ( activity = 'waimai' or activity = 'market' ) order by orderid  asc");
 	$data['moretypelist'] = $moretypelist;
 	
  			

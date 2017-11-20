@@ -48,7 +48,7 @@
 
                      <tbody>
 
-                       <{load_data assign="list" table="specialpage" showpage="true" where=" id > 0 and cityid = '<{$admininfo['cityid']}>'"   orderby = "orderid  asc"}>
+                       <{load_data assign="list" table="specialpage" showpage="true" where=" id > 0 and countyid = '<{$admininfo['countyid']}>'"   orderby = "orderid  asc"}>
 		                 	<{foreach from=$list['list'] item=items}>
                       <tr class="s_out" onmouseover="this.bgColor='#F5F5F5';" onmouseout="this.bgColor='ffffff';" bgcolor="#ffffff">
                         <td align="center" ><input type="checkbox" name="id[]" value="<{$items['id']}>"></td>

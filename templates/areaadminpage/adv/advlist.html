@@ -56,7 +56,7 @@
 	 	                      <{/foreach}>
 
 	 	                    <{/if}>
-                      <{load_data assign="list" table="adv" showpage="true"  fileds="*" where="cityid=<{$admininfo['cityid']}>  "  }>
+                      <{load_data assign="list" table="adv" showpage="true"  fileds="*" where="countyid=<{$admininfo['countyid']}>  "  }>
 					  <{if empty($list['list']) }>
 						   <tr class="s_out" onmouseover="this.bgColor='#F5F5F5';" onmouseout="this.bgColor='ffffff';" bgcolor="#ffffff">
 						   <td  align=center colspan=6>暂无数据</td>

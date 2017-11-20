@@ -1222,7 +1222,7 @@ class method   extends wxbaseclass
 	     $pageinfo->setpage(intval(IReq::get('page'))); 
 	     $tempdd = array();
 	     $templist = array();
-	     $tempdd[] =   $this->mysql->getarr("select * from ".Mysite::$app->config['tablepre']."market where is_deleted = 0    ".$where."    order by  ".$orderarray[0]." limit ".$pageinfo->startnum().", ".$pageinfo->getsize()."  ");
+	     $tempdd[] =   $this->mysql->getarr("select * from ".Mysite::$app->config['tablepre']."market where is_deleted = 0    ".$where."    order by  ".$orderarray[0]."  ");
 	     foreach ($tempdd[0] as $k=>$list){
 	         
 	         $mi = $this->GetDistance($lat,$lng, $list['lat'],$list['lng'], 1);
