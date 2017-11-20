@@ -5,22 +5,25 @@ class method   extends areaadminbaseclass
 	 
 	 function wxkefu(){
 		$cityid = $this->admin['cityid'];
-		$platpssetinfo = $this->mysql->select_one("select * from ".Mysite::$app->config['tablepre']."platpsset  where cityid = '".$cityid."'  ");
+		$countyid = $this->admin['countyid'];
+		$platpssetinfo = $this->mysql->select_one("select * from ".Mysite::$app->config['tablepre']."platpsset  where countyid = '".$countyid."'  ");
   		$data['station'] = $platpssetinfo;
 		Mysite::$app->setdata($data); 
 	}
 	 function savewxkefu(){
 		 
 		 $cityid = $this->admin['cityid'];
-	 	 $platpssetinfo = $this->mysql->select_one("select * from ".Mysite::$app->config['tablepre']."platpsset  where cityid = '".$cityid."'  ");
+		 $countyid = $this->admin['countyid'];
+	 	 $platpssetinfo = $this->mysql->select_one("select * from ".Mysite::$app->config['tablepre']."platpsset  where cityid='".$cityid."' and  countyid = '".$countyid."'  ");
 		 
 	     $data['wxkefu_open'] =  intval(IFilter::act(IReq::get('wxkefu_open'))); 
 	     $data['wxkefu_ewm'] =  trim(IFilter::act(IReq::get('wxkefu_ewm'))); 
 	     $data['wxkefu_phone'] =  trim(IFilter::act(IReq::get('wxkefu_phone'))); 
 		 if( !empty($platpssetinfo) ){
-			 $this->mysql->update(Mysite::$app->config['tablepre'].'platpsset',$data,"cityid='".$cityid."'");	 
+			 $this->mysql->update(Mysite::$app->config['tablepre'].'platpsset',$data,"cityid='".$cityid."' and countyid='".$countyid."'");	 
 		 } else{
 			 $data['cityid'] = $cityid;
+			 $data['countyid'] = $countyid;
 			  $this->mysql->insert(Mysite::$app->config['tablepre'].'platpsset',$data);  
 		} 
 	    $this->success('success'); 
