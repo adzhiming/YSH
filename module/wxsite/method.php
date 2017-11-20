@@ -673,7 +673,7 @@ class method   extends wxbaseclass
                     
                        $orderarray = array(
 				   //   	   '0'=>'  sort ASC       ',
-                 '0'=>' (`lat` -'.$lat.') * (`lat` -'.$lat.' ) + (`lng` -'.$lng.' ) * (`lng` -'.$lng.' ) ASC  ',
+                       '0'=>' (`lat` -'.$lat.') * (`lat` -'.$lat.' ) + (`lng` -'.$lng.' ) * (`lng` -'.$lng.' ) ASC  ',
                        '1'=>' (`lat` -'.$lat.') * (`lat` -'.$lat.' ) + (`lng` -'.$lng.' ) * (`lng` -'.$lng.' ) ASC   ',
                        '2'=>' limitcost asc ',
 					   '3'=>' is_com desc '
@@ -1213,13 +1213,16 @@ class method   extends wxbaseclass
 	     $lat = trim($lat);
 	     $lng = empty($lng)?0:$lng;
 	     $lat =empty($lat)?0:$lat;
-
+	     $orderarray = array(
+	     		'0'=>' (`lat` -'.$lat.') * (`lat` -'.$lat.' ) + (`lng` -'.$lng.' ) * (`lng` -'.$lng.' ) ASC       ',
+	     		'1'=>'   sort asc      ',
+	     );
 	     /*获取市场列表*/
 	     $pageinfo = new page();
 	     $pageinfo->setpage(intval(IReq::get('page'))); 
 	     $tempdd = array();
 	     $templist = array();
-	     $tempdd[] =   $this->mysql->getarr("select * from ".Mysite::$app->config['tablepre']."market where is_deleted = 0    ".$where."    order by id limit ".$pageinfo->startnum().", ".$pageinfo->getsize()."  ");
+	     $tempdd[] =   $this->mysql->getarr("select * from ".Mysite::$app->config['tablepre']."market where is_deleted = 0    ".$where."    order by  ".$orderarray[0]." limit ".$pageinfo->startnum().", ".$pageinfo->getsize()."  ");
 	     foreach ($tempdd[0] as $k=>$list){
 	         
 	         $mi = $this->GetDistance($lat,$lng, $list['lat'],$list['lng'], 1);

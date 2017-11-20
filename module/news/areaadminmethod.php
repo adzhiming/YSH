@@ -13,7 +13,8 @@ class method   extends areaadminbaseclass
 		Mysite::$app->setdata($data);
    }
    function savenotice(){
-      $id = IReq::get('uid');
+        $id = IReq::get('uid');
+        $countyid	= $this->admin['countyid'];
 	   	$data['addtime'] = strtotime(IReq::get('addtime').' 00:00:00');
 	   	$data['title'] = IReq::get('title');
 	   	$data['content'] = IReq::get('content');
@@ -22,7 +23,8 @@ class method   extends areaadminbaseclass
 		$data['type'] = 1; // type 1为网站通知 2为生活服务
 		$data['cityid']	= $this->admin['cityid'];
 		$data['countyid']	= $this->admin['countyid'];
-	   	if(empty($id))
+		$rs = $this->mysql->select_one("select * from ".Mysite::$app->config['tablepre']."information where id=".$id." and countyid = '{$countyid}' ");
+	   	if(empty($rs['id']))
 	   	{
 	   		$link = IUrl::creatUrl('areaadminpage/news/module/addnotice');
 	   		if(empty($data['title'])) $this->message('通知标题不能为空！',$link);
