@@ -9,10 +9,10 @@ class method   extends areaadminbaseclass
 		 $dftime = strtotime(date('Y-m-d',time())); 
 		 $detime = time();//今天订单将配送时间做为当前时间 
   
-	 $areawhere = " and  admin_id = ".$this->admin['cityid']." ";
+	 $areawhere = " and  admin_id = ".$this->admin['countyid']." ";
 	 	/* 代理区域 */
 	 //echo "select * from ".Mysite::$app->config['tablepre']."area where parent_id = 0  ".$areawhere."  ";
-	$data['arealist'] = $this->mysql->getarr("select * from ".Mysite::$app->config['tablepre']."area where  id = ".$this->admin['cityid']." ");
+	$data['arealist'] = $this->mysql->getarr("select * from ".Mysite::$app->config['tablepre']."area where  id = ".$this->admin['countyid']." ");
 	
 	    // 今日总订单	
      $tjdata['dayallorder'] = $this->mysql->counts("select * from ".Mysite::$app->config['tablepre']."order  where posttime > $dftime and posttime < $detime  ".$areawhere." ");

@@ -57,9 +57,8 @@ $(function(){
  <div class="swiper-scrollbar"></div> 
 <div  class="swiper-wrapper" >
 <div class="swiper-slide"> 
-
 <!-- <div id="uprefuBox"><p class="refuImg"><img  src="/upload/images/wmrloading.gif"  ></p><p class="refuFang flipup" >下拉刷新...</p></div> -->
-<{load_data assign="advlist" table="adv"    fileds="*"  limit="5" where="advtype='weixinlb' and  module='<{$sitetemp}>'  and cityid='<{$CITY_ID}>'  " }> 
+<{load_data assign="advlist" table="adv"    fileds="*"  limit="5" where="advtype='weixinlb' and  module='<{$sitetemp}>'  and countyid='<{$COUNTY_ID}>'  " }> 
 <{if !empty($advlist['list']) }>
 
   <div class="device"> 
