@@ -4306,8 +4306,14 @@ function makeorder(){
 	}
 	//订单管理
 	function orderManage(){
-	    $this->checkshoplogin();
-	    $shopid = ICookie::get('adminshopid');
+	    $this->checkwxweb();
+	    $this->checkwxuser();
+	    $link = IUrl::creatUrl('wxsite/login');
+	    if($this->member['uid'] == 0)  $this->message('',$link);
+	    $sql = "select id from ".Mysite::$app->config['tablepre']."shop
+                where uid='".$this->member['uid']."'  limit 1";
+	    $shopinfo = $this->mysql->select_one($sql);
+	    $shopid = $shopinfo['id'];
 	    if(empty($shopid)) $this->message('emptycookshop');
 	    $starttime = trim(IFilter::act(IReq::get('startTime')));
 	    $endtime = trim(IFilter::act(IReq::get('endTime')));
@@ -4398,10 +4404,15 @@ function makeorder(){
 	}
 	//商家资金
 	function merchantFunds(){
-	    $this->checkshoplogin();
-	    $shopid = ICookie::get('adminshopid');
+	    $this->checkwxweb();
+	    $this->checkwxuser();
+	    $link = IUrl::creatUrl('wxsite/login');
+	    if($this->member['uid'] == 0)  $this->message('',$link);
+	    $sql = "select id from ".Mysite::$app->config['tablepre']."shop
+                where uid='".$this->member['uid']."'  limit 1";
+	    $shopinfo = $this->mysql->select_one($sql);
+	    $shopid = $shopinfo['id'];
 	    if(empty($shopid)) $this->message('emptycookshop');
-	   
 	    //var_dump($this->member);
 	    $today = date("Y-m-d",time());
 	    $todaywhere = " and suretime between '".strtotime($today.' 00:00')."' and '".strtotime($today . '23:59')."'";
