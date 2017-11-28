@@ -325,7 +325,7 @@ document.addEventListener('DOMContentLoaded', function () { setTimeout(loaded, 2
     
     function FillSheng()
     {
-      var pid = "100000";
+      var pid = "1";
       $.ajax({
         async:false,
         url: '<{ofunc type=url link="/wxsite/getareainfo/datatype/json"}>',
@@ -340,7 +340,7 @@ document.addEventListener('DOMContentLoaded', function () { setTimeout(loaded, 2
           //把行的数组遍历下用for循环...length长度
           for(var i=0;i<areainfo.length;i++)
           {
-            str += "<option value='"+areainfo[i]['id']+"' data-id='"+areainfo[i]['id']+"'>"+areainfo[i]['shortname']+"</option>";
+            str += "<option value='"+areainfo[i]['id']+"' data-id='"+areainfo[i]['id']+"'>"+areainfo[i]['name']+"</option>";
             $("#province").html(str);
           }
         }
@@ -365,7 +365,7 @@ document.addEventListener('DOMContentLoaded', function () { setTimeout(loaded, 2
     	     //把行的数组遍历下用for循环...length长度
     	     for(var i=0;i<areainfo.length;i++)
     	     {
-    	       str += "<option value='"+areainfo[i]['id']+"' data-id='"+areainfo[i]['id']+"'>"+areainfo[i]['shortname']+"</option>";
+    	       str += "<option value='"+areainfo[i]['id']+"' data-id='"+areainfo[i]['id']+"'>"+areainfo[i]['name']+"</option>";
     	       $("#city").html(str);
     	     }
     	   }
@@ -390,7 +390,7 @@ document.addEventListener('DOMContentLoaded', function () { setTimeout(loaded, 2
     	        //把行的数组遍历下用for循环...length长度
     	        for(var i=0;i<areainfo.length;i++)
     	        {
-    	          str += "<option value='"+areainfo[i]['id']+"' data-id='"+areainfo[i]['id']+"'>"+areainfo[i]['shortname']+"</option>";
+    	          str += "<option value='"+areainfo[i]['id']+"' data-id='"+areainfo[i]['id']+"'>"+areainfo[i]['name']+"</option>";
     	          $("#county").html(str);
     	        }
     	      }
