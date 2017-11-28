@@ -46,7 +46,7 @@ class method   extends adminbaseclass
 	   $checkshoptype =  $this->mysql->select_one("select * from ".Mysite::$app->config['tablepre']."shoptype where id=".$attrid."  ");
 	   if(empty($checkshoptype))  $this->message("获取店铺分类失败");
 	   
-	   
+	   $sdata['cattype'] = $checkshoptype['id'];
 	    $this->mysql->insert(Mysite::$app->config['tablepre'].'shop',$sdata);
 	  
 	   $shopid = $this->mysql->insertid();
@@ -104,7 +104,7 @@ class method   extends adminbaseclass
 	   $checkshoptype =  $this->mysql->select_one("select * from ".Mysite::$app->config['tablepre']."shoptype where id=".$attrid."  ");
 	   if(empty($checkshoptype))  $this->message("获取店铺分类失败");
 	   
-	   
+	   $data['cattype'] = $checkshoptype['id'];
 	    $this->mysql->insert(Mysite::$app->config['tablepre'].'shop',$data);
 	  
 	   $shopid = $this->mysql->insertid();
@@ -161,7 +161,7 @@ class method   extends adminbaseclass
 	   $checkshoptype =  $this->mysql->select_one("select * from ".Mysite::$app->config['tablepre']."shoptype where id=".$attrid."  ");
 	   if(empty($checkshoptype))  $this->message("获取店铺分类失败");
 	   
-	   
+	   $sdata['cattype'] = $checkshoptype['id'];
 	    $this->mysql->insert(Mysite::$app->config['tablepre'].'shop',$sdata);
 	  
 	   $shopid = $this->mysql->insertid();

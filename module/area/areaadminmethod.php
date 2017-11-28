@@ -256,7 +256,7 @@ class method   extends areaadminbaseclass
 	        exit;
 	    } */
 	    $data = array();
-	    $data['shoptype'] = intval(IReq::get('shoptype'));
+	    $data['cattype'] = intval(IReq::get('shoptype'));
 	    $data['market_id'] =  intval(IReq::get('market_id'));
 	    $this->mysql->update(Mysite::$app->config['tablepre'].'shop',$data,"id='".$shopid."'");
 	     echo "<script>parent.uploadsucess('更新成功');</script>";

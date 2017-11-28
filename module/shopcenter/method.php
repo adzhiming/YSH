@@ -687,7 +687,7 @@ class method   extends baseclass
 		if(empty($shopinfo)) $this->message('shop_noexit');
 		$shoptype = $shopinfo['shoptype'];
 		if(empty($shopid)) $this->message('emptycookshop');
-		if(empty($shoptype)){
+		if($shoptype == 0){
 	        $listtype = $this->mysql->getarr("select * from ".Mysite::$app->config['tablepre']."goodstype where shopid = '".$shopid."'  order by orderid asc  ");
 		}elseif($shoptype ==1){
     	   $listtype = $this->mysql->getarr("select * from ".Mysite::$app->config['tablepre']."marketcate where shopid = '".$shopid."'  order by orderid asc  ");
@@ -772,7 +772,8 @@ class method   extends baseclass
 		if(empty($data['shopid'])) $this->message('emptycookshop');
 		$shopinfo = $this->shopinfo();
 		if(!(IValidate::len($data['name'],1,10)))$this->message('goods_namelenth'); 
-		if(empty($shopinfo['shoptype'])){
+	
+		if($shopinfo['shoptype'] == 0){
 			$checkwaimai = $this->mysql->select_one("select * from ".Mysite::$app->config['tablepre']."shopfast where shopid = '".$shopid."'  order by shopid asc  "); 
 			$data['cattype'] = 0;
 			if(empty($checkwaimai)) $this->message('shop_noexit'); 
@@ -1600,7 +1601,7 @@ class method   extends baseclass
 		 $shopinfo = $this->shopinfo();
 		 $uid = intval(IReq::get('addressid'));	 
 		 if(empty($uid))  $this->message('goods_emptytype');//$this->json(array('err'=>true,'msg'=>'删除ID不能为空')); 
-		 if(empty($shopinfo['shoptype'])){
+		 if($shopinfo['shoptype'] == 0){
 		    $checkshuliang = $this->mysql->counts("select * from ".Mysite::$app->config['tablepre']."goodstype where id = '$uid' and shopid='".$shopid."'");
 		    if($checkshuliang < 1) $this->message('goods_emptytype');//$this->json(array('err'=>true,'msg'=>''));  
 		    $this->mysql->delete(Mysite::$app->config['tablepre'].'goods',"typeid = '$uid' and  shopid='".$shopid."'");   

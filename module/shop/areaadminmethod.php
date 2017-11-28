@@ -168,8 +168,8 @@ class method   extends areaadminbaseclass
 			  $data['admin_id'] = $this->admin['cityid'];
 			  $data['shoptype'] = intval(IReq::get('shoptype'));
 			  $nowday = 24*60*60*365;
-	       $data['endtime'] = time()+$nowday;
-	       $data['is_pass'] = 1;
+	          $data['endtime'] = time()+$nowday;
+	          $data['is_pass'] = 1;
 			  $this->mysql->insert(Mysite::$app->config['tablepre'].'shop',$data);
 			  $this->success('success');
 		}elseif($subtype ==  2){
