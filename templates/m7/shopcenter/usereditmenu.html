@@ -2,7 +2,7 @@
 	<div class="jbset <{if $urlshort == 'shopcenter/useredit'}> onset<{/if}>" onclick="openlink('<{ofunc type=url link="/shopcenter/useredit"}>');">
                 	<img src="<{$siteurl}>/templates/<{$tempdir}>/public/shopcenter/images/jbBg.png" /><span>基本设置</span>
                 </div>
-                <{if empty($shopinfo['shoptype'])}>
+                <{if  $shopinfo['shoptype'] neq '1'}>
                 <div  class="jbset <{if $urlshort == 'shopcenter/usershopfast'}> onset<{/if}>" onclick="openlink('<{ofunc type=url link="/shopcenter/usershopfast"}>');" >
                 	<img src="<{$siteurl}>/templates/<{$tempdir}>/public/shopcenter/images/wmset.png" /><span>外卖设置</span>
                 </div>

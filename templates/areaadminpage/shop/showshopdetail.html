@@ -20,7 +20,7 @@
 				<li><span>申请店铺名称：</span><b><{$shopinfo['shopname']}> </b></li>
 				<li><span>申请联系电话：</span><b><{$shopinfo['maphone']}></b></li>
 				<li><span>申请联系地址：</span><b><{$shopinfo['address']}> </b></li>
-				<li><span>申请类型：</span><b><{if $shopinfo['shoptype'] == 0}>外卖<{else}>超市<{/if}></b></li>
+				<li><span>申请类型：</span><b><{if $shopinfo['shoptype'] == 1}>超市<{else}>外卖<{/if}></b></li>
 				<li><span>入驻单位：</span><b><{if $shopinfo['ruzhutype'] == 1}>企业入驻<{else}>个人入驻<{/if}> </b></li>
 				<li><span>申请处理状态：</span><b><{if $shopinfo['is_pass'] == 0}>处理中<{else}>通过审核<{/if}> </b></li>
 				<li class="bor_no"><span>营业执照：</span>

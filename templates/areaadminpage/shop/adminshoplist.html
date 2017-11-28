@@ -62,7 +62,7 @@
 									<input type="checkbox" name="id[]" value="<{$items['id']}>"> 
 								</div>
 							</td>
-							<td><{$items['shopname']}>[<span><{$shoptype[$items['shoptype']]}></span>]</td>
+							<td><{$items['shopname']}>[<span><{if $items['shoptype'] eq '1'}>超市<{else}>外卖<{/if}></span>]</td>
 							<td><a  onclick="showshopdetail('<{$items['id']}>','<{$items['shopname']}>');"  href="javascript:;">查看详情</a></td>
 							<td><{load_data assign="userinfo" table="member" type="one" where="uid='<{$items['uid']}>'" fileds="username,shopcost,backacount" }> 
                           	<{$userinfo['username']}> </td>
