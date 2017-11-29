@@ -253,7 +253,10 @@ class baseclass
   	       	  $shoplat = isset($shopinfo['lat'])?$shopinfo['lat']:0;
   	       	  $shoplng = isset($shopinfo['lng'])?$shopinfo['lng']:0;
   	       	  $juli =  $this->GetDistance($lat,$lng, $shoplat,$shoplng, 1);  
- 			   
+  	       	  $backdata['$lat'] = $lat;
+  	       	  $backdata['$lng'] = $lng;
+  	       	  $backdata['$shoplat'] = $shoplat;
+  	       	  $backdata['$shoplng'] = $shoplng;
   	       	  $juliceshi = intval($juli/1000);
 			   $backdata['juli'] = $juliceshi.'Km';
   	       	  if(is_array($pradiusvalue)){

@@ -94,16 +94,17 @@ function bindaddressclick(){
 
 function checkPsrangePscost(newobj){
  	 isexist = 0;
-	 pscost = 0 ;
+	 pscost = 0 ; 
 	 psway = pstype;
 	juli = 0; 
 	nopsparghtml = '';
 	 var newobj = newobj;
 	 var addresslnglat = newobj.lng+','+newobj.lat;
+	 console.log(pstype)
  									 if( pstype == 1 ){
-										 
 										 var checkinfo = ajaxback(siteurl+'/index.php?ctrl=member&action=checkIsPaPsrange&datatype=json&random=@random@',{'shopid':shopid,'addressid':newobj.id});
-										    if(checkinfo.flag == false){
+										   
+										 if(checkinfo.flag == false){
  												 var psdata = checkinfo.content.psdata; 
 												 if( psdata.canps == 1 ){
 													 isexist = 1;
@@ -122,7 +123,7 @@ function checkPsrangePscost(newobj){
 										
 										
 									}else{
- 										  
+										console.log(addresslnglat)
   										 var  is_exist = checkIsPaPsrange(addresslnglat); //检测配送地址是否在平台的配送范围内
     										if(is_exist == false){
 											isexist = 0;

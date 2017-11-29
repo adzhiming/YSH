@@ -1072,7 +1072,7 @@ class method   extends wxbaseclass
 	         $pageinfo->setpage(intval(IReq::get('page')));
 	         $where .= $qsjarray[$qsjid];
 	         $tempwhere = $shopshowtype == 'dingtai'?' and is_goshop =1 ':' and is_waimai =1 ';
-	         $where .= " and shoptype = '{$catid}' ";
+	         $where .= " and cattype = '{$catid}' ";
 	         
 	         $where .= "  and county=".$this->COUNTY_ID."  and market_id = ".$marketid;
 	         
@@ -3812,6 +3812,7 @@ function makeorder(){
 			    $paytypelist[$value['loginname']] = $value['logindesc'];
 		  }
 	  }
+	  //var_dump($paylist);die;
 	  $data['paylist'] = $paylist;
 	  
 	  $data['order'] = $order;
@@ -7302,7 +7303,7 @@ function sjapplyrz(){
 	$checkshoptype =  $this->mysql->select_one("select * from ".Mysite::$app->config['tablepre']."shoptype where id= '{$attrid}' ");
 	if(empty($checkshoptype))  $this->message("获取店铺分类失败");
 	
-	
+	$data['cattype'] = $checkshoptype['id'];
 	$this->mysql->insert(Mysite::$app->config['tablepre'].'shop',$data);
 	
 	$shopid = $this->mysql->insertid();
@@ -7461,7 +7462,7 @@ function lifeass(){
 	   $checkshoptype =  $this->mysql->select_one("select * from ".Mysite::$app->config['tablepre']."shoptype where id=".$attrid."  ");
 	   if(empty($checkshoptype))  $this->message("获取店铺分类失败");
 	   
-	   
+	    $data['cattype'] = $checkshoptype['id'];
 	    $this->mysql->insert(Mysite::$app->config['tablepre'].'shop',$data);
 	  
 	   $shopid = $this->mysql->insertid();
@@ -7518,7 +7519,7 @@ function lifeass(){
 	   $checkshoptype =  $this->mysql->select_one("select * from ".Mysite::$app->config['tablepre']."shoptype where id=".$attrid."  ");
 	   if(empty($checkshoptype))  $this->message("获取店铺分类失败");
 	   
-	   
+	   $data['cattype'] = $checkshoptype['id'];
 	    $this->mysql->insert(Mysite::$app->config['tablepre'].'shop',$sdata);
 	  
 	   $shopid = $this->mysql->insertid();
