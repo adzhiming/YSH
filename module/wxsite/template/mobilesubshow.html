@@ -82,6 +82,16 @@ document.addEventListener('DOMContentLoaded', function () { setTimeout(loaded, 2
 </div>
 
 <{foreach from=$paylist   item=items}>
+
+<{if  $items['loginname'] == 'weixin'   }>
+<div class="balchapayma"  data="<{$items['loginname']}>">
+ <ul>
+  <li class="balchapaymaL"><i class="balchawx"></i></li>
+  <li class="balchapaymaC"><span>微信支付</span></li>
+  <li class="balchapaymaR"><label><input type="radio" name="one"><i class="balchacirc1"></i></label></li>
+ </ul>
+</div>
+<{/if}>
 <{if  $items['loginname'] == 'alimobile'   }>
 <div class="balchapayma"  data="<{$items['loginname']}>">
  <ul>
@@ -145,7 +155,9 @@ function downtime(){
 						   return;
 						 }
 						 if($('input[name="paydotype"]').val() == 'weixin'){
-							   
+							 var url = '<{ofunc type=url link="/wxsite/gotopay/orderid/<{$order['id']}>/paydotype/@paydotype@"}>';
+							 url = url.replace('@paydotype@', "weixinH5");  
+							 window.location.href= url;
 						 }else{
 							 var url = '<{ofunc type=url link="/wxsite/gotopay/orderid/<{$order['id']}>/paydotype/@paydotype@"}>';
 							 url = url.replace('@paydotype@', $('input[name="paydotype"]').val());  

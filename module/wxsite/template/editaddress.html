@@ -6,6 +6,98 @@
 <link rel="stylesheet" href="<{$siteurl}>/templates/<{$tempdir}>/public/wxsite/css/gaodecss.css"/>
   <script src="<{$map_comment_link}>webapi.amap.com/maps?v=1.3&key=<{$map_javascript_key}>"></script>
 <script> 
+$(document).ready(function(e){
+	  //当省选中的话市也会跟着变去也会变。市和区都会加载一遍
+	  FillSheng();//省
+	  FillShi();//市
+	  FillQu();//区
+	  //给省加点击事件
+	  $("#province").change(function(){
+	      FillShi();//市
+	      FillQu();//区
+	    })
+	  //给市加点击事件
+	  $("#city").change(function(){
+	      FillQu();//区
+	   })
+});
+
+function FillSheng()
+{
+var pid = "1";
+$.ajax({
+  async:false,
+  url: '<{ofunc type=url link="/wxsite/getareainfo/datatype/json"}>',
+  data:{pid:pid},
+  type:"POST",
+  dataType:"TEXT",
+  success: function(data){
+  	 var obj = JSON.parse(data); 
+  	 var areainfo = obj.msg.areainfo
+    //返回数据,根据行于行之间的分隔符来拆,拆完之后会返回一数组/行的数组
+    var str = "<option value='' >请选择省份</option>";
+    //把行的数组遍历下用for循环...length长度
+    for(var i=0;i<areainfo.length;i++)
+    {
+      str += "<option value='"+areainfo[i]['name']+"' data-id='"+areainfo[i]['id']+"'>"+areainfo[i]['name']+"</option>";
+      $("#province").html(str);
+    }
+  }
+});
+}
+
+	//填充市的方法
+	function FillShi()
+	{
+	  var pid =$ ("#province").find ("option:selected").attr ("data-id");
+	  $.ajax({
+	    async:false,//****
+	    url: '<{ofunc type=url link="/wxsite/getareainfo/datatype/json"}>',
+	    data:{pid:pid},
+	    type:"POST",
+	    dataType:"TEXT",
+	    success: function(data){
+	   	 var obj = JSON.parse(data); 
+	   	 var areainfo = obj.msg.areainfo
+	     //返回数据,根据行于行之间的分隔符来拆,拆完之后会返回一数组/行的数组
+	     var str = "<option value='' >请选择市</option>";
+	     //把行的数组遍历下用for循环...length长度
+	     for(var i=0;i<areainfo.length;i++)
+	     {
+	       str += "<option value='"+areainfo[i]['name']+"' data-id='"+areainfo[i]['id']+"'>"+areainfo[i]['name']+"</option>";
+	       $("#city").html(str);
+	     }
+	   }
+	  });
+	  
+	}
+	//填充区的方法
+	function FillQu()
+	{
+	  var pid = $ ("#city").find ("option:selected").attr ("data-id");
+	  $.ajax({
+	    async:false,
+	    url: '<{ofunc type=url link="/wxsite/getareainfo/datatype/json"}>',
+	    data:{pid:pid},
+	    type:"POST",
+	    dataType:"TEXT",
+	    success: function(data){
+	      	 var obj = JSON.parse(data); 
+	      	 var areainfo = obj.msg.areainfo
+	        //返回数据,根据行于行之间的分隔符来拆,拆完之后会返回一数组/行的数组
+	        var str = "<option value='' >请选择县/区</option>";
+	        //把行的数组遍历下用for循环...length长度
+	        for(var i=0;i<areainfo.length;i++)
+	        {
+	          str += "<option value='"+areainfo[i]['name']+"' data-id='"+areainfo[i]['id']+"'>"+areainfo[i]['name']+"</option>";
+	          $("#county").html(str);
+	        }
+	      }
+	  });
+	
+	} 
+
+
 var myScroll;
 function loaded() {
 	myScroll = new iScroll('wrapper', {
@@ -106,12 +198,17 @@ $(function(){
                             <a>&nbsp;&nbsp;&nbsp;地址：</a><input type="text" placeholder="输入收货人详细地址（如单元、门牌号等）" value="<{$info['address']}>" class="newinp1" style="width:79%;margin-left:0px;">
                         </li>
                         <{else}>
-                        <li style=" height:44px; ">
-                            <a style="float:left;">&nbsp;&nbsp;&nbsp;地址：</a>
-                            <div lng="<{$info['lng']}>" lat="<{$info['lat']}>" lnglat="" style="float:left; height:44px; line-height:44px;margin-left:20px;" id ='selectSendAddress' type="text"  class="newinp1"><{$info['bigadr']|default:'点击选择地址'}></div>
+
+                        <li style=" height:44px; " lng="<{$info['lng']}>" lat="<{$info['lat']}>" lnglat=""  class="newinp1">
+                        <a style="float:left;">&nbsp;&nbsp;&nbsp;地址：</a>
+                        <select name="province" id="province" style="width:30%"><option value="0">请选择省份</option></select>
+                        <select name="city" id="city"><option value="0" style="width:30%">请选择城市</option></select>
+                        <select name="county" id="county"><option value="0" style="width:30%">请选择县区</option></select>
+                            <!-- <a style="float:left;">&nbsp;&nbsp;&nbsp;地址：</a>
+                            <div lng="<{$info['lng']}>" lat="<{$info['lat']}>" lnglat="" style="float:left; height:44px; line-height:44px;margin-left:20px;" id ='selectSendAddress' type="text"  class="newinp1"><{$info['bigadr']|default:'点击选择地址'}></div> -->
                         </li>
                         <div class="clear"></div>
-                        <li><a>&nbsp;&nbsp;&nbsp;楼号-门牌号：</a><input type="text" placeholder="例：16号楼107室" value="<{$info['detailadr']}>" class="newinp2"></li>
+                        <li><a>&nbsp;&nbsp;&nbsp;楼号-门牌号：</a><input type="text" placeholder="例：16号楼107室" value="<{$info['detailadr']}>" class="newinp2" style=""></li>
                         <{/if}>
 						 
 						<div class="selectLabCon">
@@ -198,6 +295,7 @@ $("#selectSendAddress").bind('click',function() {
 		$(".addressbox").hide();
 		$("#selectAddress").html('');
 		var content = htmlback(siteurl + '/index.php?ctrl=wxsite&action=gaodewebapi', {});
+		
 		if (content.flag == false) {
 			$("#selectAddress").html(content.content);
 			$('#searchAddresslist').hide();
@@ -218,7 +316,7 @@ $("#selectSendAddress").bind('click',function() {
 									}
 								});
 								bindsearchclick();
-			});  
+			});   
 			$("#searchKeywordss").bind('keyup',function(e){
 				//if(biaoqianval == false){
 					//biaoqianval  = true;
@@ -343,16 +441,54 @@ function choiceaddresslnglat(name,lnglat){
 	}
 }
 
-
+function func_getadcode(datas){ 
+	if(datas.status == 1   && datas.info == 'OK' ) {
+		console.log(datas.geocodes[0].location)
+		var lat = datas.geocodes[0].location
+		$(".newinp1").attr("lnglat",lat)
+	}	
+	else{
+		Tmsg('选择地址获取失败，请重新选择');
+	}
+}  
 function saveaddress(){
+	 var province = $("#province").val();
+	 var city = $("#city").val();
+	 var county = $("#county").val();
+	 var detailadr = $(".newinp2").val();
+	 console.log(province)
+	 if(province ==''){
+		 newTmsg('请选择省份');
+		 return
+	 }
+	 if(city ==''){
+		 newTmsg('请选择城市');
+		 return
+	 }
+	 if(county ==''){
+		 newTmsg('请选择县区');
+		 return
+	 }
+	 if(detailadr ==''){
+		 newTmsg('请填写详细地址');
+		 return
+	 }
+	//获取经纬度
+	var addresslist = "http://restapi.amap.com/v3/geocode/geo?key=<{$map_webservice_key}>&address="+county+detailadr+"&city="+city+"&callback=func_getadcode";
+		$.getScript(addresslist);
+				
 	$('#loading').show();
-	var detailadr = $(".newinp2").val();
+						
+						 
+	
 <{if $addAreaType == 1}>
-	var bigadr = $(".newinp1").val();
-	var tempaddress = $(".newinp1").val();
-<{else}>
-	var bigadr = $(".newinp1").text();
+	//var bigadr = $(".newinp1").val();
+    var bigadr = $(".newinp1").text();
 	var tempaddress = $(".newinp1").text()+$(".newinp2").val();
+<{else}>
+var bigadr = province+city+county;
+var tempaddress = province+city+county+$(".newinp2").val();
+	
 <{/if}>
 	var	lnglatstr= $(".newinp1").attr("lnglat");
 	if(lnglatstr){
